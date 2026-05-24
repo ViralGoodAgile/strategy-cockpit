@@ -11,6 +11,8 @@ test('a first visit lands on a live, seeded cockpit', async ({ page }) => {
   // the instrument cluster + challenge bar are present
   expect(await page.locator('.inst').count()).toBeGreaterThan(5);
   await expect(page.locator('.challenge-bar')).toBeVisible();
+  // the build number is shown in the HUD (the short commit the build came from, or "dev")
+  await expect(page.locator('.hud-build-no')).toContainText('build');
 });
 
 test('the challenges overlay opens and closes', async ({ page }) => {
