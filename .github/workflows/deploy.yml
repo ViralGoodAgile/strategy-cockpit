@@ -1,7 +1,8 @@
 name: Deploy to Cloudflare Pages
 
 # Build and publish to the existing Cloudflare Pages project on every push to main.
-# Requires one repo secret: CLOUDFLARE_API_TOKEN (Account ▸ Cloudflare Pages ▸ Edit).
+# Runs the test suite, writes a verifiable build-info.json into the deployed site,
+# then publishes. Requires one repo secret: CLOUDFLARE_API_TOKEN.
 on:
   push:
     branches: [main]
@@ -19,6 +20,10 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      # Run the Gherkin/Vitest suite and capture a JSON report (gates the deploy).
+      - run: npm test -- --reporter=json --outputFile=test-results.json
+      # Emit public/build-info.json (commit, timestamp, test counts, Actions run URL).
+      - run: node scripts/build-info.mjs
       - run: npm run build
       - name: Publish to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3

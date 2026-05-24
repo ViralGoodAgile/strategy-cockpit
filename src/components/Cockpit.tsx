@@ -13,6 +13,7 @@ import { RadarReadout } from './dash/RadarReadout';
 import { OutcomesReadout } from './dash/OutcomesReadout';
 import { HygieneReadout } from './dash/HygieneReadout';
 import { ChallengeBar } from './dash/ChallengeBar';
+import { BuildBadge } from './dash/BuildBadge';
 import { DetailOverlay } from './dash/DetailOverlay';
 import { AuthorMode } from './dash/AuthorMode';
 import './cockpit.css';
@@ -46,6 +47,7 @@ export function Cockpit() {
             <span className="hud-offline">offline · no v0.1</span>
           )}
         </div>
+        <BuildBadge />
         <button className="hud-author" onClick={() => setMode('author')}>
           Author strategy ›
         </button>
