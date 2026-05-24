@@ -139,10 +139,22 @@ export interface DataDogSet {
   maps: QualityId[];
 }
 
-// Production outcomes — changes in PRODUCT metrics (incl. usage telemetry). This is the
-// REALITY the loop senses: whether the world is moving toward INTENT.
+// A customer Job-To-Be-Done that the strategy has PRIORITISED but not yet served —
+// the demand side of outcomes. `rank` orders the queue (1 = next); `evidence` is the
+// signal that surfaced the demand. These are jobs, never features or named people.
+export interface JobToBeDone {
+  id: string;
+  job: string; // the job, in the customer's situation ("When… I want… so I can…")
+  rank: number; // prioritisation order (1 = highest)
+  evidence: string; // why it's on the list (a weak signal, a metric gap, a quote)
+}
+
+// Production outcomes — changes in PRODUCT metrics (incl. usage telemetry) PLUS the
+// prioritised-but-unserved customer jobs. This is the REALITY the loop senses: whether
+// the world is moving toward INTENT, and which demand is still unmet.
 export interface OutcomeSet {
   metrics: Metric[];
+  jobs: JobToBeDone[]; // unserved customer JTBD, prioritised (the demand still open)
   maps: QualityId[];
 }
 

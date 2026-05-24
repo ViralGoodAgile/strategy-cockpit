@@ -7,10 +7,13 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  reporter: 'list',
+  // `list` for console; `html` is uploaded as a CI artifact so failures are debuggable.
+  reporter: [['list'], ['html', { open: 'never' }]],
   use: {
     baseURL: 'http://localhost:4173',
-    trace: 'on-first-retry',
+    trace: 'on-first-retry', // full trace captured on the retry of any failure
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
