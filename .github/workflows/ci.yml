@@ -17,7 +17,20 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
-      # Unit tests gate the PR (pure domain/logic suite via Vitest).
+      # Unit/BDD tests gate the PR (Gherkin suite via Vitest).
       - run: npm test
       # `npm run build` runs `tsc --noEmit && vite build` — fails the check on type or build errors.
       - run: npm run build
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      # Playwright builds + previews the app (see playwright.config.ts) and drives it.
+      - run: npm run test:e2e
