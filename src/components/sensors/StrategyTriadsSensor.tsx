@@ -24,6 +24,15 @@ export function StrategyTriadsSensor() {
             <p className="triad-lean">
               leans <strong>{v.strong}</strong> · <span className="st-weak">{v.weak}</span> is thin
             </p>
+            <div className="triad-interp">
+              <div className="triad-interp-head">interpretations · by people, not the cockpit</div>
+              {v.interpretations.map((it, i) => (
+                <p className="triad-interp-row" key={i}>
+                  <span className="triad-interp-by">{it.by}</span>
+                  {it.text}
+                </p>
+              ))}
+            </div>
           </div>
         ))}
       </div>

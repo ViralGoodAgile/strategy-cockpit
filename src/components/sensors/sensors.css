@@ -646,8 +646,32 @@
   font-size: 9px;
   letter-spacing: 0.04em;
 }
+.radar-blip-hit {
+  cursor: pointer;
+}
 .radar-blip {
   fill: var(--ink);
+  transition: opacity 0.12s ease;
+}
+/* hovered blip: ringed in bright ink so it's unmistakable among the cluster */
+.radar-blip-hover {
+  stroke: var(--ink);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+.radar-blip-dim {
+  opacity: 0.3;
+}
+/* the hovered impediment's name, with a dark halo so it reads over rings and blips */
+.radar-tip {
+  fill: var(--ink);
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  paint-order: stroke;
+  stroke: rgba(6, 7, 9, 0.92);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  pointer-events: none;
 }
 .radar-blip.radar-high {
   fill: var(--accent);

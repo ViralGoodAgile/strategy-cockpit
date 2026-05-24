@@ -60,6 +60,23 @@ test('the radar expands to a legible scope', async ({ page }) => {
     .evaluate((el) => parseFloat(getComputedStyle(el).strokeWidth));
   expect(ringW).toBeGreaterThanOrEqual(1.5);
 
+  // each blip is hoverable and names its impediment
+  await page.locator('.overlay .radar-blip-hit').first().hover();
+  await expect(page.locator('.overlay .radar-tip')).toHaveCount(1);
+  await expect(page.locator('.overlay .radar-tip')).not.toBeEmpty();
+
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.overlay')).toHaveCount(0);
+});
+
+test('strategy triads show per-triad interpretations from different groups', async ({ page }) => {
+  await page.locator('.inst', { hasText: 'Strategy triads' }).first().click();
+  await expect(page.locator('.overlay-title')).toHaveText('Strategy triads');
+  // four triads, each with an interpretations block (≥2 group readings apiece)
+  expect(await page.locator('.overlay .triad-interp').count()).toBeGreaterThanOrEqual(4);
+  expect(await page.locator('.overlay .triad-interp-row').count()).toBeGreaterThanOrEqual(8);
+  await expect(page.locator('.overlay .triad-interp-by').first()).not.toBeEmpty();
+
   await page.keyboard.press('Escape');
   await expect(page.locator('.overlay')).toHaveCount(0);
 });
