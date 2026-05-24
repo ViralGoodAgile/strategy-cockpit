@@ -1,6 +1,7 @@
 import { TRIAD_SIGNAL } from '../../data/sensorData';
 import type { Triad } from '../../domain/sensors';
 import { useCockpit } from '../../store/useCockpit';
+import { triadsWithCaptured } from '../../mirrors/capturedTriads';
 import { TriadChart } from '../sensors/TriadChart';
 import { Instrument } from './Instrument';
 
@@ -15,7 +16,8 @@ function leanIndex(triad: Triad, period: 'current' | 'prior'): number {
 // Expand for all three triads.
 export function TriadsReadout() {
   const setDetail = useCockpit((s) => s.setDetail);
-  const triads = TRIAD_SIGNAL.value.triads;
+  const captured = useCockpit((s) => s.capturedStories);
+  const triads = triadsWithCaptured(TRIAD_SIGNAL.value.triads, captured);
   const sense = triads[0];
   const now = leanIndex(sense, 'current');
   const before = leanIndex(sense, 'prior');

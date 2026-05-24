@@ -130,7 +130,8 @@
   background: var(--accent-wash);
   color: var(--accent);
 }
-.hud-author {
+.hud-author,
+.hud-signify {
   color: var(--accent);
   font-size: var(--t-xs);
   letter-spacing: 0.06em;
@@ -1305,4 +1306,151 @@
   flex: 1;
   min-height: 0;
   width: 100%;
+}
+
+/* --- /signify capture screen (survey-taker triad input) --- */
+.sig-body {
+  flex-direction: column;
+  gap: var(--s-4);
+  max-width: 1000px;
+  overflow-y: auto;
+}
+.sig-triad-tabs {
+  display: flex;
+  gap: var(--s-2);
+  flex-wrap: wrap;
+}
+.sig-tab {
+  font-size: var(--t-xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  padding: 4px 12px;
+  border: 1px solid var(--hair);
+  border-radius: 999px;
+}
+.sig-tab:hover {
+  color: var(--ink);
+}
+.sig-tab-on {
+  color: var(--accent);
+  border-color: var(--accent-dim);
+  background: var(--accent-wash);
+}
+.sig-question {
+  font-family: var(--font-display);
+  font-size: var(--t-m);
+  color: var(--ink);
+  line-height: 1.35;
+}
+.sig-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-6);
+  align-items: start;
+}
+.sig-left,
+.sig-right {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  min-width: 0;
+}
+.sig-right {
+  align-items: center;
+}
+.sig-label {
+  font-size: var(--t-xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.sig-story {
+  width: 100%;
+  min-height: 90px;
+  resize: vertical;
+  background: var(--panel);
+  border: 1px solid var(--bezel);
+  border-radius: var(--radius);
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--t-s);
+  line-height: 1.4;
+  padding: var(--s-3);
+}
+.sig-count {
+  font-size: var(--t-xs);
+  color: var(--ink-3);
+}
+.sig-role {
+  background: var(--panel);
+  border: 1px solid var(--bezel);
+  border-radius: var(--radius);
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--t-s);
+  padding: var(--s-2) var(--s-3);
+}
+.sig-submit {
+  align-self: flex-start;
+  margin-top: var(--s-2);
+  color: var(--accent);
+  border: 1px solid var(--accent-dim);
+  background: var(--accent-wash);
+  border-radius: var(--radius);
+  padding: var(--s-2) var(--s-4);
+  font-size: var(--t-s);
+  letter-spacing: 0.04em;
+}
+.sig-submit:disabled {
+  color: var(--ink-3);
+  border-color: var(--hair);
+  background: none;
+  cursor: not-allowed;
+}
+.sig-saved {
+  font-size: var(--t-xs);
+  color: var(--tl-green);
+}
+.sig-svg {
+  width: 100%;
+  max-width: 360px;
+  height: auto;
+  touch-action: none;
+  cursor: crosshair;
+}
+.sig-dot {
+  fill: var(--accent);
+  stroke: var(--ink);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+.sig-hint {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+}
+.sig-right-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: var(--s-3);
+}
+.sig-na-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--t-xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.sig-na-label input {
+  accent-color: var(--accent);
+}
+.sig-svg-disabled {
+  opacity: 0.3;
+  pointer-events: none;
 }

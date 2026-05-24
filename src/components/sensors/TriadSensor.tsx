@@ -1,5 +1,7 @@
 import type { Signal } from '../../domain/types';
 import type { TriadSet } from '../../domain/sensors';
+import { useCockpit } from '../../store/useCockpit';
+import { triadsWithCaptured } from '../../mirrors/capturedTriads';
 import { SensorModule } from './SensorModule';
 import { TriadChart } from './TriadChart';
 
@@ -13,7 +15,8 @@ function leanIndex(stories: { a: number; b: number; c: number; period: string }[
 // Triad.SenseMaker — the full Cynefin signification set: three triangles with their
 // findings. Stories self-signified by role (never named individuals, C4).
 export function TriadSensor({ signal }: { signal: Signal<TriadSet> }) {
-  const triads = signal.value.triads;
+  const captured = useCockpit((s) => s.capturedStories);
+  const triads = triadsWithCaptured(signal.value.triads, captured);
   const total = triads.reduce((n, t) => n + t.stories.filter((s) => s.period === 'current').length, 0);
 
   return (
