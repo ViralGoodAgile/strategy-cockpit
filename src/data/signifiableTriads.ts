@@ -73,17 +73,6 @@ export function signifiableTriads(): SignifiableTriad[] {
   return [...cynefin, customer, ...strategy];
 }
 
-// Segments, never named individuals (C4). The /signify role picker draws from this list,
-// and tests assert it carries no person-shaped names.
-export const SEGMENTS = [
-  'onboarding teams',
-  'returning users',
-  'power users',
-  'cross-team hand-offs',
-  'evaluators',
-  'admins',
-  'PM',
-  'engineer',
-  'designer',
-  'support',
-] as const;
+// Segments, never named individuals (C4). The default list lives in ./segments and seeds
+// the store, where the /signify role picker reads it (and the user can edit it).
+export { DEFAULT_SEGMENTS as SEGMENTS } from './segments';

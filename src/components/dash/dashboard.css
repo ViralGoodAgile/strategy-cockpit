@@ -1445,6 +1445,84 @@
   text-transform: uppercase;
   color: var(--ink-3);
 }
+.sig-seg-toggle {
+  margin-left: var(--s-2);
+  font-size: var(--t-xs);
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: var(--accent);
+}
+.sig-seg-toggle:hover {
+  color: var(--ink);
+}
+/* --- "whose situation" segment editor --- */
+.sig-seg-editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  border: 1px solid var(--hair);
+  border-radius: var(--radius);
+  padding: var(--s-3);
+}
+.sig-seg-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+.sig-seg-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+  border: 1px solid var(--hair);
+  border-radius: 999px;
+  padding: 2px 4px 2px 10px;
+}
+.sig-seg-del {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  color: var(--ink-3);
+  line-height: 1;
+}
+.sig-seg-del:hover {
+  color: var(--tl-red);
+}
+.sig-seg-add {
+  display: flex;
+  gap: var(--s-2);
+}
+.sig-seg-input {
+  flex: 1;
+  min-width: 0;
+  background: var(--panel);
+  border: 1px solid var(--bezel);
+  border-radius: var(--radius);
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--t-s);
+  padding: 4px var(--s-3);
+}
+.sig-seg-addbtn {
+  flex: 0 0 auto;
+  color: var(--accent);
+  border: 1px solid var(--accent-dim);
+  background: var(--accent-wash);
+  border-radius: var(--radius);
+  padding: 4px var(--s-3);
+  font-size: var(--t-xs);
+  letter-spacing: 0.04em;
+}
+.sig-seg-addbtn:disabled {
+  color: var(--ink-3);
+  border-color: var(--hair);
+  background: none;
+  cursor: not-allowed;
+}
 .sig-story {
   width: 100%;
   min-height: 90px;

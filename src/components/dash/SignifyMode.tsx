@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react';
 import {
   MIN_STORY_LEN,
-  SEGMENTS,
   signifiableTriads,
   signifyReady,
   TRIAD_CATEGORY_LABEL,
@@ -38,17 +37,26 @@ export function SignifyMode() {
   const updateCaptured = useCockpit((s) => s.updateCaptured);
   const deleteCaptured = useCockpit((s) => s.deleteCaptured);
   const captured = useCockpit((s) => s.capturedStories);
+  const segments = useCockpit((s) => s.segments);
+  const addSegment = useCockpit((s) => s.addSegment);
+  const removeSegment = useCockpit((s) => s.removeSegment);
   const triads = TRIADS;
 
   const [triadIdx, setTriadIdx] = useState(0);
   const [text, setText] = useState('');
-  const [role, setRole] = useState<string>(SEGMENTS[0]);
+  const [roleSel, setRoleSel] = useState<string>(segments[0] ?? '');
   const [w, setW] = useState<{ a: number; b: number; c: number } | null>(null);
   const [na, setNa] = useState(false);
   const [guides, setGuides] = useState(true); // median guide lines (as in the result charts)
   const [justSaved, setJustSaved] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null); // a story being revised
   const [confirmId, setConfirmId] = useState<string | null>(null); // a delete awaiting confirm
+  const [editSegs, setEditSegs] = useState(false); // the "manage segments" editor is open
+  const [newSeg, setNewSeg] = useState('');
+
+  // The selected segment, kept valid if the chosen one was removed from the list.
+  const role = segments.includes(roleSel) ? roleSel : (segments[0] ?? '');
+  const setRole = setRoleSel;
   const svgRef = useRef<SVGSVGElement | null>(null);
   const dragging = useRef(false);
 
@@ -167,14 +175,55 @@ export function SignifyMode() {
 
             <label className="sig-label" htmlFor="sig-role">
               3 · Whose situation (a segment, never a person)
+              <button className="sig-seg-toggle" type="button" onClick={() => setEditSegs((v) => !v)}>
+                {editSegs ? 'done' : 'edit list'}
+              </button>
             </label>
             <select id="sig-role" className="sig-role" value={role} onChange={(e) => setRole(e.target.value)}>
-              {SEGMENTS.map((s) => (
+              {segments.map((s) => (
                 <option key={s} value={s}>
                   {s}
                 </option>
               ))}
             </select>
+
+            {editSegs && (
+              <div className="sig-seg-editor">
+                <ul className="sig-seg-list">
+                  {segments.map((s) => (
+                    <li className="sig-seg-chip" key={s}>
+                      {s}
+                      <button
+                        className="sig-seg-del"
+                        type="button"
+                        aria-label={`remove ${s}`}
+                        onClick={() => removeSegment(s)}
+                      >
+                        ×
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+                <form
+                  className="sig-seg-add"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    addSegment(newSeg);
+                    setNewSeg('');
+                  }}
+                >
+                  <input
+                    className="sig-seg-input"
+                    value={newSeg}
+                    placeholder="add a segment (never a person)"
+                    onChange={(e) => setNewSeg(e.target.value)}
+                  />
+                  <button className="sig-seg-addbtn" type="submit" disabled={!newSeg.trim()}>
+                    Add
+                  </button>
+                </form>
+              </div>
+            )}
 
             <div className="sig-actions">
               <button className="sig-submit" disabled={!ready} onClick={submit}>
