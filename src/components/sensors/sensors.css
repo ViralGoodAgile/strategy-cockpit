@@ -159,6 +159,68 @@
   margin-right: var(--s-2);
 }
 
+/* --- backlog pruning (in the Flow overlay) --- */
+.bk {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  border-top: 1px solid var(--hair);
+  padding-top: var(--s-3);
+}
+.bk-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-3);
+  flex-wrap: wrap;
+}
+.bk-title {
+  font-size: var(--t-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.bk-counts {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+}
+.bk-z {
+  color: var(--tl-amber);
+}
+.bk-f {
+  color: var(--tl-red);
+}
+.bk-prune {
+  margin-left: auto;
+  font-size: var(--t-xs);
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+.bk-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.bk-tiles .fi-tile {
+  width: 15px;
+  height: 15px;
+}
+.bk-zombie {
+  opacity: 0.5;
+}
+.bk-fossil {
+  opacity: 0.28;
+  outline: 1px solid var(--tl-red);
+  outline-offset: 1px;
+}
+.bk-note {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+}
+.bk-note .num {
+  color: var(--ink);
+  font-size: var(--t-s);
+}
+
 /* --- triad chart (shared by dashboard pod + overlay) --- */
 .tc {
   display: flex;

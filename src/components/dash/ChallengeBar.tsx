@@ -1,35 +1,33 @@
 import { useMemo } from 'react';
-import { composeChallenge } from '../../challenge/composeChallenge';
-import { MANDATE_SIGNAL } from '../../data/synthetic';
+import { composeChallenges } from '../../challenge/composeChallenge';
 import { useCockpit } from '../../store/useCockpit';
-import { FreshnessLine } from '../common/Freshness';
+import { FreshPill } from '../common/Trust';
 
-// The challenge as the cockpit's primary message bar — the live provocation, framed
-// against the strategy, wearing its inputs' freshness on its face.
+// The primary challenge as the cockpit's message bar, with a freshness pill for trust
+// and a way into the full set when more than one cross-sensor pattern fires.
 export function ChallengeBar() {
   const draft = useCockpit((s) => s.draft);
   const setMode = useCockpit((s) => s.setMode);
   const setDetail = useCockpit((s) => s.setDetail);
   const focusQuality = useCockpit((s) => s.focusQuality);
 
-  const challenge = useMemo(() => composeChallenge(draft, MANDATE_SIGNAL), [draft]);
+  const challenges = useMemo(() => composeChallenges(draft), [draft]);
+  const c = challenges[0];
+  if (!c) return null;
 
   return (
     <section className="challenge-bar">
       <div className="cb-tag">Challenge</div>
-      <p className="cb-q">{challenge.question}</p>
+      <p className="cb-q">{c.question}</p>
       <div className="cb-side">
-        {challenge.trendNote && <p className="cb-trend">{challenge.trendNote}.</p>}
+        {c.trendNote && <p className="cb-trend">{c.trendNote}.</p>}
         <div className="cb-refs">
-          {challenge.references.map((r, i) => (
+          {c.references.map((r, i) => (
             <button
               key={i}
               className="cb-ref"
               onClick={() => {
-                if (r.quality) {
-                  focusQuality(r.quality);
-                  setMode('author');
-                }
+                if (r.quality) { focusQuality(r.quality); setMode('author'); }
                 if (r.teamId) setDetail('mandate');
               }}
             >
@@ -37,11 +35,14 @@ export function ChallengeBar() {
             </button>
           ))}
         </div>
-        <FreshnessLine
-          observedAt={challenge.observedAt}
-          freshness={challenge.freshness}
-          prefix="rests on Mandate data"
-        />
+        <div className="cb-meta">
+          <FreshPill freshness={c.freshness} />
+          {challenges.length > 1 && (
+            <button className="cb-all" onClick={() => setDetail('challenges')}>
+              {challenges.length} challenges ›
+            </button>
+          )}
+        </div>
       </div>
     </section>
   );
