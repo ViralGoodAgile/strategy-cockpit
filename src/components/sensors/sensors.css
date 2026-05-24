@@ -353,7 +353,7 @@
 .fi-stage {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 .fi-stage-head {
   font-size: var(--t-xs);
@@ -369,8 +369,8 @@
 .fi-zone {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 3px 0;
+  gap: 3px;
+  padding: 2px 0;
 }
 .fi-zone-active {
   border-top: 1px solid var(--hair);
@@ -386,7 +386,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 3px;
-  min-height: 14px;
+  min-height: 12px;
 }
 /* a work item; colour-coded by type (warm set, a deliberate nudge past the 4-colour
    budget for legibility — see report). */

@@ -151,6 +151,62 @@ test('product outcomes show AARRR/HEART lenses, a customer triad and unserved cu
   await expect(page.locator('.overlay')).toHaveCount(0);
 });
 
+test('the whole instrument cluster fits a 1440×860 laptop with nothing truncated', async ({
+  page,
+}) => {
+  // Density regression guard. The no-scroll cockpit must show every instrument's content
+  // on a typical 1440×900 MacBook (~860px usable height) — the height the truncation pass
+  // was tuned for. Two kinds of clipping are checked, because some dense tiles stretch a
+  // grid to fill (align-content: space-between), so body scrollHeight can't see their squish.
+  await page.setViewportSize({ width: 1440, height: 860 });
+  await page.reload();
+  await expect(page.locator('.inst', { hasText: 'Product outcomes' }).first()).toBeVisible();
+
+  const report = await page.evaluate(() => {
+    const TOL = 4; // tolerate sub-pixel + cross-platform font-metric variance
+
+    // (a) tiles whose content overflows their body box (text + flex-column tiles)
+    const bodyClips: { area: string; clip: number }[] = [];
+    document.querySelectorAll('.inst').forEach((inst) => {
+      const body = inst.querySelector('.inst-body');
+      if (!body) return;
+      const clip = body.scrollHeight - body.clientHeight;
+      if (clip > TOL) {
+        const area = getComputedStyle(inst).gridArea.split('/')[0].trim();
+        bodyClips.push({ area, clip });
+      }
+    });
+
+    // (b) stretch grids hide overflow by spreading rows — detect by rows that overlap.
+    //     For each group, sort by top and flag any pair on different rows that collide.
+    const overlaps: { group: string; gap: number }[] = [];
+    const checkRows = (group: string, sel: string) => {
+      const rects = [...document.querySelectorAll(sel)]
+        .map((e) => e.getBoundingClientRect())
+        .sort((a, b) => a.top - b.top);
+      for (let i = 1; i < rects.length; i++) {
+        if (rects[i].top - rects[i - 1].top > 2) {
+          const gap = rects[i].top - rects[i - 1].bottom;
+          if (gap < -TOL) overlaps.push({ group, gap: Math.round(gap) });
+        }
+      }
+    };
+    checkRows('quant', '.inst .quant-grid .numeral');
+    checkRows('aarrr', '.po-lens:nth-child(1) .po-metric');
+    checkRows('heart', '.po-lens:nth-child(2) .po-metric');
+    checkRows('jobs', '.po-job');
+
+    const pageScroll =
+      document.documentElement.scrollHeight - document.documentElement.clientHeight;
+
+    return { bodyClips, overlaps, pageScroll };
+  });
+
+  expect(report.bodyClips).toEqual([]);
+  expect(report.overlaps).toEqual([]);
+  expect(report.pageScroll).toBeLessThanOrEqual(1);
+});
+
 test('scenario toggles make the loop and challenge react', async ({ page }) => {
   const ret = page.locator('.inst-loop .loop-return');
 
