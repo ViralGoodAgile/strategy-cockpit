@@ -11,6 +11,7 @@ import { SystemModelReadout } from './dash/SystemModelReadout';
 import { WeakSignalsReadout } from './dash/WeakSignalsReadout';
 import { RadarReadout } from './dash/RadarReadout';
 import { OutcomesReadout } from './dash/OutcomesReadout';
+import { ReliabilityReadout } from './dash/ReliabilityReadout';
 import { HygieneReadout } from './dash/HygieneReadout';
 import { ChallengeBar } from './dash/ChallengeBar';
 import { BuildBadge } from './dash/BuildBadge';
@@ -67,6 +68,7 @@ export function Cockpit() {
             <TriadsReadout />
             <OutcomesReadout />
             <HygieneReadout />
+            <ReliabilityReadout />
             <FlowReadout />
           </main>
           <ChallengeBar />

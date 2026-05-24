@@ -58,17 +58,33 @@ test('the radar expands to a legible scope', async ({ page }) => {
   await expect(page.locator('.overlay')).toHaveCount(0);
 });
 
-test('production outcomes show metrics beside prioritised unserved jobs', async ({ page }) => {
-  // The full-width outcomes row is skimmable in place — jobs visible without expanding.
-  const tile = page.locator('.inst', { hasText: 'Production outcomes' }).first();
-  await expect(tile.locator('.orw-jobs-head')).toContainText('Unserved jobs');
-  expect(await tile.locator('.orw-job').count()).toBe(4);
+test('product outcomes show AARRR/HEART lenses, a customer triad and unserved jobs', async ({ page }) => {
+  // The full-width product-outcomes row is skimmable in place.
+  const tile = page.locator('.inst', { hasText: 'Product outcomes' }).first();
+  await expect(tile).toContainText('AARRR');
+  await expect(tile).toContainText('HEART');
+  // customer sense-making triad renders in the tile
+  await expect(tile.locator('.po-triad-chart .tc-svg')).toBeVisible();
+  // top unserved jobs visible without expanding
+  expect(await tile.locator('.po-job').count()).toBe(3);
 
-  // Expanding reveals the evidence behind each job.
+  // Expanding reveals the full set: all jobs with evidence + the full customer triad.
   await tile.click();
-  await expect(page.locator('.overlay-title')).toHaveText('Production Outcomes');
+  await expect(page.locator('.overlay-title')).toHaveText('Product Outcomes');
   expect(await page.locator('.outcomes-job').count()).toBe(4);
   await expect(page.locator('.outcomes-job-evidence').first()).not.toBeEmpty();
+  await expect(page.locator('.po-detail-triad .tc-svg')).toBeVisible();
+
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.overlay')).toHaveCount(0);
+});
+
+test('the reliability instrument expands to the production subset', async ({ page }) => {
+  await page.locator('.inst', { hasText: 'Reliability' }).first().click();
+  await expect(page.locator('.overlay-title')).toHaveText('Reliability');
+  // uptime / MTTR etc. render as numerals
+  expect(await page.locator('.overlay .numeral').count()).toBeGreaterThan(2);
+  await expect(page.locator('.overlay')).toContainText('MTTR');
 
   await page.keyboard.press('Escape');
   await expect(page.locator('.overlay')).toHaveCount(0);

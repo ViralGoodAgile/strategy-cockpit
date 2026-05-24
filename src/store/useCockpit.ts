@@ -18,6 +18,7 @@ export type DetailView =
   | 'striads'
   | 'loop'
   | 'outcomes'
+  | 'reliability'
   | 'hygiene'
   | 'challenges'
   | null;

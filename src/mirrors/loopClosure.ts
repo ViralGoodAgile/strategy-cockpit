@@ -11,8 +11,10 @@ export interface LoopClosure {
 }
 
 export function loopClosure(versions: StrategyVersion[]): LoopClosure {
-  // Has reality moved? (a production outcome whose value differs from its prior)
-  const moved = OUTCOMES_SIGNAL.value.metrics.find((m) => m.value !== m.prior);
+  // Has reality moved? (a product outcome whose value differs from its prior)
+  const moved = [...OUTCOMES_SIGNAL.value.aarrr, ...OUTCOMES_SIGNAL.value.heart].find(
+    (m) => m.value !== m.prior,
+  );
   const outcomeNote = moved
     ? `${moved.label} ${moved.prior}${moved.unit}→${moved.value}${moved.unit}`
     : 'production outcomes';

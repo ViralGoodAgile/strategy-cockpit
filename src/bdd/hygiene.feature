@@ -3,6 +3,6 @@ Feature: Data hygiene ledger
 
   Scenario: the ledger lists every signal, worst-first
     Given the hygiene ledger
-    Then it lists nine signals
+    Then it lists ten signals
     And they are ordered least-trustworthy first
     And the present-but-stale count is the total minus the fresh count

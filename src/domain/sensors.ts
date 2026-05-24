@@ -149,12 +149,27 @@ export interface JobToBeDone {
   evidence: string; // why it's on the list (a weak signal, a metric gap, a quote)
 }
 
-// Production outcomes — changes in PRODUCT metrics (incl. usage telemetry) PLUS the
-// prioritised-but-unserved customer jobs. This is the REALITY the loop senses: whether
-// the world is moving toward INTENT, and which demand is still unmet.
+// Product outcomes — whether the product is moving customers' world toward INTENT,
+// seen through two recognised lenses plus the qualitative customer voice and the demand
+// still open. (Production/operational reliability is a SUBSET — see ReliabilitySet.)
+//   aarrr  = the PIRATE growth funnel: Acquisition, Activation, Retention, Referral, Revenue.
+//   heart  = experience quality (Google HEART): Happiness, Engagement, Adoption, Retention, Task-success.
+//   customerTriad = customer sense-making as a Cynefin SenseMaker triad (qualitative).
+//   jobs   = prioritised-but-unserved customer JTBD (the demand still open).
+// All numeric lenses lead with direction-of-travel, never a target (trends, not pass/fail).
 export interface OutcomeSet {
+  aarrr: Metric[];
+  heart: Metric[];
+  customerTriad: Triad;
+  jobs: JobToBeDone[];
+  maps: QualityId[];
+}
+
+// Production/operational reliability — the production SUBSET of product outcomes:
+// uptime, MTTR, incidents, error rate. Shown as trend (e.g. MTTR 52m → 38m), not an SLA
+// pass/fail badge — the cockpit inspects direction of travel.
+export interface ReliabilitySet {
   metrics: Metric[];
-  jobs: JobToBeDone[]; // unserved customer JTBD, prioritised (the demand still open)
   maps: QualityId[];
 }
 
