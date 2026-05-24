@@ -73,8 +73,16 @@ export function TriadChart({ triad, showStory = true }: { triad: Triad; showStor
               onMouseLeave={() => setHoverId((h) => (h === s.id ? null : h))}
               onClick={() => setPinned((cur) => (cur?.id === s.id ? null : s))}
             >
-              <title>{`${s.role}: ${s.text}`}</title>
-              <circle cx={p.x} cy={p.y} r={on ? 6 : 4.5} className={`tc-dot${on ? ' tc-dot-on' : ''}`} />
+              <title>{`${s.role}: ${s.text}${s.captured ? ' (your signified story)' : ''}`}</title>
+              {s.captured && (
+                <circle cx={p.x} cy={p.y} r={on ? 9 : 7.5} className="tc-dot-ring" />
+              )}
+              <circle
+                cx={p.x}
+                cy={p.y}
+                r={on ? 6 : 4.5}
+                className={`tc-dot${on ? ' tc-dot-on' : ''}${s.captured ? ' tc-dot-captured' : ''}`}
+              />
             </g>
           );
         })}
