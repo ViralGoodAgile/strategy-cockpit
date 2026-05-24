@@ -110,6 +110,8 @@ test('product outcomes show AARRR/HEART lenses, a customer triad and unserved cu
   // both arrows carry a hoverable hint: signal (for systems thinkers) vs last-point (noise)
   const firstMetric = lenses.nth(0).locator('.po-metric').first();
   await expect(firstMetric.locator('.mtrend-run')).toHaveAttribute('title', /SIGNAL/);
+  // the signal hint names the actual readings (not just "6 data points"): Acquisition runs 96…142
+  await expect(firstMetric.locator('.mtrend-run')).toHaveAttribute('title', /96.*142/);
   await expect(firstMetric.locator('.mtrend-last')).toHaveAttribute('title', /single data point/);
   // the headline systems-thinking case: Engagement's signal disagrees with its last point —
   // the prominent arrow points down (the run is sliding) while the last-point arrow points up.
@@ -265,6 +267,14 @@ test('signify: a survey taker captures a story into a triad', async ({ page }) =
 
   await page.locator('.author-back').click();
   await expect(page.locator('.dash-grid')).toBeVisible();
+
+  // persisted + visible: opening the Cynefin triads shows the captured story as a distinct
+  // ringed "yours" dot, with a legend — not lost, not indistinguishable from seed stories.
+  await page.locator('.inst', { hasText: 'Cynefin triads' }).first().click();
+  await expect(page.locator('.overlay-title')).toHaveText('Cynefin triads');
+  expect(await page.locator('.overlay .tc-dot-captured').count()).toBe(1);
+  expect(await page.locator('.overlay .tc-dot-ring').count()).toBe(1);
+  await expect(page.locator('.overlay .triad-legend')).toContainText('ringed in champagne');
 });
 
 test('signify: every triad allows "not applicable" without a story or placement', async ({ page }) => {

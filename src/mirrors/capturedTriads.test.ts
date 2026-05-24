@@ -34,11 +34,12 @@ describe('triadsWithCaptured', () => {
     expect(triadsWithCaptured(input, [])).toBe(input); // early return, no copy
   });
 
-  it('appends a matching capture as a current-period story', () => {
+  it('appends a matching capture as a current-period story, flagged as captured', () => {
     const out = triadsWithCaptured([triad], [cap({})]);
     expect(out[0].stories).toHaveLength(1);
     expect(out[0].stories[0].period).toBe('current');
     expect(out[0].stories[0].role).toBe('PM');
+    expect(out[0].stories[0].captured).toBe(true); // distinct "yours" dot in the chart
   });
 
   it('ignores captures for a different triad', () => {

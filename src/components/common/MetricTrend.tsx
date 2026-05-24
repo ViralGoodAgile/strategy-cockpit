@@ -20,9 +20,10 @@ export function MetricTrend({ metric }: { metric: Metric }) {
   const diverges =
     run.direction !== 'flat' && last.direction !== 'flat' && run.direction !== last.direction;
 
-  const n = metric.series.length;
+  const unit = metric.unit ? ` ${metric.unit.trim()}` : '';
+  const readings = metric.series.map((v) => `${v}${unit}`).join(', ');
   const runHint =
-    `SIGNAL (for systems thinkers): the trend fitted across all ${n} points. ` +
+    `SIGNAL (for systems thinkers): the trend fitted across the readings ${readings}. ` +
     `It weighs every reading, so one noisy point can't flip it. This is the arrow to act on.`;
   const lastHint =
     `LAST POINT ONLY (${last.detail}): the change from the previous reading. ` +

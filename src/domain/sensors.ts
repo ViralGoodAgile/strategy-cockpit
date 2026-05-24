@@ -19,6 +19,7 @@ export interface TriadStory {
   b: number;
   c: number;
   period: 'current' | 'prior'; // for centroid-drift trend
+  captured?: boolean; // self-signified by a survey taker (vs a seed story) — drawn distinctly
 }
 
 // A human reading of a triad pattern. SenseMaker is human sense-making — the cockpit

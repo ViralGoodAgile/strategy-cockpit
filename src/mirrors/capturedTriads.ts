@@ -39,6 +39,7 @@ export function triadsWithCaptured(triads: Triad[], captured: CapturedStory[]): 
           b: c.b,
           c: c.c,
           period: 'current' as const,
+          captured: true, // a survey taker's own signification — drawn distinctly from seed dots
         })),
       ],
     };

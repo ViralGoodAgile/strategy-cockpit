@@ -29,6 +29,9 @@ export function TriadSensor({ signal }: { signal: Signal<TriadSet> }) {
       insight={
         <>
           {triads.length} Cynefin triads · {total} stories self-signified by role.
+          {captured.length > 0 && (
+            <span className="triad-legend"> · your {captured.filter((c) => !c.na).length} signified {captured.filter((c) => !c.na).length === 1 ? 'story is' : 'stories are'} ringed in champagne.</span>
+          )}
           {signal.freshness !== 'fresh' && (
             <em className="sensor-warn"> Signal is {signal.freshness} — a quiet triad may mean nothing happened, or that no one is collecting stories.</em>
           )}
