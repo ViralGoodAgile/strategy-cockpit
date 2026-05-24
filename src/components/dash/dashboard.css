@@ -1514,3 +1514,113 @@
   opacity: 0.3;
   pointer-events: none;
 }
+
+/* submit + cancel sit on one line; cancel is a quiet text button */
+.sig-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  margin-top: var(--s-2);
+}
+.sig-submit {
+  margin-top: 0;
+}
+.sig-cancel {
+  font-size: var(--t-xs);
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+}
+.sig-cancel:hover {
+  color: var(--ink);
+}
+.sig-editing {
+  font-size: var(--t-xs);
+  color: var(--accent);
+}
+
+/* --- captured-story manager: edit / delete-with-confirm for this triad --- */
+.sig-captured {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  border-top: 1px solid var(--hair);
+  padding-top: var(--s-3);
+}
+.sig-captured-head {
+  font-size: var(--t-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.sig-captured-empty {
+  font-size: var(--t-s);
+  color: var(--ink-3);
+}
+.sig-cap-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+}
+.sig-cap-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-3);
+  padding: var(--s-2) var(--s-3);
+  border: 1px solid var(--hair);
+  border-radius: var(--radius);
+}
+.sig-cap-editing {
+  border-color: var(--accent-dim);
+  background: var(--accent-wash);
+}
+.sig-cap-role {
+  flex: 0 0 auto;
+  font-size: var(--t-xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+  min-width: 9rem;
+}
+.sig-cap-text {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--t-s);
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sig-cap-na {
+  color: var(--ink-3);
+  font-style: italic;
+}
+.sig-cap-acts,
+.sig-cap-confirm {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+.sig-cap-edit,
+.sig-cap-del,
+.sig-cap-yes,
+.sig-cap-no {
+  font-size: var(--t-xs);
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+}
+.sig-cap-edit:hover,
+.sig-cap-no:hover {
+  color: var(--ink);
+}
+.sig-cap-del:hover,
+.sig-cap-yes {
+  color: var(--tl-red);
+}
+.sig-cap-ask {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+}
