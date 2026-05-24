@@ -44,7 +44,6 @@ export function TriadChart({ triad, showStory = true }: { triad: Triad; showStor
 
   // Hover takes precedence; a click pins a story so it stays after the mouse leaves.
   const active = current.find((s) => s.id === hoverId) ?? pinned;
-  const activeP = active ? place(active.a, active.b, active.c) : null;
 
   return (
     <div className="tc">
@@ -91,21 +90,21 @@ export function TriadChart({ triad, showStory = true }: { triad: Triad; showStor
         <text x={TOP.x} y={TOP.y - 8} className="tc-pole" textAnchor="middle">{triad.poles[0].short}</text>
         <text x={LEFT.x - 2} y={LEFT.y + 18} className="tc-pole" textAnchor="middle">{triad.poles[1].short}</text>
         <text x={RIGHT.x + 2} y={RIGHT.y + 18} className="tc-pole" textAnchor="middle">{triad.poles[2].short}</text>
-        {/* hovered/pinned story's role, drawn last with a dark halo so it reads */}
-        {active && activeP && (
-          <text
-            x={activeP.x + (activeP.x > W / 2 ? -9 : 9)}
-            y={activeP.y - 9}
-            textAnchor={activeP.x > W / 2 ? 'end' : 'start'}
-            className="tc-tip"
-          >
-            {active.role}
-          </text>
-        )}
       </svg>
-      {showStory && active && (
+      {/* The hovered/pinned story reads in a reserved caption beneath the triangle — never
+          floated over the dots (which overlapped the centroid + guides). Always rendered so
+          the columns stay aligned and nothing reflows on hover. */}
+      {showStory && (
         <p className="tc-story">
-          <span className="tc-role">{active.role}</span> {active.text}
+          {active ? (
+            <>
+              <span className="tc-role">{active.role}</span>
+              {active.text}
+              {active.captured && <span className="tc-mine"> · yours</span>}
+            </>
+          ) : (
+            <span className="tc-story-hint">hover a dot for its story</span>
+          )}
         </p>
       )}
     </div>

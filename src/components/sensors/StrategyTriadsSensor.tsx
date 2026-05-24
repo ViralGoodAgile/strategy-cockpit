@@ -30,7 +30,7 @@ export function StrategyTriadsSensor() {
         {views.map((v) => (
           <div className="triad-chart" key={v.id}>
             <div className="triad-title">{v.title}</div>
-            <StrategyTriadChart labels={v.labels} weights={v.weights} captures={capturesFor(v.id)} />
+            <StrategyTriadChart labels={v.labels} weights={v.weights} captures={capturesFor(v.id)} showStory />
             <p className="triad-lean">
               leans <strong>{v.strong}</strong> · <span className="st-weak">{v.weak}</span> is thin
             </p>

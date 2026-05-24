@@ -292,16 +292,6 @@
   vector-effect: non-scaling-stroke;
 }
 /* hovered/pinned story's role, with a dark halo so it reads over the triangle */
-.tc-tip {
-  fill: var(--ink);
-  font-size: 10px;
-  letter-spacing: 0.02em;
-  paint-order: stroke;
-  stroke: rgba(6, 7, 9, 0.92);
-  stroke-width: 3px;
-  stroke-linejoin: round;
-  pointer-events: none;
-}
 .tc-centroid {
   fill: var(--accent);
 }
@@ -319,6 +309,20 @@
   font-size: var(--t-xs);
   color: var(--ink);
   max-width: var(--measure);
+  text-align: center;
+  line-height: 1.35;
+  /* reserve two lines so hovering a dot never reflows the column or overlaps the lean line */
+  min-height: 2.7em;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.tc-story-hint {
+  color: var(--ink-3);
+}
+.tc-mine {
+  color: var(--accent);
 }
 .tc-role {
   color: var(--ink-2);
