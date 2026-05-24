@@ -23,9 +23,11 @@ export function Numeral({
 }) {
   return (
     <div className="numeral">
-      <div className="numeral-value num">{value}</div>
+      <div className="numeral-top">
+        <div className="numeral-value num">{value}</div>
+        {metric ? <MetricTrend metric={metric} /> : trend ? <TrendMark trend={trend} /> : null}
+      </div>
       <div className="numeral-label">{label}</div>
-      {metric ? <MetricTrend metric={metric} /> : trend ? <TrendMark trend={trend} /> : null}
     </div>
   );
 }
