@@ -464,33 +464,52 @@
   grid-template-columns: repeat(3, 1fr);
   gap: var(--s-4) var(--s-5);
 }
-/* overlay: supply (metrics) beside demand (prioritised unserved jobs) */
-.outcomes-detail {
+/* overlay: metric lenses (AARRR + HEART) · customer triad · unserved jobs */
+.po-detail {
   display: flex;
   gap: var(--s-6);
   align-items: stretch;
+  min-height: 0;
 }
-.outcomes-supply {
-  flex: 1 1 50%;
+.po-detail-col {
+  flex: 1 1 38%;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--s-4);
+  gap: var(--s-3);
 }
-.outcomes-demand {
-  flex: 1 1 50%;
+.po-detail-triad {
+  flex: 1 1 30%;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--s-4);
+  gap: var(--s-2);
   border-left: 1px solid var(--hair);
   padding-left: var(--s-6);
 }
-.outcomes-sub {
+.po-detail-jobs {
+  flex: 1 1 32%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  border-left: 1px solid var(--hair);
+  padding-left: var(--s-6);
+}
+.po-detail-head {
   font-size: var(--t-xs);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--ink-3);
+}
+.po-detail-q {
+  font-size: var(--t-s);
+  color: var(--ink-2);
+  line-height: 1.4;
+}
+.po-detail-triad .tc-svg {
+  max-height: 30vh;
+  width: auto;
 }
 .outcomes-jobs {
   list-style: none;

@@ -7,6 +7,7 @@ import {
   FLOW_CONSTRAINT_SIGNAL,
   OUTCOMES_SIGNAL,
   RADAR_SIGNAL,
+  RELIABILITY_SIGNAL,
   SYSTEM_MODEL_SIGNAL,
   TRIAD_SIGNAL,
   WEAK_SIGNAL,
@@ -30,7 +31,8 @@ const SIGNALS: { name: string; sig: { observedAt: string; freshness: Freshness }
   { name: 'Weak signals', sig: WEAK_SIGNAL },
   { name: 'System model', sig: SYSTEM_MODEL_SIGNAL },
   { name: 'Radar', sig: RADAR_SIGNAL },
-  { name: 'Production outcomes', sig: OUTCOMES_SIGNAL },
+  { name: 'Product outcomes', sig: OUTCOMES_SIGNAL },
+  { name: 'Reliability', sig: RELIABILITY_SIGNAL },
 ];
 
 const RANK: Record<Freshness, number> = { fresh: 0, aging: 1, stale: 2, dead: 3 };

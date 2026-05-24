@@ -20,9 +20,10 @@ import { RadarSensor } from '../sensors/RadarSensor';
 import { StrategyTriadsSensor } from '../sensors/StrategyTriadsSensor';
 import { LoopDetail } from './LoopDetail';
 import { OutcomesSensor } from '../sensors/OutcomesSensor';
+import { ReliabilitySensor } from '../sensors/ReliabilitySensor';
 import { HygieneSensor } from '../sensors/HygieneSensor';
 import { ChallengesSensor } from '../sensors/ChallengesSensor';
-import { RADAR_SIGNAL, OUTCOMES_SIGNAL } from '../../data/sensorData';
+import { RADAR_SIGNAL, OUTCOMES_SIGNAL, RELIABILITY_SIGNAL } from '../../data/sensorData';
 
 const TITLES: Record<string, string> = {
   mandate: 'Mandate Levels',
@@ -34,7 +35,8 @@ const TITLES: Record<string, string> = {
   radar: 'Radar — Impediments',
   striads: 'Strategy triads',
   loop: 'The loop under inspection',
-  outcomes: 'Production Outcomes',
+  outcomes: 'Product Outcomes',
+  reliability: 'Reliability',
   hygiene: 'Data hygiene',
   challenges: 'Challenges',
 };
@@ -71,6 +73,7 @@ export function DetailOverlay() {
           {detail === 'striads' && <StrategyTriadsSensor />}
           {detail === 'loop' && <LoopDetail />}
           {detail === 'outcomes' && <OutcomesSensor signal={OUTCOMES_SIGNAL} />}
+          {detail === 'reliability' && <ReliabilitySensor signal={RELIABILITY_SIGNAL} />}
           {detail === 'hygiene' && <HygieneSensor />}
           {detail === 'challenges' && <ChallengesSensor />}
           {detail === 'quant' && (

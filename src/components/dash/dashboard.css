@@ -110,10 +110,10 @@
   gap: var(--s-2);
 }
 
-/* Four rows now (the user asked for the extra length). Flow owns one full bottom row;
-   Production outcomes earns its own full-width row beneath it, equal in height. Hygiene
-   takes the cell outcomes vacated. The grid fills the height between HUD and Challenge —
-   still no scroll. */
+/* Four rows (the user asked for the extra length). Flow owns one full row; Product
+   outcomes earns its own full-width row beneath it, equal in height. Reliability (the
+   production subset) sits beside Hygiene in row 2. The grid fills the height between HUD
+   and Challenge — still no scroll. */
 .dash-grid {
   flex: 1;
   min-height: 0;
@@ -121,9 +121,9 @@
   grid-template-columns: repeat(6, 1fr);
   grid-template-rows: 1fr 1fr 1.05fr 1.05fr;
   grid-template-areas:
-    'strategy mandate quant   weak    radar   striads'
-    'loop     system  triads  hygiene hygiene striads'
-    'flow     flow    flow    flow    flow    flow'
+    'strategy mandate quant   weak    radar       striads'
+    'loop     system  triads  hygiene reliability striads'
+    'flow     flow    flow    flow    flow        flow'
     'outcomes outcomes outcomes outcomes outcomes outcomes';
   gap: var(--s-2);
 }
@@ -560,43 +560,29 @@
   gap: var(--s-5);
 }
 
-/* --- production outcomes: full-width row, supply (metrics) beside demand (jobs) --- */
-.orw {
+/* --- product outcomes: full-width row — AARRR + HEART lenses · customer triad · jobs --- */
+.po {
   display: flex;
-  gap: var(--s-6);
+  gap: var(--s-5);
   height: 100%;
   min-height: 0;
 }
-.orw-metrics {
-  flex: 1 1 46%;
-  min-width: 0;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-auto-rows: 1fr;
-  gap: var(--s-2) var(--s-4);
-  align-content: space-between;
-}
-.orw-metrics .numeral-value {
-  font-size: var(--t-m);
-}
-.orw-jobs {
-  flex: 1 1 54%;
+.po-lens {
+  flex: 1 1 0;
   min-width: 0;
   display: flex;
   flex-direction: column;
   gap: var(--s-2);
   min-height: 0;
-  border-left: 1px solid var(--hair);
-  padding-left: var(--s-5);
 }
-.orw-jobs-head {
+.po-lens-head {
   flex: 0 0 auto;
   font-size: var(--t-xs);
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--ink-2);
 }
-.orw-job-list {
+.po-metrics {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -606,26 +592,106 @@
   flex-direction: column;
   justify-content: space-between;
 }
-.orw-job {
+.po-metric {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+}
+.po-m-label {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.po-m-val {
+  flex: 0 0 auto;
+  font-size: var(--t-s);
+  color: var(--ink);
+}
+/* compact trend on the tile: glyph only — hide the verbose prior→value detail */
+.po .trend-detail {
+  display: none;
+}
+/* customer sense-making triad + the two demand-side panels share a hairline divider */
+.po-triad,
+.po-jobs {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  min-height: 0;
+  border-left: 1px solid var(--hair);
+  padding-left: var(--s-4);
+}
+.po-jobs {
+  flex: 1.2 1 0;
+}
+.po-triad-chart {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.po-triad-chart .tc {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.po-triad-chart .tc-svg {
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  min-height: 0;
+}
+.po-triad-finding {
+  flex: 0 0 auto;
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+  text-align: center;
+}
+.po-triad-finding strong {
+  font-weight: var(--w-regular);
+  color: var(--accent);
+}
+.po-job-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.po-job {
   display: flex;
   align-items: baseline;
   gap: var(--s-3);
 }
-.orw-rank {
+.po-rank {
   flex: 0 0 auto;
-  width: 1.4em;
+  width: 1.3em;
   font-size: var(--t-s);
   color: var(--accent);
   text-align: center;
 }
-.orw-job-text {
-  font-size: var(--t-s);
-  color: var(--ink);
-  line-height: 1.35;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.po-job-text {
+  flex: 1;
   min-width: 0;
+  font-size: var(--t-xs);
+  color: var(--ink);
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* --- data hygiene (freshness ledger) --- */

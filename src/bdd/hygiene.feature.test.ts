@@ -13,8 +13,8 @@ describeFeature(feature, ({ Scenario }) => {
     Given('the hygiene ledger', () => {
       expect(rows.length).toBeGreaterThan(0);
     });
-    Then('it lists nine signals', () => {
-      expect(rows.length).toBe(9);
+    Then('it lists ten signals', () => {
+      expect(rows.length).toBe(10);
     });
     And('they are ordered least-trustworthy first', () => {
       for (let i = 1; i < rows.length; i++) {

@@ -8,8 +8,10 @@ import type {
   FlowInsights,
   OutcomeSet,
   RadarSet,
+  ReliabilitySet,
   SimItem,
   SystemModel,
+  Triad,
   TriadSet,
   WeakSignalSet,
   WorkItemType,
@@ -386,18 +388,61 @@ const RADAR: RadarSet = {
   ],
 };
 
-// --- Production outcomes: changes in product metrics + usage telemetry. The REALITY
-// the loop senses. Fresh (telemetry arrives quickly); strategy is the slowest to react.
+// --- Product outcomes: is the product moving customers' world toward intent? Seen
+// through the PIRATE funnel (AARRR) and experience quality (HEART), plus the customer's
+// own voice (a Cynefin sense-making triad) and the demand still open (unserved jobs).
+// Fresh (telemetry arrives quickly); strategy is the slowest thing to react.
+
+// Customer sense-making — a Cynefin SenseMaker triad. Three positive poles (all good,
+// C2); stories self-signified at SEGMENT level, never named individuals (C4). The drift
+// is the finding: customers used to talk about delight; on re-entry they now talk friction.
+const CUSTOMER_TRIAD: Triad = {
+  id: 'customer-value',
+  title: 'Customer sense-making',
+  question: 'When the product helped you most, it was because it…',
+  poles: [
+    { id: 'friction', label: 'Removed friction', short: 'Friction-free' },
+    { id: 'delight', label: 'Sparked delight', short: 'Delight' },
+    { id: 'confidence', label: 'Built confidence', short: 'Confidence' },
+  ],
+  maps: ['intent', 'learning', 'participation'],
+  interpretations: [
+    { by: 'customer researcher', text: 'Delight clusters on first-run; on re-entry the stories slide toward friction — exactly the gap the unserved jobs target.' },
+    { by: 'support lead', text: 'Confidence shows up when hand-offs are visible. Its absence arrives as a complaint, never as a request.' },
+  ],
+  stories: [
+    { id: 'cu1', role: 'onboarding teams', text: 'Set up faster than we expected — no call needed.', a: 0.7, b: 0.2, c: 0.1, period: 'current' },
+    { id: 'cu2', role: 'returning users', text: 'Took a while to see what had changed since last week.', a: 0.55, b: 0.1, c: 0.35, period: 'current' },
+    { id: 'cu3', role: 'power users', text: 'The new flow felt delightful once I found it.', a: 0.15, b: 0.7, c: 0.15, period: 'current' },
+    { id: 'cu4', role: 'cross-team hand-offs', text: 'I could not prove the work landed without chasing.', a: 0.5, b: 0.1, c: 0.4, period: 'current' },
+    { id: 'cu5', role: 'evaluators', text: 'The first artefact made the value obvious.', a: 0.2, b: 0.65, c: 0.15, period: 'current' },
+    { id: 'cu6', role: 'admins', text: 'Trusted the numbers once freshness was visible.', a: 0.2, b: 0.15, c: 0.65, period: 'current' },
+    { id: 'cp1', role: 'onboarding teams', text: 'Earlier: delight on first run dominated.', a: 0.2, b: 0.65, c: 0.15, period: 'prior' },
+    { id: 'cp2', role: 'returning users', text: 'Earlier: fewer friction stories on re-entry.', a: 0.3, b: 0.5, c: 0.2, period: 'prior' },
+    { id: 'cp3', role: 'power users', text: 'Earlier: stories clustered on delight.', a: 0.15, b: 0.7, c: 0.15, period: 'prior' },
+  ],
+};
+
 const OUTCOMES: OutcomeSet = {
   maps: ['intent', 'quantification', 'learning'],
-  metrics: [
-    { key: 'ttfv', label: 'Time to first artefact', display: '7.4 min', value: 7.4, prior: 9.1, unit: 'min', better: 'lower' },
-    { key: 'habit', label: 'Teams active 3 of 4 wks', display: '38 %', value: 38, prior: 31, unit: '%', better: 'higher' },
-    { key: 'retention', label: '30-day retention', display: '62 %', value: 62, prior: 58, unit: '%', better: 'higher' },
-    { key: 'adoption', label: 'New-collab adoption', display: '21 %', value: 21, prior: 12, unit: '%', better: 'higher' },
-    { key: 'stickiness', label: 'DAU/WAU stickiness', display: '0.46', value: 0.46, prior: 0.41, unit: '', better: 'higher' },
-    { key: 'sessions', label: 'Sessions / team / wk (telemetry)', display: '5.8', value: 5.8, prior: 5.2, unit: '', better: 'higher' },
+  // PIRATE / AARRR — the growth funnel, acquisition through revenue.
+  aarrr: [
+    { key: 'acq', label: 'Acquisition · new workspaces / wk', display: '142', value: 142, prior: 118, unit: '', better: 'higher' },
+    { key: 'act', label: 'Activation · reached first artefact', display: '64 %', value: 64, prior: 57, unit: '%', better: 'higher' },
+    { key: 'ret', label: 'Retention · 30-day', display: '62 %', value: 62, prior: 58, unit: '%', better: 'higher' },
+    { key: 'ref', label: 'Referral · invite k-factor', display: '0.38', value: 0.38, prior: 0.29, unit: '', better: 'higher' },
+    { key: 'rev', label: 'Revenue · net revenue retention', display: '112 %', value: 112, prior: 104, unit: '%', better: 'higher' },
   ],
+  // HEART — experience quality. Retention is the shared anchor with AARRR (shown in both
+  // lenses on purpose: the frameworks overlap there).
+  heart: [
+    { key: 'hap', label: 'Happiness · CSAT', display: '4.3 / 5', value: 4.3, prior: 4.1, unit: '', better: 'higher' },
+    { key: 'eng', label: 'Engagement · DAU/WAU stickiness', display: '0.46', value: 0.46, prior: 0.41, unit: '', better: 'higher' },
+    { key: 'ado', label: 'Adoption · new-collab', display: '21 %', value: 21, prior: 12, unit: '%', better: 'higher' },
+    { key: 'hret', label: 'Retention · 30-day (shared)', display: '62 %', value: 62, prior: 58, unit: '%', better: 'higher' },
+    { key: 'tsk', label: 'Task success · completion', display: '88 %', value: 88, prior: 83, unit: '%', better: 'higher' },
+  ],
+  customerTriad: CUSTOMER_TRIAD,
   // Prioritised-but-unserved customer jobs — the demand the strategy has chosen to
   // pursue next. Ranked, evidence-backed, jobs not features. (C4: situations, not people.)
   jobs: [
@@ -428,8 +473,21 @@ const OUTCOMES: OutcomeSet = {
   ],
 };
 
+// --- Reliability: the production/operational SUBSET of product outcomes. Trend, not SLA
+// pass/fail (MTTR 52m → 38m). Freshest of all — monitoring streams in near-real-time.
+const RELIABILITY: ReliabilitySet = {
+  maps: ['durability', 'quantification'],
+  metrics: [
+    { key: 'up', label: 'Uptime · 30-day', display: '99.95 %', value: 99.95, prior: 99.91, unit: '%', better: 'higher' },
+    { key: 'mttr', label: 'MTTR', display: '38 min', value: 38, prior: 52, unit: ' min', better: 'lower' },
+    { key: 'inc', label: 'Incidents / wk', display: '1.2', value: 1.2, prior: 1.8, unit: '', better: 'lower' },
+    { key: 'err', label: 'Error rate', display: '0.21 %', value: 0.21, prior: 0.34, unit: '%', better: 'lower' },
+  ],
+};
+
 // Exported signals with deliberately varied freshness to exercise the layer.
 export const OUTCOMES_SIGNAL: Signal<OutcomeSet> = synthetic(OUTCOMES, 1, 'synthetic'); // fresh
+export const RELIABILITY_SIGNAL: Signal<ReliabilitySet> = synthetic(RELIABILITY, 0, 'synthetic'); // freshest
 export const WEAK_SIGNAL: Signal<WeakSignalSet> = synthetic(WEAK, 5, 'synthetic'); // aging
 export const SYSTEM_MODEL_SIGNAL: Signal<SystemModel[]> = synthetic(SYSTEM_MODELS, 6, 'synthetic'); // aging
 export const RADAR_SIGNAL: Signal<RadarSet> = synthetic(RADAR, 3, 'synthetic'); // fresh-ish
