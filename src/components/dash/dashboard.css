@@ -1189,6 +1189,9 @@
 }
 .overlay-body .tc-svg {
   max-height: 36vh;
+  /* strategy triads label vertices with full quality names ("Emergence", "Coherence") —
+     let them spill past the triangle box in the roomy overlay rather than clip */
+  overflow: visible;
 }
 .overlay-body .cld-svg {
   max-height: 62vh;
@@ -1377,8 +1380,21 @@
 }
 .sig-triad-tabs {
   display: flex;
+  gap: var(--s-2) var(--s-4);
+  flex-wrap: wrap;
+  align-items: center;
+}
+.sig-tab-group {
+  display: inline-flex;
+  align-items: center;
   gap: var(--s-2);
   flex-wrap: wrap;
+}
+.sig-tab-cat {
+  font-size: var(--t-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
 }
 .sig-tab {
   font-size: var(--t-xs);
@@ -1478,6 +1494,10 @@
   height: auto;
   touch-action: none;
   cursor: crosshair;
+  /* strategy triads label their vertices with full quality names (e.g. "Emergence",
+     "Quantification") — wider than the Cynefin short labels — so let them spill past the
+     triangle's box rather than clip. Click math still uses the 0..W viewBox. */
+  overflow: visible;
 }
 .sig-dot {
   fill: var(--accent);

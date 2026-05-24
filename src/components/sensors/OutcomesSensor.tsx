@@ -1,5 +1,7 @@
 import type { Signal } from '../../domain/types';
 import type { OutcomeSet, Triad } from '../../domain/sensors';
+import { useCockpit } from '../../store/useCockpit';
+import { triadsWithCaptured } from '../../mirrors/capturedTriads';
 import { Numeral } from '../common/Numeral';
 import { SensorModule } from './SensorModule';
 import { TriadChart } from './TriadChart';
@@ -15,7 +17,9 @@ function leanIndex(t: Triad, period: 'current' | 'prior') {
 // (HEART) as numbers, the customer's own voice as a Cynefin sense-making triad, and the
 // prioritised unserved jobs (demand). Production reliability is its own instrument.
 export function OutcomesSensor({ signal }: { signal: Signal<OutcomeSet> }) {
-  const { aarrr, heart, customerTriad, jobs } = signal.value;
+  const captured = useCockpit((s) => s.capturedStories);
+  const { aarrr, heart, jobs } = signal.value;
+  const customerTriad = triadsWithCaptured([signal.value.customerTriad], captured)[0];
   const now = leanIndex(customerTriad, 'current');
   const before = leanIndex(customerTriad, 'prior');
 

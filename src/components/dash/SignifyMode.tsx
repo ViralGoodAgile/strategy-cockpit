@@ -1,5 +1,12 @@
 import { useRef, useState } from 'react';
-import { TRIAD_SIGNAL } from '../../data/sensorData';
+import {
+  MIN_STORY_LEN,
+  SEGMENTS,
+  signifiableTriads,
+  signifyReady,
+  TRIAD_CATEGORY_LABEL,
+  type TriadCategory,
+} from '../../data/signifiableTriads';
 import { pointToBarycentric } from '../../lib/barycentric';
 import { useCockpit } from '../../store/useCockpit';
 
@@ -10,19 +17,9 @@ const A = { x: W / 2, y: 22 };
 const B = { x: 30, y: H - 30 };
 const C = { x: W - 30, y: H - 30 };
 
-// Segments only — never named individuals (C4).
-const SEGMENTS = [
-  'onboarding teams',
-  'returning users',
-  'power users',
-  'cross-team hand-offs',
-  'evaluators',
-  'admins',
-  'PM',
-  'engineer',
-  'designer',
-  'support',
-];
+// Every signifiable triad, grouped for the picker (Cynefin · Customer · Strategy).
+const TRIADS = signifiableTriads();
+const CATEGORIES = [...new Set(TRIADS.map((t) => t.category))] as TriadCategory[];
 
 // /signify — SenseMaker-style capture for survey takers. Story first (C2), then the
 // respondent drops a dot in the triad to signify it; the dot's position becomes the (a,b,c)
@@ -34,11 +31,11 @@ export function SignifyMode() {
   const updateCaptured = useCockpit((s) => s.updateCaptured);
   const deleteCaptured = useCockpit((s) => s.deleteCaptured);
   const captured = useCockpit((s) => s.capturedStories);
-  const triads = TRIAD_SIGNAL.value.triads;
+  const triads = TRIADS;
 
   const [triadIdx, setTriadIdx] = useState(0);
   const [text, setText] = useState('');
-  const [role, setRole] = useState(SEGMENTS[0]);
+  const [role, setRole] = useState<string>(SEGMENTS[0]);
   const [w, setW] = useState<{ a: number; b: number; c: number } | null>(null);
   const [na, setNa] = useState(false);
   const [justSaved, setJustSaved] = useState(false);
@@ -49,7 +46,7 @@ export function SignifyMode() {
 
   const triad = triads[triadIdx];
   // Ready when the triad is marked not-applicable, OR there's a story plus a placement.
-  const ready = na || (text.trim().length >= 10 && w != null);
+  const ready = signifyReady({ na, text, placed: w != null });
   const dot = w ? { x: w.a * A.x + w.b * B.x + w.c * C.x, y: w.a * A.y + w.b * B.y + w.c * C.y } : null;
   const mine = captured.filter((s) => s.triadId === triad.id);
 
@@ -118,18 +115,25 @@ export function SignifyMode() {
 
       <div className="author-body sig-body">
         <div className="sig-triad-tabs">
-          {triads.map((t, i) => (
-            <button
-              key={t.id}
-              className={`sig-tab${i === triadIdx ? ' sig-tab-on' : ''}`}
-              onClick={() => {
-                setTriadIdx(i);
-                resetForm();
-                setJustSaved(false);
-              }}
-            >
-              {t.title}
-            </button>
+          {CATEGORIES.map((cat) => (
+            <div className="sig-tab-group" key={cat}>
+              <span className="sig-tab-cat">{TRIAD_CATEGORY_LABEL[cat]}</span>
+              {triads.map((t, i) =>
+                t.category === cat ? (
+                  <button
+                    key={t.id}
+                    className={`sig-tab${i === triadIdx ? ' sig-tab-on' : ''}`}
+                    onClick={() => {
+                      setTriadIdx(i);
+                      resetForm();
+                      setJustSaved(false);
+                    }}
+                  >
+                    {t.title}
+                  </button>
+                ) : null,
+              )}
+            </div>
           ))}
         </div>
 
@@ -151,7 +155,7 @@ export function SignifyMode() {
               }}
               maxLength={280}
             />
-            <div className="sig-count">{text.trim().length}/280 · at least 10 characters</div>
+            <div className="sig-count">{text.trim().length}/280 · at least {MIN_STORY_LEN} characters</div>
 
             <label className="sig-label" htmlFor="sig-role">
               3 · Whose situation (a segment, never a person)
@@ -222,13 +226,13 @@ export function SignifyMode() {
             >
               <polygon points={`${A.x},${A.y} ${B.x},${B.y} ${C.x},${C.y}`} className="tc-frame" />
               <text x={A.x} y={A.y - 8} className="tc-pole" textAnchor="middle">
-                {triad.poles[0].short}
+                {triad.poles[0]}
               </text>
               <text x={B.x - 2} y={B.y + 18} className="tc-pole" textAnchor="middle">
-                {triad.poles[1].short}
+                {triad.poles[1]}
               </text>
               <text x={C.x + 2} y={C.y + 18} className="tc-pole" textAnchor="middle">
-                {triad.poles[2].short}
+                {triad.poles[2]}
               </text>
               {dot && <circle cx={dot.x} cy={dot.y} r={7} className="sig-dot" />}
             </svg>

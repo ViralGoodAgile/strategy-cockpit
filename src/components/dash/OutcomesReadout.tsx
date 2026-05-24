@@ -1,6 +1,7 @@
 import { OUTCOMES_SIGNAL } from '../../data/sensorData';
 import type { Metric, Triad } from '../../domain/sensors';
 import { useCockpit } from '../../store/useCockpit';
+import { triadsWithCaptured } from '../../mirrors/capturedTriads';
 import { MetricTrend } from '../common/MetricTrend';
 import { TriadChart } from '../sensors/TriadChart';
 import { Instrument } from './Instrument';
@@ -41,7 +42,9 @@ function Lens({ title, metrics }: { title: string; metrics: Metric[] }) {
 // triad, and the demand still open (unserved jobs). All skimmable without clicking.
 export function OutcomesReadout() {
   const setDetail = useCockpit((s) => s.setDetail);
-  const { aarrr, heart, customerTriad, jobs } = OUTCOMES_SIGNAL.value;
+  const captured = useCockpit((s) => s.capturedStories);
+  const { aarrr, heart, jobs } = OUTCOMES_SIGNAL.value;
+  const customerTriad = triadsWithCaptured([OUTCOMES_SIGNAL.value.customerTriad], captured)[0];
   const ranked = [...jobs].sort((a, b) => a.rank - b.rank).slice(0, 3);
   const now = leanIndex(customerTriad, 'current');
   const before = leanIndex(customerTriad, 'prior');

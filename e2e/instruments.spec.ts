@@ -335,6 +335,44 @@ test('signify: a captured story can be edited, and deleted only after confirming
   await expect(page.locator('.author-fresh')).toContainText('0 captured');
 });
 
+test('signify: the customer and strategy triads accept stories, shown as distinct dots', async ({
+  page,
+}) => {
+  await page.locator('.hud-signify').click();
+  // the picker is grouped — Cynefin, Customer and Strategy — and offers all eight triads
+  await expect(page.locator('.sig-tab-cat')).toHaveCount(3);
+  expect(await page.locator('.sig-tab').count()).toBe(8);
+
+  // signify the customer triad
+  await page.locator('.sig-tab', { hasText: 'Customer sense-making' }).click();
+  await page.locator('.sig-story').fill('The first artefact made the value obvious within minutes.');
+  await page.locator('.sig-svg').click({ position: { x: 120, y: 150 } });
+  await page.locator('.sig-submit').click();
+  await expect(page.locator('.author-fresh')).toContainText('1 captured');
+
+  // signify a strategy triad (Direction) — its vertices are quality names
+  await page.locator('.sig-tab', { hasText: 'Direction' }).click();
+  await expect(page.locator('.sig-question')).toContainText('this strategy showed up');
+  await page.locator('.sig-story').fill('Leadership held us to one outcome and cut two side quests.');
+  await page.locator('.sig-svg').click({ position: { x: 130, y: 150 } });
+  await page.locator('.sig-submit').click();
+  await expect(page.locator('.author-fresh')).toContainText('2 captured');
+
+  await page.locator('.author-back').click();
+
+  // the customer voice (Product Outcomes overlay) shows the ringed "yours" dot
+  await page.locator('.inst', { hasText: 'Product outcomes' }).first().click();
+  await expect(page.locator('.overlay-title')).toHaveText('Product Outcomes');
+  expect(await page.locator('.po-detail-triad .tc-dot-captured').count()).toBe(1);
+  await page.keyboard.press('Escape');
+
+  // the strategy triads overlay shows the ringed perceived dot + the perceived-vs-authored legend
+  await page.locator('.inst', { hasText: 'Strategy triads' }).first().click();
+  await expect(page.locator('.overlay-title')).toHaveText('Strategy triads');
+  expect(await page.locator('.overlay .tc-dot-captured').count()).toBe(1);
+  await expect(page.locator('.overlay .triad-legend')).toContainText('perceived');
+});
+
 test('the colour-scheme switcher re-themes the cockpit (incl. colour-blind-safe)', async ({ page }) => {
   const html = page.locator('html');
   await expect(html).toHaveAttribute('data-theme', 'obsidian');
