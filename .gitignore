@@ -5,6 +5,10 @@ node_modules
 dist
 dist-ssr
 
+# generated test report + per-deploy build info (created in CI)
+test-results.json
+public/build-info.json
+
 # logs
 *.log
 npm-debug.log*

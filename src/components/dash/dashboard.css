@@ -74,6 +74,26 @@
 .hud-offline {
   color: var(--accent);
 }
+.hud-build {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--t-xs);
+  color: var(--ink-3);
+  letter-spacing: 0.02em;
+}
+.hud-build:hover {
+  color: var(--ink-2);
+}
+.hud-build-pip {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--tl-green);
+}
+.hud-build-bad {
+  background: var(--tl-red);
+}
 .hud-author {
   color: var(--accent);
   font-size: var(--t-xs);
