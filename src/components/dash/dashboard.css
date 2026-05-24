@@ -85,6 +85,10 @@
 .hud-build:hover {
   color: var(--ink-2);
 }
+.hud-build-no {
+  color: var(--ink-2);
+  letter-spacing: 0.04em;
+}
 .hud-build-pip {
   width: 6px;
   height: 6px;
@@ -1515,6 +1519,11 @@
   justify-content: space-between;
   width: 100%;
   gap: var(--s-3);
+}
+.sig-toggles {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-4);
 }
 .sig-na-label {
   display: inline-flex;

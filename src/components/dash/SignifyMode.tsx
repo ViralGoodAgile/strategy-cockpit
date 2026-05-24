@@ -16,6 +16,13 @@ const H = 214;
 const A = { x: W / 2, y: 22 };
 const B = { x: 30, y: H - 30 };
 const C = { x: W - 30, y: H - 30 };
+// Median guides — same as the result charts: each vertex to the midpoint of the opposite
+// edge, so the eye can read how far a placement sits from each pole.
+const GUIDES: [{ x: number; y: number }, { x: number; y: number }][] = [
+  [A, { x: (B.x + C.x) / 2, y: (B.y + C.y) / 2 }],
+  [B, { x: (A.x + C.x) / 2, y: (A.y + C.y) / 2 }],
+  [C, { x: (A.x + B.x) / 2, y: (A.y + B.y) / 2 }],
+];
 
 // Every signifiable triad, grouped for the picker (Cynefin · Customer · Strategy).
 const TRIADS = signifiableTriads();
@@ -38,6 +45,7 @@ export function SignifyMode() {
   const [role, setRole] = useState<string>(SEGMENTS[0]);
   const [w, setW] = useState<{ a: number; b: number; c: number } | null>(null);
   const [na, setNa] = useState(false);
+  const [guides, setGuides] = useState(true); // median guide lines (as in the result charts)
   const [justSaved, setJustSaved] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null); // a story being revised
   const [confirmId, setConfirmId] = useState<string | null>(null); // a delete awaiting confirm
@@ -193,18 +201,29 @@ export function SignifyMode() {
           <div className="sig-right">
             <div className="sig-right-head">
               <label className="sig-label">2 · Place it — drag the dot to where your story sits</label>
-              <label className="sig-na-label">
-                <input
-                  type="checkbox"
-                  className="sig-na"
-                  checked={na}
-                  onChange={(e) => {
-                    setNa(e.target.checked);
-                    setJustSaved(false);
-                  }}
-                />
-                Not applicable
-              </label>
+              <div className="sig-toggles">
+                <label className="sig-na-label">
+                  <input
+                    type="checkbox"
+                    className="sig-guides"
+                    checked={guides}
+                    onChange={(e) => setGuides(e.target.checked)}
+                  />
+                  Guides
+                </label>
+                <label className="sig-na-label">
+                  <input
+                    type="checkbox"
+                    className="sig-na"
+                    checked={na}
+                    onChange={(e) => {
+                      setNa(e.target.checked);
+                      setJustSaved(false);
+                    }}
+                  />
+                  Not applicable
+                </label>
+              </div>
             </div>
             <svg
               ref={svgRef}
@@ -224,6 +243,10 @@ export function SignifyMode() {
                 dragging.current = false;
               }}
             >
+              {guides &&
+                GUIDES.map(([v, m], i) => (
+                  <line key={i} x1={v.x} y1={v.y} x2={m.x} y2={m.y} className="tc-guide" />
+                ))}
               <polygon points={`${A.x},${A.y} ${B.x},${B.y} ${C.x},${C.y}`} className="tc-frame" />
               <text x={A.x} y={A.y - 8} className="tc-pole" textAnchor="middle">
                 {triad.poles[0]}

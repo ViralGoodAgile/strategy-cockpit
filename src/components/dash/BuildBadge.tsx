@@ -21,22 +21,31 @@ export function BuildBadge() {
   }, []);
 
   if (!info) return null;
-  const sha = info.commit ? info.commit.slice(0, 7) : null;
+  // The build number is the short commit the live site was built from ("dev" for a local,
+  // unbuilt copy, where build-info.json carries no commit).
+  const build = info.commit ? info.commit.slice(0, 7) : 'dev';
   const t = info.tests;
-  const label = t && t.passed != null ? `tests ${t.passed}${info.ok === false ? ' ✗' : ' ✓'}` : 'build';
+  const tests = t && t.passed != null ? `${t.passed}${info.ok === false ? ' ✗' : ' ✓'}` : null;
+  const builtAt = info.builtAt ? new Date(info.builtAt).toLocaleString() : null;
+  const title = `build ${build}${builtAt ? ` · built ${builtAt}` : ''}${
+    info.runUrl ? ' · click for the CI run that tested it' : ''
+  }`;
 
   const body = (
     <>
-      <i className={`hud-build-pip ${info.ok === false ? 'hud-build-bad' : ''}`} /> {label}
-      {sha ? ` · ${sha}` : ''}
+      <i className={`hud-build-pip ${info.ok === false ? 'hud-build-bad' : ''}`} />
+      <span className="hud-build-no">build {build}</span>
+      {tests && <span className="hud-build-tests"> · tests {tests}</span>}
     </>
   );
 
   return info.runUrl ? (
-    <a className="hud-build" href={info.runUrl} target="_blank" rel="noreferrer" title="view the CI run that tested this build">
+    <a className="hud-build" href={info.runUrl} target="_blank" rel="noreferrer" title={title}>
       {body}
     </a>
   ) : (
-    <span className="hud-build">{body}</span>
+    <span className="hud-build" title={title}>
+      {body}
+    </span>
   );
 }

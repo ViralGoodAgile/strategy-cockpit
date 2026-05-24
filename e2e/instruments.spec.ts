@@ -254,6 +254,13 @@ test('signify: a survey taker captures a story into a triad', async ({ page }) =
   await page.locator('.hud-signify').click();
   await expect(page.locator('.author-title')).toHaveText('Signify a story');
 
+  // median guides (as in the result charts) are on by default and can be toggled off
+  await expect(page.locator('.sig-guides')).toBeChecked();
+  expect(await page.locator('.sig-svg .tc-guide').count()).toBe(3);
+  await page.locator('.sig-guides').uncheck();
+  expect(await page.locator('.sig-svg .tc-guide').count()).toBe(0);
+  await page.locator('.sig-guides').check();
+
   // story-first: submit is disabled until there's a story AND a placement
   await expect(page.locator('.sig-submit')).toBeDisabled();
   await page.locator('.sig-story').fill('Returning after a week away, I could not tell what had changed.');
