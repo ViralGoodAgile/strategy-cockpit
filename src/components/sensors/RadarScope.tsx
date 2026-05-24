@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { Impediment, RadarSet, ScopeLevel } from '../../domain/sensors';
 
 const W = 240;
@@ -22,8 +23,12 @@ function blip(im: Impediment) {
 }
 
 // A ship's-radar of impediments. Range = organisational scope; high-severity blips
-// glow in the accent. Labels run up the 12 o'clock axis so the rings stay legible.
+// glow in the accent. Each blip is hoverable: it highlights and names itself, so you can
+// tell which impediment is which (the scope is too dense for permanent labels).
 export function RadarScope({ set }: { set: RadarSet }) {
+  const [hover, setHover] = useState<string | null>(null);
+  const hovered = hover ? set.impediments.find((i) => i.id === hover) : null;
+
   return (
     <svg viewBox={`0 0 ${W} ${W}`} className="radar-svg" role="img">
       {RINGS.map((ring) => (
@@ -39,10 +44,43 @@ export function RadarScope({ set }: { set: RadarSet }) {
 
       {set.impediments.map((im) => {
         const p = blip(im);
+        const on = hover === im.id;
+        const dim = hover != null && !on;
         return (
-          <circle key={im.id} cx={p.x} cy={p.y} r={SEV_R[im.severity]} className={`radar-blip radar-${im.severity}`} />
+          <g
+            key={im.id}
+            className="radar-blip-hit"
+            onMouseEnter={() => setHover(im.id)}
+            onMouseLeave={() => setHover((h) => (h === im.id ? null : h))}
+          >
+            <title>{`${im.label} · ${im.level} · ${im.severity}`}</title>
+            <circle
+              cx={p.x}
+              cy={p.y}
+              r={SEV_R[im.severity] + (on ? 2 : 0)}
+              className={`radar-blip radar-${im.severity}${on ? ' radar-blip-hover' : ''}${dim ? ' radar-blip-dim' : ''}`}
+            />
+          </g>
         );
       })}
+
+      {/* Hovered impediment's name, drawn last so nothing overlaps it. Offset toward the
+          centre and anchored by side so it stays inside the scope. */}
+      {hovered &&
+        (() => {
+          const p = blip(hovered);
+          const right = p.x > C;
+          return (
+            <text
+              x={p.x + (right ? -9 : 9)}
+              y={p.y - 9}
+              textAnchor={right ? 'end' : 'start'}
+              className="radar-tip"
+            >
+              {hovered.label}
+            </text>
+          );
+        })()}
     </svg>
   );
 }

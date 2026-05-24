@@ -1,4 +1,5 @@
 import { STRATEGY_TRIADS } from '../data/strategyTriads';
+import type { TriadInterpretation } from '../data/strategyTriads';
 import { QUALITIES } from '../domain/qualities';
 import { qualityStrength } from './qualityStrength';
 import type { QualityId, Strategy } from '../domain/types';
@@ -6,7 +7,8 @@ import type { QualityId, Strategy } from '../domain/types';
 const nameOf = (id: QualityId) => QUALITIES.find((q) => q.id === id)?.name ?? id;
 
 // A strategy triad ready to render: its three quality labels, their computed weights,
-// and which quality the strategy leans on (strong) vs neglects (weak).
+// which quality the strategy leans on (strong) vs neglects (weak), and the qualitative
+// interpretations from different groups of people.
 export interface TriadView {
   id: string;
   title: string;
@@ -14,6 +16,7 @@ export interface TriadView {
   weights: [number, number, number];
   strong: string;
   weak: string;
+  interpretations: TriadInterpretation[];
 }
 
 export function strategyTriadViews(s: Strategy): TriadView[] {
@@ -23,6 +26,14 @@ export function strategyTriadViews(s: Strategy): TriadView[] {
     const labels = t.qualities.map(nameOf) as [string, string, string];
     const maxI = weights.indexOf(Math.max(...weights));
     const minI = weights.indexOf(Math.min(...weights));
-    return { id: t.id, title: t.title, labels, weights, strong: labels[maxI], weak: labels[minI] };
+    return {
+      id: t.id,
+      title: t.title,
+      labels,
+      weights,
+      strong: labels[maxI],
+      weak: labels[minI],
+      interpretations: t.interpretations,
+    };
   });
 }
