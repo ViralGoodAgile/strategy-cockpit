@@ -234,14 +234,18 @@
   max-width: 240px;
   height: auto;
 }
+/* Triangle outline: bold + high-contrast, and a non-scaling stroke so it stays a solid
+   ~2px at any size (in a small tile or the big overlay) instead of vanishing when scaled. */
 .tc-frame {
-  fill: rgba(255, 255, 255, 0.015);
-  stroke: var(--hair);
-  stroke-width: 1;
+  fill: rgba(255, 255, 255, 0.025);
+  stroke: var(--ink-2);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
 }
 .tc-guide {
-  stroke: var(--hair);
+  stroke: var(--ink-3);
   stroke-width: 1;
+  vector-effect: non-scaling-stroke;
 }
 .tc-drift {
   stroke: var(--accent-dim);
@@ -621,14 +625,18 @@
   width: 100%;
   height: auto;
 }
+/* Range rings: clearly visible concentric circles (non-scaling stroke so they read at
+   tile size too). Spokes stay quieter so the rings are the dominant geometry. */
 .radar-ring {
   fill: none;
-  stroke: var(--hair);
-  stroke-width: 1;
+  stroke: var(--ink-2);
+  stroke-width: 1.75;
+  vector-effect: non-scaling-stroke;
 }
 .radar-spoke {
-  stroke: var(--hair);
+  stroke: var(--ink-3);
   stroke-width: 1;
+  vector-effect: non-scaling-stroke;
 }
 .radar-hub {
   fill: var(--ink-2);
