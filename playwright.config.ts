@@ -7,8 +7,9 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  // `list` for console; `html` is uploaded as a CI artifact so failures are debuggable.
-  reporter: [['list'], ['html', { open: 'never' }]],
+  // `list` for console; `html` uploaded as a CI artifact; `json` so the deploy can fold
+  // the e2e count into the verifiable build-info.json badge.
+  reporter: [['list'], ['html', { open: 'never' }], ['json', { outputFile: 'playwright-results.json' }]],
   use: {
     baseURL: 'http://localhost:4173',
     trace: 'on-first-retry', // full trace captured on the retry of any failure
