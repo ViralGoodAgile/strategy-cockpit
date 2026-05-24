@@ -48,6 +48,39 @@ test('time travel does not autoplay when the viewer prefers reduced motion', asy
   await expect(page.locator('.toc-play')).toContainText('play');
 });
 
+test('time travel: the triad view plays, pauses and scrubs through periods', async ({ page }) => {
+  await page.locator('.inst', { hasText: 'Cynefin triads' }).first().click();
+  await expect(page.locator('.overlay-title')).toHaveText('Cynefin triads');
+  // opens auto-playing
+  const play = page.locator('.overlay .toc-play');
+  await expect(play).toContainText('pause');
+  await play.click();
+  await expect(play).toContainText('play');
+  // scrub to the earliest period (not "now"), then to the end ("now")
+  const scrub = page.locator('.overlay .toc-scrub');
+  await scrub.focus();
+  await page.keyboard.press('Home');
+  await expect(scrub).toHaveValue('0');
+  await expect(page.locator('.overlay .toc-asof')).not.toHaveText('now');
+  await page.keyboard.press('End');
+  await expect(page.locator('.overlay .toc-asof')).toHaveText('now');
+  await page.keyboard.press('Escape');
+});
+
+test('time travel: the radar view scrubs from emerging to "now"', async ({ page }) => {
+  await page.locator('.inst', { hasText: 'Radar' }).first().click();
+  await expect(page.locator('.overlay-title')).toHaveText('Radar — Impediments');
+  const scrub = page.locator('.overlay .toc-scrub');
+  await scrub.focus();
+  await page.keyboard.press('Home'); // earliest period — fewer impediments raised
+  await expect(scrub).toHaveValue('0');
+  const early = await page.locator('.overlay .radar-grp-row').count();
+  await page.keyboard.press('End'); // now — the full live scope
+  await expect(page.locator('.overlay .toc-asof')).toHaveText('now');
+  const now = await page.locator('.overlay .radar-grp-row').count();
+  expect(now).toBeGreaterThan(early);
+});
+
 test('the system model expands and switches among the seed CLDs', async ({ page }) => {
   await page.locator('.inst', { hasText: 'System model' }).first().click();
   await expect(page.locator('.overlay-title')).toHaveText('System Model');
@@ -287,10 +320,15 @@ test('signify: a survey taker captures a story into a triad', async ({ page }) =
 
   // persisted + visible: opening the Cynefin triads shows the captured story as a distinct
   // ringed "yours" dot, with a legend — not lost, not indistinguishable from seed stories.
+  // The triads time-travel, and a contributor's dot lives in the "now" period — scrub there.
   await page.locator('.inst', { hasText: 'Cynefin triads' }).first().click();
   await expect(page.locator('.overlay-title')).toHaveText('Cynefin triads');
-  expect(await page.locator('.overlay .tc-dot-captured').count()).toBe(1);
-  expect(await page.locator('.overlay .tc-dot-ring').count()).toBe(1);
+  const scrub = page.locator('.overlay .toc-scrub');
+  await scrub.focus();
+  await page.keyboard.press('End');
+  await expect(page.locator('.overlay .toc-asof')).toHaveText('now');
+  await expect(page.locator('.overlay .tc-dot-captured')).toHaveCount(1);
+  await expect(page.locator('.overlay .tc-dot-ring')).toHaveCount(1);
   await expect(page.locator('.overlay .triad-legend')).toContainText('ringed in champagne');
 });
 

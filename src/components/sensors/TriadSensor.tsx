@@ -1,23 +1,36 @@
+import { useMemo } from 'react';
 import type { Signal } from '../../domain/types';
-import type { TriadSet } from '../../domain/sensors';
+import type { TriadSet, TriadStory } from '../../domain/sensors';
 import { useCockpit } from '../../store/useCockpit';
 import { triadsWithCaptured } from '../../mirrors/capturedTriads';
+import { triadAtPeriod, triadHistory } from '../../mirrors/triadHistory';
+import { useTimeTravel } from '../common/useTimeTravel';
+import { Transport } from '../common/Transport';
 import { SensorModule } from './SensorModule';
 import { TriadChart } from './TriadChart';
 
 // Mean-weight lean: which pole a triad's stories sit nearest, in a period.
-function leanIndex(stories: { a: number; b: number; c: number; period: string }[], period: string) {
+function leanIndex(stories: TriadStory[], period: string) {
   const r = stories.filter((s) => s.period === period);
   const m = r.reduce((o, s) => ({ a: o.a + s.a, b: o.b + s.b, c: o.c + s.c }), { a: 0, b: 0, c: 0 });
   return [m.a, m.b, m.c].indexOf(Math.max(m.a, m.b, m.c));
 }
 
-// Triad.SenseMaker — the full Cynefin signification set: three triangles with their
-// findings. Stories self-signified by role (never named individuals, C4).
+// Triad.SenseMaker — the full Cynefin signification set as a time-travel movie: scrub or
+// play through periods to watch the dispositional drift. Stories self-signified by role
+// (never named individuals, C4); your own captures appear at "now", ringed.
 export function TriadSensor({ signal }: { signal: Signal<TriadSet> }) {
   const captured = useCockpit((s) => s.capturedStories);
-  const triads = triadsWithCaptured(signal.value.triads, captured);
-  const total = triads.reduce((n, t) => n + t.stories.filter((s) => s.period === 'current').length, 0);
+  const triads = signal.value.triads;
+  const histories = useMemo(() => triads.map((t) => triadHistory(t)), [triads]);
+  const tt = useTimeTravel(histories[0]?.length ?? 1);
+  const atNow = tt.index === tt.last;
+  const asOf = histories[0]?.[tt.index]?.label ?? 'now';
+
+  const total = triads.reduce(
+    (n, _t, i) => n + histories[i][tt.index].stories.length,
+    0,
+  );
 
   return (
     <SensorModule
@@ -28,33 +41,34 @@ export function TriadSensor({ signal }: { signal: Signal<TriadSet> }) {
       freshness={signal.freshness}
       insight={
         <>
-          {triads.length} Cynefin triads · {total} stories self-signified by role.
-          {captured.length > 0 && (
-            <span className="triad-legend"> · your {captured.filter((c) => !c.na).length} signified {captured.filter((c) => !c.na).length === 1 ? 'story is' : 'stories are'} ringed in champagne.</span>
-          )}
-          {signal.freshness !== 'fresh' && (
-            <em className="sensor-warn"> Signal is {signal.freshness} — a quiet triad may mean nothing happened, or that no one is collecting stories.</em>
+          {triads.length} Cynefin triads · self-signified by role · <strong>{asOf}</strong>: {total} stories.
+          Scrub or play to watch the dispositional drift.
+          {atNow && captured.length > 0 && (
+            <span className="triad-legend"> Your {captured.filter((c) => !c.na).length} signified {captured.filter((c) => !c.na).length === 1 ? 'story is' : 'stories are'} ringed in champagne.</span>
           )}
         </>
       }
     >
+      <Transport tt={tt} label={asOf} />
       <div className="triad-grid">
-        {triads.map((t) => {
-          const now = leanIndex(t.stories, 'current');
-          const before = leanIndex(t.stories, 'prior');
+        {triads.map((t, i) => {
+          const rt = triadAtPeriod(t, histories[i], tt.index, (base) => triadsWithCaptured([base], captured)[0]);
+          const now = leanIndex(rt.stories, 'current');
+          const before = leanIndex(rt.stories, 'prior');
+          const hasPrior = rt.stories.some((s) => s.period === 'prior');
           return (
             <div className="triad-chart" key={t.id}>
               <div className="triad-title">{t.title}</div>
               <p className="triad-q">{t.question}</p>
-              <TriadChart triad={t} />
+              <TriadChart triad={rt} />
               <p className="triad-lean">
                 leans <strong>“{t.poles[now].label}”</strong>
-                {now !== before && <> · drifted from “{t.poles[before].label}”</>}
+                {hasPrior && now !== before && <> · drifted from “{t.poles[before].label}”</>}
               </p>
               <div className="triad-interp">
                 <div className="triad-interp-head">interpretations · by people, not the cockpit</div>
-                {t.interpretations.map((it, i) => (
-                  <p className="triad-interp-row" key={i}>
+                {t.interpretations.map((it, j) => (
+                  <p className="triad-interp-row" key={j}>
                     <span className="triad-interp-by">{it.by}</span>
                     {it.text}
                   </p>
