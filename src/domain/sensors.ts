@@ -71,6 +71,24 @@ export interface SimItem {
   type: WorkItemType;
 }
 
+// A backlog item carries how long it's gone untouched (days). Live work is recent;
+// "zombies" linger; "fossils" are deletion candidates. Zombies poison flow metrics.
+export interface BacklogItem {
+  id: string;
+  type: WorkItemType;
+  age: number; // days since last touched
+}
+export interface Backlog {
+  items: BacklogItem[];
+  maps: QualityId[];
+}
+// Age thresholds for backlog hygiene.
+export const ZOMBIE_AFTER = 21; // days untouched -> zombie
+export const FOSSIL_AFTER = 90; // days untouched -> fossil (delete candidate)
+export function backlogClass(age: number): 'live' | 'zombie' | 'fossil' {
+  return age <= ZOMBIE_AFTER ? 'live' : age <= FOSSIL_AFTER ? 'zombie' : 'fossil';
+}
+
 // A work-station's contents at one moment: items queued (waiting) vs active (being
 // worked, limited by capacity). Active beyond capacity is impossible — surplus queues.
 export interface StageState {

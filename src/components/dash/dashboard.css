@@ -714,6 +714,111 @@
   color: var(--accent);
   border-bottom: 1px solid var(--accent-dim);
 }
+.cb-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+.cb-all {
+  font-size: var(--t-xs);
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+
+/* freshness pill (trust signal) */
+.fresh-pill {
+  font-size: var(--t-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 1px 7px;
+  border-radius: 999px;
+  border: 1px solid var(--hair);
+  color: var(--ink-2);
+}
+.fresh-fresh {
+  color: var(--tl-green);
+  border-color: rgba(111, 169, 135, 0.4);
+}
+.fresh-aging {
+  color: var(--tl-amber);
+  border-color: rgba(201, 162, 92, 0.4);
+}
+.fresh-stale,
+.fresh-dead {
+  color: var(--tl-red);
+  border-color: rgba(182, 95, 97, 0.5);
+}
+
+/* --- challenges overlay --- */
+.ch-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+.ch-lead {
+  font-size: var(--t-s);
+  color: var(--ink-2);
+  max-width: var(--measure);
+  line-height: 1.5;
+}
+.ch-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+.ch-item {
+  padding-left: var(--s-3);
+  border-left: 2px solid var(--hair);
+}
+.ch-item-caveat {
+  border-left-color: var(--accent-dim);
+}
+.ch-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-3);
+  margin-bottom: var(--s-2);
+}
+.ch-title {
+  font-size: var(--t-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.ch-q {
+  font-family: var(--font-display);
+  font-size: var(--t-m);
+  color: var(--ink);
+  line-height: 1.35;
+}
+.ch-trend {
+  font-size: var(--t-s);
+  color: var(--ink-2);
+  margin-top: var(--s-1);
+}
+.ch-foot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-3);
+  margin-top: var(--s-2);
+}
+.ch-trust {
+  font-size: var(--t-xs);
+  color: var(--ink-3);
+}
+.ch-refs {
+  display: flex;
+  gap: var(--s-3);
+}
+.ch-ref {
+  font-size: var(--t-xs);
+  color: var(--accent);
+  border-bottom: 1px solid var(--accent-dim);
+}
 
 /* --- detail overlay (MFD page) --- */
 .overlay {

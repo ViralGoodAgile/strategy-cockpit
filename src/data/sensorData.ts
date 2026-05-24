@@ -1,4 +1,5 @@
 import type {
+  Backlog,
   CldVariable,
   DataDogSet,
   DoraSet,
@@ -182,6 +183,28 @@ function simulateFlow(): FlowConstraintData {
 }
 
 const FLOW_CONSTRAINT = simulateFlow();
+
+// --- Backlog: the queue behind the flow. Zombies (untouched 22–90d) and fossils (90d+)
+// inflate age-in-state and make a WIP cap meaningless. Pruning them is a flow practice.
+export const BACKLOG: Backlog = {
+  maps: ['focus', 'quantification', 'decisions'],
+  items: [
+    { id: 'bk1', type: 'feature', age: 4 },
+    { id: 'bk2', type: 'feature', age: 9 },
+    { id: 'bk3', type: 'enterprise', age: 14 },
+    { id: 'bk4', type: 'bug', age: 3 },
+    { id: 'bk5', type: 'feature', age: 38 },
+    { id: 'bk6', type: 'enterprise', age: 52 },
+    { id: 'bk7', type: 'debt', age: 71 },
+    { id: 'bk8', type: 'feature', age: 19 },
+    { id: 'bk9', type: 'bug', age: 44 },
+    { id: 'bk10', type: 'enterprise', age: 118 },
+    { id: 'bk11', type: 'debt', age: 140 },
+    { id: 'bk12', type: 'feature', age: 7 },
+    { id: 'bk13', type: 'feature', age: 88 },
+    { id: 'bk14', type: 'debt', age: 96 },
+  ],
+};
 
 // --- DORA: lead/lag balanced. Fresh (2 days).
 const DORA: DoraSet = {

@@ -116,11 +116,14 @@ export interface MirrorVerdict {
   trend?: Trend;
 }
 
-// The single auto-composed challenge for slice 1.
+// An auto-composed challenge: a cross-sensor pattern framed against the strategy.
 export interface Challenge {
+  id: string;
+  title: string;
   question: string;
   references: { label: string; quality?: QualityId; teamId?: string }[];
-  freshness: Freshness; // worst freshness of its inputs
+  source: string; // the sensor the finding rests on (for the trust caveat)
+  freshness: Freshness; // freshness of that input — drives how much to trust it
   observedAt: string; // as-of of the data it rests on
   trendNote?: string; // e.g. "and that gap has widened over 3 weeks"
 }
