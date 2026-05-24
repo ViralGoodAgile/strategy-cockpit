@@ -100,7 +100,7 @@
   grid-template-rows: 1fr 1fr 1.05fr;
   grid-template-areas:
     'strategy mandate quant   weak     radar    striads'
-    'loop     system  triads  outcomes outcomes striads'
+    'loop     system  triads  outcomes hygiene  striads'
     'flow     flow    flow    flow     flow     flow';
   gap: var(--s-2);
 }
@@ -535,6 +535,123 @@
   height: 100%;
   align-content: start;
   gap: var(--s-5);
+}
+
+/* --- data hygiene (freshness ledger) --- */
+.hyg {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  height: 100%;
+  justify-content: center;
+}
+.hyg-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-1);
+  font-size: var(--t-s);
+  color: var(--ink-2);
+}
+.hyg-head .num {
+  font-size: var(--t-l);
+  color: var(--ink);
+}
+.hyg-of {
+  margin-left: 2px;
+}
+.hyg-warn {
+  color: var(--tl-red);
+}
+.hyg-warn .num {
+  color: var(--tl-red);
+  font-size: var(--t-m);
+}
+.hyg-dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+.hyg-dot,
+.hyg-pip {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--ink-3);
+  flex: 0 0 auto;
+}
+.hyg-fresh {
+  background: var(--tl-green);
+}
+.hyg-aging {
+  background: var(--tl-amber);
+}
+.hyg-stale,
+.hyg-dead {
+  background: var(--tl-red);
+}
+
+/* hygiene detail (overlay) */
+.hyg-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+.hyg-lead {
+  font-size: var(--t-s);
+  color: var(--ink-2);
+  max-width: var(--measure);
+  line-height: 1.5;
+}
+.hyg-lead strong {
+  color: var(--accent);
+  font-weight: var(--w-regular);
+}
+.hyg-ledger {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.hyg-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-3) 0;
+  border-bottom: 1px solid var(--hair);
+}
+.hyg-row:last-child {
+  border-bottom: none;
+}
+.hyg-pip {
+  align-self: center;
+}
+.hyg-name {
+  flex: 1;
+  font-size: var(--t-s);
+  color: var(--ink);
+}
+.hyg-asof {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+}
+.hyg-state {
+  width: 64px;
+  text-align: right;
+  font-size: var(--t-xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.hyg-text-aging {
+  color: var(--tl-amber);
+}
+.hyg-text-stale,
+.hyg-text-dead {
+  color: var(--tl-red);
+}
+.hyg-text-fresh {
+  color: var(--tl-green);
 }
 
 /* --- quant grid --- */

@@ -20,6 +20,7 @@ import { RadarSensor } from '../sensors/RadarSensor';
 import { StrategyTriadsSensor } from '../sensors/StrategyTriadsSensor';
 import { LoopDetail } from './LoopDetail';
 import { OutcomesSensor } from '../sensors/OutcomesSensor';
+import { HygieneSensor } from '../sensors/HygieneSensor';
 import { RADAR_SIGNAL, OUTCOMES_SIGNAL } from '../../data/sensorData';
 
 const TITLES: Record<string, string> = {
@@ -33,6 +34,7 @@ const TITLES: Record<string, string> = {
   striads: 'Strategy triads',
   loop: 'The loop under inspection',
   outcomes: 'Production Outcomes',
+  hygiene: 'Data hygiene',
 };
 
 // Detail-on-demand: expanding an instrument opens its full sensor in a modal "page",
@@ -67,6 +69,7 @@ export function DetailOverlay() {
           {detail === 'striads' && <StrategyTriadsSensor />}
           {detail === 'loop' && <LoopDetail />}
           {detail === 'outcomes' && <OutcomesSensor signal={OUTCOMES_SIGNAL} />}
+          {detail === 'hygiene' && <HygieneSensor />}
           {detail === 'quant' && (
             <div className="overlay-stack">
               <DoraSensor signal={DORA_SIGNAL} />
