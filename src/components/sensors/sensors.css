@@ -500,7 +500,7 @@
   color: var(--accent);
   background: var(--accent-wash);
 }
-.toc-week {
+.toc-asof {
   font-size: var(--t-xs);
   color: var(--ink-2);
   min-width: 52px;
