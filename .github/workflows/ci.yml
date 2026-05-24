@@ -17,5 +17,7 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      # Unit tests gate the PR (pure domain/logic suite via Vitest).
+      - run: npm test
       # `npm run build` runs `tsc --noEmit && vite build` — fails the check on type or build errors.
       - run: npm run build
