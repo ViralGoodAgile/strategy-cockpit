@@ -60,7 +60,7 @@ export function TriadSensor({ signal }: { signal: Signal<TriadSet> }) {
             <div className="triad-chart" key={t.id}>
               <div className="triad-title">{t.title}</div>
               <p className="triad-q">{t.question}</p>
-              <TriadChart triad={rt} />
+              <TriadChart triad={rt} onInspect={() => tt.setPlaying(false)} />
               <p className="triad-lean">
                 leans <strong>“{t.poles[now].label}”</strong>
                 {hasPrior && now !== before && <> · drifted from “{t.poles[before].label}”</>}

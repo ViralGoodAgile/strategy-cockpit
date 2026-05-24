@@ -34,7 +34,15 @@ function centroid(stories: TriadStory[]) {
 // guide grid for readability, current centroid + drift line from the prior period.
 // Each story dot is hoverable: it highlights and names its author-role (with the full
 // story shown beneath when there's room), so you can tell which dot is which story.
-export function TriadChart({ triad, showStory = true }: { triad: Triad; showStory?: boolean }) {
+export function TriadChart({
+  triad,
+  showStory = true,
+  onInspect,
+}: {
+  triad: Triad;
+  showStory?: boolean;
+  onInspect?: () => void; // called when a dot is hovered — lets a movie pause so it stops moving
+}) {
   const [pinned, setPinned] = useState<TriadStory | null>(null);
   const [hoverId, setHoverId] = useState<string | null>(null);
   const current = triad.stories.filter((s) => s.period === 'current');
@@ -68,7 +76,10 @@ export function TriadChart({ triad, showStory = true }: { triad: Triad; showStor
             <g
               key={s.id}
               className="tc-dot-hit"
-              onMouseEnter={() => setHoverId(s.id)}
+              onMouseEnter={() => {
+                onInspect?.();
+                setHoverId(s.id);
+              }}
               onMouseLeave={() => setHoverId((h) => (h === s.id ? null : h))}
               onClick={() => setPinned((cur) => (cur?.id === s.id ? null : s))}
             >
