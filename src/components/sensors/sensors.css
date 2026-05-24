@@ -257,14 +257,29 @@
   stroke: var(--ink-3);
   stroke-width: 1.5;
 }
+.tc-dot-hit {
+  cursor: pointer;
+}
 .tc-dot {
   fill: var(--ink);
   opacity: 0.5;
-  cursor: pointer;
+  transition: opacity 0.12s ease;
 }
-.tc-dot:hover {
+.tc-dot-hit:hover .tc-dot,
+.tc-dot-on {
   fill: var(--accent);
   opacity: 1;
+}
+/* hovered/pinned story's role, with a dark halo so it reads over the triangle */
+.tc-tip {
+  fill: var(--ink);
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  paint-order: stroke;
+  stroke: rgba(6, 7, 9, 0.92);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  pointer-events: none;
 }
 .tc-centroid {
   fill: var(--accent);

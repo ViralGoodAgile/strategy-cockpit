@@ -110,21 +110,22 @@
   gap: var(--s-2);
 }
 
-/* Four rows (the user asked for the extra length). Flow owns one full row; Product
-   outcomes earns its own full-width row beneath it, equal in height. Reliability (the
-   production subset) sits beside Hygiene in row 2. The grid fills the height between HUD
-   and Challenge — still no scroll. */
+/* Five rows. Strategy earns its own full-width banner row on top (the thing under
+   inspection deserves the room). Loop and Strategy-triads each span the two instrument
+   rows beneath it; Flow and Product-outcomes own a full row each. The grid fills the
+   height between HUD and Challenge — still no scroll. */
 .dash-grid {
   flex: 1;
   min-height: 0;
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  grid-template-rows: 1fr 1fr 1.05fr 1.05fr;
+  grid-template-rows: 0.72fr 1fr 1fr 1.04fr 1.04fr;
   grid-template-areas:
-    'strategy mandate quant   weak    radar       striads'
-    'loop     system  triads  hygiene reliability striads'
-    'flow     flow    flow    flow    flow        flow'
-    'outcomes outcomes outcomes outcomes outcomes outcomes';
+    'strategy strategy strategy strategy strategy    strategy'
+    'loop     mandate  quant    weak     radar       striads'
+    'loop     system   triads   hygiene  reliability striads'
+    'flow     flow     flow     flow     flow        flow'
+    'outcomes outcomes outcomes outcomes outcomes    outcomes';
   gap: var(--s-2);
 }
 
@@ -205,17 +206,36 @@
   flex: 0 0 auto;
 }
 
-/* --- Strategy readout --- */
+/* --- Strategy readout: a full-width banner — intent headline on the left, the
+   commitments (context / WIP cap / will-not / crux) as a meta column on the right --- */
 .sr {
   display: flex;
-  flex-direction: column;
-  gap: var(--s-2);
+  flex-direction: row;
+  align-items: stretch;
+  gap: var(--s-6);
+  height: 100%;
   min-height: 0;
+}
+.sr-main {
+  flex: 2 1 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+.sr-meta {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--s-2);
+  border-left: 1px solid var(--hair);
+  padding-left: var(--s-6);
 }
 .sr-intent {
   color: var(--ink);
-  font-size: var(--t-s);
-  line-height: 1.4;
+  font-size: var(--t-m);
+  line-height: 1.35;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;

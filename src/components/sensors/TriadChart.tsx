@@ -32,12 +32,19 @@ function centroid(stories: TriadStory[]) {
 
 // One triad triangle. Self-signified dots (respondent places them, C2), a median
 // guide grid for readability, current centroid + drift line from the prior period.
+// Each story dot is hoverable: it highlights and names its author-role (with the full
+// story shown beneath when there's room), so you can tell which dot is which story.
 export function TriadChart({ triad, showStory = true }: { triad: Triad; showStory?: boolean }) {
-  const [open, setOpen] = useState<TriadStory | null>(null);
+  const [pinned, setPinned] = useState<TriadStory | null>(null);
+  const [hoverId, setHoverId] = useState<string | null>(null);
   const current = triad.stories.filter((s) => s.period === 'current');
   const prior = triad.stories.filter((s) => s.period === 'prior');
   const cNow = centroid(current);
   const cPrior = centroid(prior);
+
+  // Hover takes precedence; a click pins a story so it stays after the mouse leaves.
+  const active = current.find((s) => s.id === hoverId) ?? pinned;
+  const activeP = active ? place(active.a, active.b, active.c) : null;
 
   return (
     <div className="tc">
@@ -57,16 +64,18 @@ export function TriadChart({ triad, showStory = true }: { triad: Triad; showStor
         {cPrior && <circle cx={cPrior.x} cy={cPrior.y} r={4.5} className="tc-prior" />}
         {current.map((s) => {
           const p = place(s.a, s.b, s.c);
-          const on = open?.id === s.id;
+          const on = active?.id === s.id;
           return (
-            <circle
+            <g
               key={s.id}
-              cx={p.x}
-              cy={p.y}
-              r={on ? 6 : 4.5}
-              className="tc-dot"
-              onClick={() => setOpen(on ? null : s)}
-            />
+              className="tc-dot-hit"
+              onMouseEnter={() => setHoverId(s.id)}
+              onMouseLeave={() => setHoverId((h) => (h === s.id ? null : h))}
+              onClick={() => setPinned((cur) => (cur?.id === s.id ? null : s))}
+            >
+              <title>{`${s.role}: ${s.text}`}</title>
+              <circle cx={p.x} cy={p.y} r={on ? 6 : 4.5} className={`tc-dot${on ? ' tc-dot-on' : ''}`} />
+            </g>
           );
         })}
         {cNow && <circle cx={cNow.x} cy={cNow.y} r={6} className="tc-centroid" />}
@@ -74,10 +83,21 @@ export function TriadChart({ triad, showStory = true }: { triad: Triad; showStor
         <text x={TOP.x} y={TOP.y - 8} className="tc-pole" textAnchor="middle">{triad.poles[0].short}</text>
         <text x={LEFT.x - 2} y={LEFT.y + 18} className="tc-pole" textAnchor="middle">{triad.poles[1].short}</text>
         <text x={RIGHT.x + 2} y={RIGHT.y + 18} className="tc-pole" textAnchor="middle">{triad.poles[2].short}</text>
+        {/* hovered/pinned story's role, drawn last with a dark halo so it reads */}
+        {active && activeP && (
+          <text
+            x={activeP.x + (activeP.x > W / 2 ? -9 : 9)}
+            y={activeP.y - 9}
+            textAnchor={activeP.x > W / 2 ? 'end' : 'start'}
+            className="tc-tip"
+          >
+            {active.role}
+          </text>
+        )}
       </svg>
-      {showStory && open && (
+      {showStory && active && (
         <p className="tc-story">
-          <span className="tc-role">{open.role}</span> {open.text}
+          <span className="tc-role">{active.role}</span> {active.text}
         </p>
       )}
     </div>

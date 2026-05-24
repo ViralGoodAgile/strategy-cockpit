@@ -126,6 +126,10 @@ test('product outcomes show AARRR/HEART lenses, a customer triad and unserved cu
     .first()
     .evaluate((el) => parseFloat(getComputedStyle(el).strokeWidth));
   expect(frameW).toBeGreaterThanOrEqual(1.5);
+  // story dots are hoverable — hovering one names its author-role
+  await page.locator('.po-detail-triad .tc-dot-hit').first().hover();
+  await expect(page.locator('.po-detail-triad .tc-tip')).toHaveCount(1);
+  await expect(page.locator('.po-detail-triad .tc-tip')).not.toBeEmpty();
 
   await page.keyboard.press('Escape');
   await expect(page.locator('.overlay')).toHaveCount(0);
