@@ -30,7 +30,7 @@ export function OutcomesSensor({ signal }: { signal: Signal<OutcomeSet> }) {
         <>
           Is the product moving customers’ world toward INTENT? The PIRATE funnel (AARRR) and
           experience quality (HEART) read the numbers; the customer triad reads the voice; the
-          unserved jobs name the demand still open. Production reliability is a separate instrument.
+          unserved customer jobs name the demand still open. Production reliability is a separate instrument.
         </>
       }
     >
@@ -70,7 +70,7 @@ export function OutcomesSensor({ signal }: { signal: Signal<OutcomeSet> }) {
         </div>
 
         <div className="po-detail-jobs">
-          <div className="po-detail-head">Unserved jobs · prioritised</div>
+          <div className="po-detail-head">Unserved customer jobs · prioritised</div>
           <ol className="outcomes-jobs">
             {[...jobs]
               .sort((a, b) => a.rank - b.rank)

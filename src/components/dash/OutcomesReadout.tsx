@@ -45,7 +45,7 @@ export function OutcomesReadout() {
   return (
     <Instrument
       label="Product outcomes"
-      sub="AARRR · HEART · customer sense-making · unserved demand"
+      sub="AARRR · HEART · customer sense-making · unserved customer jobs"
       area="outcomes"
       onExpand={() => setDetail('outcomes')}
     >
@@ -63,7 +63,7 @@ export function OutcomesReadout() {
           </p>
         </div>
         <div className="po-jobs">
-          <div className="po-lens-head">Unserved jobs · prioritised</div>
+          <div className="po-lens-head">Unserved customer jobs · prioritised</div>
           <ol className="po-job-list">
             {ranked.map((j) => (
               <li className="po-job" key={j.id}>

@@ -443,32 +443,34 @@ const OUTCOMES: OutcomeSet = {
     { key: 'tsk', label: 'Task success · completion', display: '88 %', value: 88, prior: 83, unit: '%', better: 'higher' },
   ],
   customerTriad: CUSTOMER_TRIAD,
-  // Prioritised-but-unserved customer jobs — the demand the strategy has chosen to
-  // pursue next. Ranked, evidence-backed, jobs not features. (C4: situations, not people.)
+  // Prioritised-but-unserved CUSTOMER jobs-to-be-done — the demand the strategy has
+  // chosen to pursue next. These are the customer's jobs in their own situation (Christensen
+  // "When… I want… so I can…"), never our internal/team jobs; evidence is customer-derived
+  // (research, win/loss, customer behaviour). Ranked, jobs not features. (C4: situations.)
   jobs: [
     {
       id: 'j1',
       rank: 1,
-      job: 'When a teammate joins a project mid-flight, get them productive without a setup call.',
-      evidence: 'New-collab adoption 12 → 21 %, but onboarding drop-off still the top support theme.',
+      job: 'When I join a project that is already moving, I want to see where it stands and what is mine, so I can contribute on day one without pulling a teammate away.',
+      evidence: '12 of 18 onboarding interviews named “someone had to walk me through it” as the first-week blocker.',
     },
     {
       id: 'j2',
       rank: 2,
-      job: 'When I return after a week away, see what changed and what needs me — without re-reading everything.',
-      evidence: 'Weak signal: returning-user sessions start with 3+ min of scrolling before first action.',
+      job: 'When I come back after time away, I want to see what changed and what now needs me, so I can pick back up without re-reading everything.',
+      evidence: 'Returning-customer sessions open with 3+ minutes of orientation before the first meaningful action.',
     },
     {
       id: 'j3',
       rank: 3,
-      job: 'When I hand work to another team, prove it landed without chasing a status update.',
-      evidence: 'Stickiness 0.41 → 0.46, yet cross-team hand-offs absent from telemetry — a blind spot.',
+      job: 'When I hand work to another team, I want to know it landed and is moving, so I can let it go without chasing a status update.',
+      evidence: 'Recurring in win/loss notes: “I never really know if the other side picked it up.”',
     },
     {
       id: 'j4',
       rank: 4,
-      job: "When the data looks wrong, tell whether it's stale or whether reality moved.",
-      evidence: 'Hygiene ledger: two sources aging/stale; trust questions recur in qualitative triads.',
+      job: 'When updates are scattered across tools, I want one place I can trust to tell me what is true now, so I can decide without second-guessing the data.',
+      evidence: 'Customers who agree “I trust what I see here” retain 1.7× longer — yet trust is the lowest-scoring survey item.',
     },
   ],
 };
