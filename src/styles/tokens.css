@@ -1,42 +1,46 @@
 /*
   Design tokens = the aesthetic budget, auditable in one file.
-  Mode: DARK GLASS COCKPIT — an instrument cluster (BMW iDrive / Hyperscreen /
-  glass-cockpit reference). Near-black field, crisp light readouts, one warm accent
-  reserved for live/alert state. Everything visible at a glance; nothing scrolls.
+  Mode: DARK GLASS COCKPIT, "Rolls-Royce" finish — obsidian field, clean light
+  readouts with confident contrast, one PRECIOUS-METAL accent (champagne gold),
+  instruments framed like dials with fine bezels, illumination over loud colour.
 
-  Budget held: distinct UI colours <= 4 (field, light ink, dim ink, warm accent),
-  type sizes <= 5, animation only where it carries meaning (the flow movie).
+  Budget: field + light ink + warm grey + champagne accent on the default view;
+  status jewel-tones appear only on the loop. Type sizes <= 5.
 */
 :root {
-  /* --- field + surfaces --- */
-  --bg: #0c0e12;           /* near-black instrument field */
-  --bg-2: #15191f;         /* top of the background gradient (glass depth) */
-  --paper: #0c0e12;        /* "knockout" colour = field, so hollow marks read as bg */
-  --panel: rgba(255, 255, 255, 0.025);  /* glass tile fill */
-  --panel-2: rgba(255, 255, 255, 0.05); /* lifted glass (hover/active) */
+  /* --- field + surfaces (obsidian, lacquer depth) --- */
+  --bg: #0a0b0e;           /* deep obsidian field */
+  --bg-2: #14171d;         /* top of the background gradient (ambient) */
+  --paper: #0a0b0e;        /* "knockout" colour = field, so hollow marks read as bg */
+  --panel: linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.015));
+  --panel-2: linear-gradient(180deg, rgba(255, 255, 255, 0.085), rgba(255, 255, 255, 0.025));
 
-  /* --- ink: light readouts on the dark field --- */
-  --ink: #eaedf2;          /* primary readout */
-  --ink-2: #9298a3;        /* secondary / labels */
-  --ink-3: #565d68;        /* faint geometry, dim indicators */
+  /* --- ink: confident contrast on the dark field --- */
+  --ink: #f4f6f8;          /* primary readout (clean near-white) */
+  --ink-2: #b4bcc6;        /* secondary / labels — now actually readable */
+  --ink-3: #868f9a;        /* faint geometry + quiet captions (still legible) */
 
-  /* --- the single warm accent: live / alert / the constraint --- */
-  --accent: #e07a3f;       /* warm amber-terracotta */
-  --accent-dim: #7a4a2e;
+  /* --- the single accent: champagne gold (the precious metal) --- */
+  --accent: #c9ab73;       /* polished champagne */
+  --accent-dim: #7a663c;   /* recessed gold (bezels, borders) */
 
-  /* --- lines + glow (depth via light, low opacity) --- */
-  --hair: rgba(255, 255, 255, 0.08);
-  --glow: 0 0 0 1px rgba(255, 255, 255, 0.05), 0 12px 40px rgba(0, 0, 0, 0.55);
-  --accent-wash: rgba(224, 122, 63, 0.10);
-  --accent-glow: 0 0 18px rgba(224, 122, 63, 0.22);
+  /* status jewel-tones — used only on the loop (emerald / topaz / garnet) */
+  --tl-green: #6fa987;
+  --tl-amber: #c9a25c;
+  --tl-red: #b65f61;
 
-  /* traffic-light status for loop closure: red = open, amber = partial, green = closed */
-  --tl-red: #d7574b;
-  --tl-amber: #e0a23f;
-  --tl-green: #5fb27a;
+  /* --- lines, bezels, glow (material via light, low opacity) --- */
+  --hair: rgba(255, 255, 255, 0.10);
+  --bezel: rgba(255, 255, 255, 0.14);          /* fine framing line on a dial */
+  --bezel-top: rgba(255, 255, 255, 0.07);      /* inset top highlight */
+  --glow: 0 18px 44px rgba(0, 0, 0, 0.55);
+  --accent-wash: rgba(201, 171, 115, 0.10);
+  --accent-glow: 0 0 16px rgba(201, 171, 115, 0.28);
+  --numeral-glow: 0 0 18px rgba(201, 171, 115, 0.13); /* backlit-instrument feel */
 
-  /* --- typography: single family, weights 300/400 --- */
+  /* --- typography: clean grotesque for the machine, a Didone for jewellery --- */
   --font: 'Inter', system-ui, -apple-system, 'SF Pro Display', 'Segoe UI', sans-serif;
+  --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
 
   /* type scale: 5 sizes */
   --t-xs: 11.5px;  /* instrument labels, captions */
@@ -48,7 +52,7 @@
   --w-light: 300;
   --w-regular: 400;
 
-  /* --- spacing: tighter than the document layout — this is an instrument panel --- */
+  /* --- spacing --- */
   --s-1: 4px;
   --s-2: 8px;
   --s-3: 14px;
@@ -57,6 +61,6 @@
   --s-6: 52px;
 
   --shadow: var(--glow);
-  --radius: 10px;          /* glass tiles carry a soft radius */
+  --radius: 14px;          /* dials carry a soft, machined radius */
   --measure: 60ch;
 }

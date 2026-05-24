@@ -15,11 +15,11 @@ import { LoopNode, type LoopNodeData } from './LoopNode';
 // Register the single custom node type once (must be stable across renders).
 const nodeTypes = { loop: LoopNode };
 
-// Traffic-light flow (mirrors tokens.css): green = flowing, amber = slowing, red = stopped.
+// Jewel-tone flow status (mirrors tokens.css --tl-*): emerald flowing, topaz slowing, garnet stopped.
 const COLOR: Record<Closure, string> = {
-  flow: '#5fb27a',
-  partial: '#e0a23f',
-  stop: '#d7574b',
+  flow: '#6fa987',
+  partial: '#c9a25c',
+  stop: '#b65f61',
 };
 
 // Fixed loop layout — the eight nodes the spec draws, positioned as a rectangle.
