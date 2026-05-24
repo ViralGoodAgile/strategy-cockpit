@@ -8,7 +8,10 @@ import { Instrument } from './Instrument';
 // Expand for the full DORA + DataDog sensors.
 export function QuantReadout() {
   const setDetail = useCockpit((s) => s.setDetail);
-  const dora = DORA_SIGNAL.value.metrics;
+  // A 4-up lead/lag preview (deploy + lead time from DORA, uptime + error rate from
+  // DataDog) — the densest tile can't hold all six at a glance; the full DORA + DataDog
+  // set is one click away in the overlay.
+  const dora = DORA_SIGNAL.value.metrics.filter((m) => m.key === 'deployFreq' || m.key === 'leadTime');
   const lag = DATADOG_SIGNAL.value.metrics.filter((m) => m.key === 'uptime' || m.key === 'errorRate');
   const shown: Metric[] = [...dora, ...lag];
 
