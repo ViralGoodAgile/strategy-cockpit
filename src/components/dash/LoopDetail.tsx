@@ -7,7 +7,8 @@ import { LoopDiagram } from '../loop/LoopDiagram';
 export function LoopDetail() {
   const versions = useCockpit((s) => s.versions);
   const setMode = useCockpit((s) => s.setMode);
-  const lc = loopClosure(versions);
+  const scenario = useCockpit((s) => s.scenario);
+  const lc = loopClosure(versions, scenario);
 
   return (
     <div className="loop-detail">

@@ -53,10 +53,11 @@ export function LoopDiagram() {
   const closures = useCockpit((s) => s.closures);
   const setClosure = useCockpit((s) => s.setClosure);
   const versions = useCockpit((s) => s.versions);
+  const scenario = useCockpit((s) => s.scenario);
 
   // The return path (Reality → Intent) is EVIDENCE-DRIVEN, not manual: it closes only
-  // if Intent was revised after a real outcome shift (Loop.Closure).
-  const returnState = loopClosure(versions).state;
+  // if Intent was revised after a real outcome shift (Loop.Closure) — or as a demo scenario dictates.
+  const returnState = loopClosure(versions, scenario).state;
 
   const edges: Edge[] = useMemo(
     () =>

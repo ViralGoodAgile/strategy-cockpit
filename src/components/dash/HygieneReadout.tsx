@@ -6,7 +6,8 @@ import { Instrument } from './Instrument';
 // against "crap in, crap out". Expand for the full as-of table.
 export function HygieneReadout() {
   const setDetail = useCockpit((s) => s.setDetail);
-  const rows = hygieneRows();
+  const scenario = useCockpit((s) => s.scenario);
+  const rows = hygieneRows(scenario);
   const sum = hygieneSummary(rows);
 
   return (

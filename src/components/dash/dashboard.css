@@ -94,6 +94,42 @@
 .hud-build-bad {
   background: var(--tl-red);
 }
+
+/* --- scenario selector (demo control) --- */
+.hud-scenario {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+.scn-tag {
+  font-size: var(--t-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.scn-pills {
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--hair);
+  border-radius: 999px;
+}
+.scn-pill {
+  font-size: var(--t-xs);
+  letter-spacing: 0.02em;
+  color: var(--ink-2);
+  padding: 2px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.scn-pill:hover {
+  color: var(--ink);
+}
+.scn-pill-on {
+  background: var(--accent-wash);
+  color: var(--accent);
+}
 .hud-author {
   color: var(--accent);
   font-size: var(--t-xs);

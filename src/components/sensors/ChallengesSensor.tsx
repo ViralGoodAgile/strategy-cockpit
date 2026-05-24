@@ -9,7 +9,8 @@ export function ChallengesSensor() {
   const setMode = useCockpit((s) => s.setMode);
   const setDetail = useCockpit((s) => s.setDetail);
   const focusQuality = useCockpit((s) => s.focusQuality);
-  const challenges = composeChallenges(draft);
+  const scenario = useCockpit((s) => s.scenario);
+  const challenges = composeChallenges(draft, scenario);
 
   return (
     <div className="ch-detail">

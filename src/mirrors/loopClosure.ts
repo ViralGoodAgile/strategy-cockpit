@@ -1,5 +1,7 @@
 import type { Closure, StrategyVersion } from '../domain/types';
 import { OUTCOMES_SIGNAL } from '../data/sensorData';
+import { SCENARIOS } from '../data/scenarios';
+import type { ScenarioId } from '../data/scenarios';
 
 // Loop.Closure for the RETURN path (Reality → Intent): is there evidence that a real
 // outcome shift fed back into an Intent revision? Evidence-driven, not a manual toggle.
@@ -10,7 +12,16 @@ export interface LoopClosure {
   closed: boolean;
 }
 
-export function loopClosure(versions: StrategyVersion[]): LoopClosure {
+export function loopClosure(
+  versions: StrategyVersion[],
+  scenario: ScenarioId = 'baseline',
+): LoopClosure {
+  // A demo scenario can override the verdict so the return path visibly reacts.
+  const override = SCENARIOS[scenario].loop;
+  if (override) {
+    return { state: override.state, evidence: override.evidence, closed: override.closed };
+  }
+
   // Has reality moved? (a product outcome whose value differs from its prior)
   const moved = [...OUTCOMES_SIGNAL.value.aarrr, ...OUTCOMES_SIGNAL.value.heart].find(
     (m) => m.value !== m.prior,
