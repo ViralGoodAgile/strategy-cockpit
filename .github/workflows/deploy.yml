@@ -1,0 +1,28 @@
+name: Deploy to Cloudflare Pages
+
+# Build and publish to the existing Cloudflare Pages project on every push to main.
+# Requires one repo secret: CLOUDFLARE_API_TOKEN (Account ▸ Cloudflare Pages ▸ Edit).
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: 54613cc7ceeaf8e2706aa8fd14e3c773
+          command: pages deploy dist --project-name=strategy-cockpit --branch=main
