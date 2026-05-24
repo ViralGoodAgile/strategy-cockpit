@@ -48,3 +48,8 @@ Feature: Product outcomes
     Then every metric has a series of at least three points
     And each series ends with the prior then the current value
     And at least one metric's signal trend disagrees with its last-point delta
+
+  Scenario: the engagement signal warns against celebrating the latest bar
+    Given the product outcomes
+    Then the engagement signal trend is down
+    And its last-point delta is up
