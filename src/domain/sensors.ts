@@ -44,6 +44,21 @@ export interface TriadSet {
   triads: Triad[];
 }
 
+// A story signified by a survey taker in the /signify capture screen. `triadId` says which
+// triad it belongs to; `role` is a segment, never a named individual (C4). Merged into the
+// live triads as a current-period TriadStory so the cockpit reacts to real signification.
+export interface CapturedStory {
+  id: string;
+  triadId: string;
+  role: string;
+  text: string;
+  a: number;
+  b: number;
+  c: number;
+  at: string; // ISO timestamp of capture
+  na?: boolean; // respondent marked this triad "not applicable" — no placement, not plotted
+}
+
 // --- Flow.Insights (quantitative; Kanban Guides) ---
 
 // Aggregate flow state at one point in time.

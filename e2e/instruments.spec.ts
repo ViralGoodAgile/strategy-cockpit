@@ -190,3 +190,42 @@ test('the reliability instrument expands to the production subset, shown as tren
   await page.keyboard.press('Escape');
   await expect(page.locator('.overlay')).toHaveCount(0);
 });
+
+test('signify: a survey taker captures a story into a triad', async ({ page }) => {
+  await page.locator('.hud-signify').click();
+  await expect(page.locator('.author-title')).toHaveText('Signify a story');
+
+  // story-first: submit is disabled until there's a story AND a placement
+  await expect(page.locator('.sig-submit')).toBeDisabled();
+  await page.locator('.sig-story').fill('Returning after a week away, I could not tell what had changed.');
+  // place the dot by tapping inside the triangle
+  await page.locator('.sig-svg').click({ position: { x: 160, y: 160 } });
+  await expect(page.locator('.sig-dot')).toBeVisible();
+  await expect(page.locator('.sig-submit')).toBeEnabled();
+
+  await page.locator('.sig-submit').click();
+  await expect(page.locator('.sig-saved')).toBeVisible();
+  await expect(page.locator('.author-fresh')).toContainText('1 captured');
+
+  await page.locator('.author-back').click();
+  await expect(page.locator('.dash-grid')).toBeVisible();
+});
+
+test('signify: every triad allows "not applicable" without a story or placement', async ({ page }) => {
+  await page.locator('.hud-signify').click();
+  // each triad tab exposes the N/A checkbox; submit is gated until N/A or a placement
+  const tabs = page.locator('.sig-tab');
+  const n = await tabs.count();
+  expect(n).toBeGreaterThanOrEqual(3);
+  for (let i = 0; i < n; i++) {
+    await tabs.nth(i).click();
+    await expect(page.locator('.sig-submit')).toBeDisabled();
+    await expect(page.locator('.sig-na')).toBeVisible();
+  }
+  // mark the current triad not applicable → submit enabled with no story/placement
+  await page.locator('.sig-na').check();
+  await expect(page.locator('.sig-svg')).toHaveClass(/sig-svg-disabled/);
+  await expect(page.locator('.sig-submit')).toBeEnabled();
+  await page.locator('.sig-submit').click();
+  await expect(page.locator('.author-fresh')).toContainText('1 captured');
+});

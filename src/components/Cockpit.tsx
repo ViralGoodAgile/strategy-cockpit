@@ -18,6 +18,7 @@ import { ScenarioSelector } from './dash/ScenarioSelector';
 import { BuildBadge } from './dash/BuildBadge';
 import { DetailOverlay } from './dash/DetailOverlay';
 import { AuthorMode } from './dash/AuthorMode';
+import { SignifyMode } from './dash/SignifyMode';
 import './cockpit.css';
 import './dash/dashboard.css';
 import './loop/loop.css';
@@ -32,6 +33,7 @@ export function Cockpit() {
   const latest = latestVersion(versions);
 
   if (mode === 'author') return <AuthorMode />;
+  if (mode === 'signify') return <SignifyMode />;
 
   return (
     <div className="cockpit">
@@ -51,6 +53,11 @@ export function Cockpit() {
         </div>
         {gateOpen && <ScenarioSelector />}
         <BuildBadge />
+        {gateOpen && (
+          <button className="hud-signify" onClick={() => setMode('signify')}>
+            Signify ›
+          </button>
+        )}
         <button className="hud-author" onClick={() => setMode('author')}>
           Author strategy ›
         </button>
