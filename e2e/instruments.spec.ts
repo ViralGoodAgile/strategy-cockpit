@@ -286,6 +286,45 @@ test('signify: every triad allows "not applicable" without a story or placement'
   await expect(page.locator('.author-fresh')).toContainText('1 captured');
 });
 
+test('signify: a captured story can be edited, and deleted only after confirming', async ({
+  page,
+}) => {
+  await page.locator('.hud-signify').click();
+  await expect(page.locator('.author-title')).toHaveText('Signify a story');
+
+  // capture one story so the manager has something to act on
+  await page.locator('.sig-story').fill('We ran a quick spike before committing the squad.');
+  await page.locator('.sig-svg').click({ position: { x: 120, y: 150 } });
+  await page.locator('.sig-submit').click();
+
+  const row = page.locator('.sig-cap-row');
+  await expect(row).toHaveCount(1);
+  await expect(row.locator('.sig-cap-text')).toContainText('quick spike');
+
+  // EDIT — loads back into the form and saves in place (no new row)
+  await row.locator('.sig-cap-edit').click();
+  await expect(page.locator('.sig-editing')).toBeVisible();
+  await expect(page.locator('.sig-submit')).toHaveText('Save changes');
+  await page.locator('.sig-story').fill('EDITED — we ran a spike, then reviewed before scaling.');
+  await page.locator('.sig-submit').click();
+  await expect(page.locator('.sig-cap-row')).toHaveCount(1);
+  await expect(page.locator('.sig-cap-text')).toContainText('EDITED');
+  await expect(page.locator('.author-fresh')).toContainText('1 captured');
+
+  // DELETE needs confirmation — "No" cancels, the story survives
+  await page.locator('.sig-cap-del').click();
+  await expect(page.locator('.sig-cap-confirm')).toBeVisible();
+  await page.locator('.sig-cap-no').click();
+  await expect(page.locator('.sig-cap-row')).toHaveCount(1);
+
+  // …"Yes" removes it
+  await page.locator('.sig-cap-del').click();
+  await page.locator('.sig-cap-yes').click();
+  await expect(page.locator('.sig-cap-row')).toHaveCount(0);
+  await expect(page.locator('.sig-captured-empty')).toBeVisible();
+  await expect(page.locator('.author-fresh')).toContainText('0 captured');
+});
+
 test('the colour-scheme switcher re-themes the cockpit (incl. colour-blind-safe)', async ({ page }) => {
   const html = page.locator('html');
   await expect(html).toHaveAttribute('data-theme', 'obsidian');

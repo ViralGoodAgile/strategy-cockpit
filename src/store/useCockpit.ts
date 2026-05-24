@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Closure, QualityId, Strategy, StrategyVersion } from '../domain/types';
 import type { CapturedStory } from '../domain/sensors';
+import { removeCapturedFrom, updateCapturedIn, type CapturedEdit } from '../mirrors/capturedTriads';
 import { emptyStrategy } from '../domain/qualities';
 import { SAMPLE_STRATEGY } from '../data/sample';
 import type { ScenarioId } from '../data/scenarios';
@@ -54,6 +55,8 @@ interface CockpitState {
   setSystemModelIndex: (i: number) => void;
   setScenario: (s: ScenarioId) => void; // switch the demo scenario
   captureStory: (s: Omit<CapturedStory, 'id' | 'at'>) => void; // a survey taker signifies a story
+  updateCaptured: (id: string, patch: CapturedEdit) => void; // edit a captured story in place
+  deleteCaptured: (id: string) => void; // remove a single captured story
   clearCaptured: () => void; // wipe captured stories (demo reset)
   setTheme: (t: ThemeId) => void; // switch colour scheme
   seed: () => void; // first-visit: load the example as v0.1 so the cockpit is alive
@@ -115,6 +118,10 @@ export const useCockpit = create<CockpitState>()(
             { ...s, id: `cap-${Date.now()}-${st.capturedStories.length}`, at: new Date().toISOString() },
           ],
         })),
+      updateCaptured: (id, patch) =>
+        set((st) => ({ capturedStories: updateCapturedIn(st.capturedStories, id, patch) })),
+      deleteCaptured: (id) =>
+        set((st) => ({ capturedStories: removeCapturedFrom(st.capturedStories, id) })),
       clearCaptured: () => set({ capturedStories: [] }),
 
       // Apply the data-theme attribute synchronously (before the re-render) so colour

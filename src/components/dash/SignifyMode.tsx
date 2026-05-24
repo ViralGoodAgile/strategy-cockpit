@@ -31,6 +31,8 @@ const SEGMENTS = [
 export function SignifyMode() {
   const setMode = useCockpit((s) => s.setMode);
   const captureStory = useCockpit((s) => s.captureStory);
+  const updateCaptured = useCockpit((s) => s.updateCaptured);
+  const deleteCaptured = useCockpit((s) => s.deleteCaptured);
   const captured = useCockpit((s) => s.capturedStories);
   const triads = TRIAD_SIGNAL.value.triads;
 
@@ -40,6 +42,8 @@ export function SignifyMode() {
   const [w, setW] = useState<{ a: number; b: number; c: number } | null>(null);
   const [na, setNa] = useState(false);
   const [justSaved, setJustSaved] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null); // a story being revised
+  const [confirmId, setConfirmId] = useState<string | null>(null); // a delete awaiting confirm
   const svgRef = useRef<SVGSVGElement | null>(null);
   const dragging = useRef(false);
 
@@ -47,7 +51,16 @@ export function SignifyMode() {
   // Ready when the triad is marked not-applicable, OR there's a story plus a placement.
   const ready = na || (text.trim().length >= 10 && w != null);
   const dot = w ? { x: w.a * A.x + w.b * B.x + w.c * C.x, y: w.a * A.y + w.b * B.y + w.c * C.y } : null;
-  const mineForTriad = captured.filter((s) => s.triadId === triad.id).length;
+  const mine = captured.filter((s) => s.triadId === triad.id);
+
+  // Clear the form and any edit/confirm in progress — used on tab switch and after save.
+  function resetForm() {
+    setText('');
+    setW(null);
+    setNa(false);
+    setEditingId(null);
+    setConfirmId(null);
+  }
 
   function place(clientX: number, clientY: number) {
     const el = svgRef.current;
@@ -60,17 +73,36 @@ export function SignifyMode() {
 
   function submit() {
     if (!ready) return;
-    if (na) {
-      captureStory({ triadId: triad.id, role, text: '', a: 0, b: 0, c: 0, na: true });
-    } else if (w) {
-      captureStory({ triadId: triad.id, role, text: text.trim(), a: w.a, b: w.b, c: w.c });
+    const payload = na
+      ? { role, text: '', a: 0, b: 0, c: 0, na: true }
+      : w
+        ? { role, text: text.trim(), a: w.a, b: w.b, c: w.c, na: false }
+        : null;
+    if (!payload) return;
+    if (editingId) {
+      updateCaptured(editingId, payload); // revise the existing record in place
     } else {
-      return;
+      captureStory({ triadId: triad.id, ...payload });
     }
-    setText('');
-    setW(null);
-    setNa(false);
+    resetForm();
     setJustSaved(true);
+  }
+
+  // Load a captured story back into the form to revise its text, segment or placement.
+  function startEdit(s: (typeof captured)[number]) {
+    setEditingId(s.id);
+    setConfirmId(null);
+    setJustSaved(false);
+    setText(s.text);
+    setRole(s.role);
+    setNa(!!s.na);
+    setW(s.na ? null : { a: s.a, b: s.b, c: s.c });
+  }
+
+  function confirmDelete(id: string) {
+    deleteCaptured(id);
+    if (editingId === id) resetForm();
+    setConfirmId(null);
   }
 
   return (
@@ -92,9 +124,7 @@ export function SignifyMode() {
               className={`sig-tab${i === triadIdx ? ' sig-tab-on' : ''}`}
               onClick={() => {
                 setTriadIdx(i);
-                setW(null);
-                setNa(false);
-                setText('');
+                resetForm();
                 setJustSaved(false);
               }}
             >
@@ -134,10 +164,26 @@ export function SignifyMode() {
               ))}
             </select>
 
-            <button className="sig-submit" disabled={!ready} onClick={submit}>
-              Submit signification
-            </button>
-            {justSaved && <div className="sig-saved">Captured — add another, or return to the cockpit.</div>}
+            <div className="sig-actions">
+              <button className="sig-submit" disabled={!ready} onClick={submit}>
+                {editingId ? 'Save changes' : 'Submit signification'}
+              </button>
+              {editingId && (
+                <button
+                  className="sig-cancel"
+                  onClick={() => {
+                    resetForm();
+                    setJustSaved(false);
+                  }}
+                >
+                  Cancel edit
+                </button>
+              )}
+            </div>
+            {editingId && <div className="sig-editing">Editing a captured story — Save to update it.</div>}
+            {justSaved && !editingId && (
+              <div className="sig-saved">Saved — add another, edit below, or return to the cockpit.</div>
+            )}
           </div>
 
           <div className="sig-right">
@@ -186,8 +232,52 @@ export function SignifyMode() {
               </text>
               {dot && <circle cx={dot.x} cy={dot.y} r={7} className="sig-dot" />}
             </svg>
-            <div className="sig-hint">{mineForTriad} stories already on “{triad.title}”.</div>
+            <div className="sig-hint">{mine.length} stories already on “{triad.title}”.</div>
           </div>
+        </div>
+
+        <div className="sig-captured">
+          <div className="sig-captured-head">Captured on “{triad.title}” · edit or remove</div>
+          {mine.length === 0 ? (
+            <p className="sig-captured-empty">No stories yet — signify one above.</p>
+          ) : (
+            <ul className="sig-cap-list">
+              {mine.map((s) => (
+                <li className={`sig-cap-row${editingId === s.id ? ' sig-cap-editing' : ''}`} key={s.id}>
+                  <span className="sig-cap-role">{s.role}</span>
+                  <span className={`sig-cap-text${s.na ? ' sig-cap-na' : ''}`}>
+                    {s.na ? 'Not applicable' : s.text}
+                  </span>
+                  {confirmId === s.id ? (
+                    <span className="sig-cap-confirm">
+                      <span className="sig-cap-ask">Delete?</span>
+                      <button className="sig-cap-yes" onClick={() => confirmDelete(s.id)}>
+                        Yes
+                      </button>
+                      <button className="sig-cap-no" onClick={() => setConfirmId(null)}>
+                        No
+                      </button>
+                    </span>
+                  ) : (
+                    <span className="sig-cap-acts">
+                      <button className="sig-cap-edit" onClick={() => startEdit(s)}>
+                        Edit
+                      </button>
+                      <button
+                        className="sig-cap-del"
+                        onClick={() => {
+                          setConfirmId(s.id);
+                          setJustSaved(false);
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
     </div>
