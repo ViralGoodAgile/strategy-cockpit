@@ -15,7 +15,12 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
   },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  // The cockpit targets wide desktop displays ("very wide, not high"); 1440x900 is the
+  // realistic minimum where the no-scroll cluster is designed to fit. Test at that size,
+  // not Desktop Chrome's default 1280x720 (too short for the instrument density).
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 } } },
+  ],
   webServer: {
     command: 'npm run build && npm run preview -- --port 4173 --strictPort',
     url: 'http://localhost:4173',
