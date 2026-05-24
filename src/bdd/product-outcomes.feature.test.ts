@@ -2,6 +2,7 @@ import { loadFeature, describeFeature } from '@amiceli/vitest-cucumber';
 import { expect } from 'vitest';
 import { OUTCOMES_SIGNAL } from '../data/sensorData';
 import type { Triad } from '../domain/sensors';
+import { metricTrend, metricRunTrend } from '../components/common/trend';
 
 const O = OUTCOMES_SIGNAL.value;
 
@@ -84,6 +85,28 @@ describeFeature(feature, ({ ScenarioOutline, Scenario }) => {
     And('they are uniquely ranked', () => {
       const ranks = jobs.map((j) => j.rank);
       expect(new Set(ranks).size).toBe(jobs.length);
+    });
+  });
+
+  Scenario('metrics carry a multi-point series so the signal resists last-point tampering', ({ Given, Then, And }) => {
+    const metrics = [...O.aarrr, ...O.heart];
+    Given('the product outcomes', () => {
+      expect(metrics).toHaveLength(10);
+    });
+    Then('every metric has a series of at least three points', () => {
+      for (const m of metrics) expect(m.series.length).toBeGreaterThanOrEqual(3);
+    });
+    And('each series ends with the prior then the current value', () => {
+      for (const m of metrics) {
+        expect(m.series[m.series.length - 1]).toBe(m.value);
+        expect(m.series[m.series.length - 2]).toBe(m.prior);
+      }
+    });
+    And("at least one metric's signal trend disagrees with its last-point delta", () => {
+      const disagrees = metrics.some(
+        (m) => metricRunTrend(m).direction !== metricTrend(m).direction,
+      );
+      expect(disagrees).toBe(true);
     });
   });
 });

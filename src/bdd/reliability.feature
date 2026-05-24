@@ -17,3 +17,8 @@ Feature: Reliability (production subset of product outcomes)
   Scenario: reliability is the freshest signal
     Given the reliability signal
     Then the signal is fresh
+
+  Scenario: every reliability measure carries a multi-point series
+    Given the reliability signal
+    Then every measure has a series of at least three points
+    And each series ends with the current value

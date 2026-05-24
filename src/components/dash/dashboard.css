@@ -611,9 +611,13 @@
   font-size: var(--t-s);
   color: var(--ink);
 }
-/* compact trend on the tile: glyph only — hide the verbose prior→value detail */
-.po .trend-detail {
+/* compact trend on the tile: keep both arrows (prominent signal + small last point),
+   but hide the verbose prior→value detail to stay skimmable */
+.po .mtrend-last-detail {
   display: none;
+}
+.po .mtrend {
+  gap: 5px;
 }
 /* customer sense-making triad + the two demand-side panels share a hairline divider */
 .po-triad,

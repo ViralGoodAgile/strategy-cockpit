@@ -1,6 +1,6 @@
 import type { Signal } from '../../domain/types';
 import type { DataDogSet } from '../../domain/sensors';
-import { Numeral, metricTrend } from '../common/Numeral';
+import { Numeral } from '../common/Numeral';
 import { SensorModule } from './SensorModule';
 
 // DataDog.Ingest: production observability, explicitly a LAG source. Freshest of the
@@ -20,7 +20,7 @@ export function DataDogSensor({ signal }: { signal: Signal<DataDogSet> }) {
         <span className="dd-tag">lag</span>
         <div className="dora-grid">
           {dd.metrics.map((m) => (
-            <Numeral key={m.key} value={m.display} label={m.label} trend={metricTrend(m)} />
+            <Numeral key={m.key} value={m.display} label={m.label} metric={m} />
           ))}
         </div>
       </div>

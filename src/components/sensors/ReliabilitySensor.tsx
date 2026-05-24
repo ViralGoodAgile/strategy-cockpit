@@ -1,6 +1,6 @@
 import type { Signal } from '../../domain/types';
 import type { ReliabilitySet } from '../../domain/sensors';
-import { Numeral, metricTrend } from '../common/Numeral';
+import { Numeral } from '../common/Numeral';
 import { SensorModule } from './SensorModule';
 
 // Reliability — the production/operational SUBSET of product outcomes. Does the product
@@ -24,7 +24,7 @@ export function ReliabilitySensor({ signal }: { signal: Signal<ReliabilitySet> }
     >
       <div className="outcomes-grid">
         {signal.value.metrics.map((m) => (
-          <Numeral key={m.key} value={m.display} label={m.label} trend={metricTrend(m)} />
+          <Numeral key={m.key} value={m.display} label={m.label} metric={m} />
         ))}
       </div>
     </SensorModule>

@@ -1,6 +1,6 @@
 import type { Signal } from '../../domain/types';
 import type { DoraSet } from '../../domain/sensors';
-import { Numeral, metricTrend } from '../common/Numeral';
+import { Numeral } from '../common/Numeral';
 import { SensorModule } from './SensorModule';
 
 // DORA.Metrics: the four numbers as focal numerals, lead-and-lag balanced. Movement
@@ -18,7 +18,7 @@ export function DoraSensor({ signal }: { signal: Signal<DoraSet> }) {
     >
       <div className="dora-grid">
         {dora.metrics.map((m) => (
-          <Numeral key={m.key} value={m.display} label={m.label} trend={metricTrend(m)} />
+          <Numeral key={m.key} value={m.display} label={m.label} metric={m} />
         ))}
       </div>
     </SensorModule>

@@ -84,6 +84,40 @@
   color: var(--ink-2);
 }
 
+/* Metric trend pair: the prominent multi-point SIGNAL arrow leads; the two-point
+   last-point arrow is small and secondary (it's the tamperable one). */
+.mtrend {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.mtrend-run {
+  font-size: var(--t-s);
+  line-height: 1;
+  font-weight: var(--w-regular);
+  color: var(--ink-3);
+}
+.mtrend-run.trend-up,
+.mtrend-run.trend-down {
+  color: var(--accent);
+  text-shadow: var(--accent-glow);
+}
+.mtrend-last {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  font-size: var(--t-xs);
+  color: var(--ink-3);
+}
+.mtrend-last-detail {
+  color: var(--ink-3);
+}
+/* When the latest point disagrees with the signal, dim the small arrow further so the
+   prominent run arrow clearly wins the eye. */
+.mtrend-diverge .mtrend-last {
+  opacity: 0.7;
+}
+
 .freshness {
   font-size: var(--t-xs);
   color: var(--ink-2);

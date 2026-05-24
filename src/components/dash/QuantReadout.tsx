@@ -1,7 +1,7 @@
 import { DATADOG_SIGNAL, DORA_SIGNAL } from '../../data/sensorData';
 import type { Metric } from '../../domain/sensors';
 import { useCockpit } from '../../store/useCockpit';
-import { Numeral, metricTrend } from '../common/Numeral';
+import { Numeral } from '../common/Numeral';
 import { Instrument } from './Instrument';
 
 // Quant cluster — DORA (lead/lag) plus a DataDog lag reading, as glowing numerals.
@@ -16,7 +16,7 @@ export function QuantReadout() {
     <Instrument label="Quant" sub="DORA · DataDog" area="quant" onExpand={() => setDetail('quant')}>
       <div className="quant-grid">
         {shown.map((m) => (
-          <Numeral key={m.key} value={m.display} label={m.label} trend={metricTrend(m)} />
+          <Numeral key={m.key} value={m.display} label={m.label} metric={m} />
         ))}
       </div>
     </Instrument>

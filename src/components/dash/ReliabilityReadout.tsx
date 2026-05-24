@@ -1,6 +1,6 @@
 import { RELIABILITY_SIGNAL } from '../../data/sensorData';
 import { useCockpit } from '../../store/useCockpit';
-import { Numeral, metricTrend } from '../common/Numeral';
+import { Numeral } from '../common/Numeral';
 import { Instrument } from './Instrument';
 
 // Reliability — the production/operational subset of product outcomes. Uptime, MTTR,
@@ -23,7 +23,7 @@ export function ReliabilityReadout() {
     >
       <div className="quant-grid">
         {metrics.map((m) => (
-          <Numeral key={m.key} value={m.display} label={m.label} trend={metricTrend(m)} />
+          <Numeral key={m.key} value={m.display} label={m.label} metric={m} />
         ))}
       </div>
     </Instrument>

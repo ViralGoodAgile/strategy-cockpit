@@ -116,14 +116,19 @@ export interface FlowConstraintData {
 
 // A single numeric metric with a prior value for trend. `better` is informational
 // only — the cockpit shows direction of travel, not pass/fail.
+// `series` is the full run of recent points (oldest → newest, last = current value). The
+// cockpit reads the SIGNAL across the whole series (a fitted slope), which resists the
+// last-point tampering a two-point delta is prone to (Deming/Wheeler). `value`/`prior`
+// remain the latest point and the one before it.
 export interface Metric {
   key: string;
   label: string;
   display: string; // formatted current value, e.g. "2.3 / day"
-  value: number; // numeric current
-  prior: number; // numeric previous period
+  value: number; // numeric current (== series[last])
+  prior: number; // numeric previous period (== series[last-1])
   unit: string;
   better: 'higher' | 'lower';
+  series: number[]; // oldest → newest; ≥3 points so a run-trend is meaningful
 }
 
 // The four DORA numbers, lead-and-lag balanced.

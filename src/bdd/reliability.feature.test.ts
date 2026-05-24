@@ -30,4 +30,17 @@ describeFeature(feature, ({ ScenarioOutline, Scenario }) => {
       expect(RELIABILITY_SIGNAL.freshness).toBe('fresh');
     });
   });
+
+  Scenario('every reliability measure carries a multi-point series', ({ Given, Then, And }) => {
+    const metrics = RELIABILITY_SIGNAL.value.metrics;
+    Given('the reliability signal', () => {
+      expect(metrics.length).toBeGreaterThan(0);
+    });
+    Then('every measure has a series of at least three points', () => {
+      for (const m of metrics) expect(m.series.length).toBeGreaterThanOrEqual(3);
+    });
+    And('each series ends with the current value', () => {
+      for (const m of metrics) expect(m.series[m.series.length - 1]).toBe(m.value);
+    });
+  });
 });
