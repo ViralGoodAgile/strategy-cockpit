@@ -5,9 +5,12 @@ node_modules
 dist
 dist-ssr
 
-# generated test report + per-deploy build info (created in CI)
+# generated test reports + per-deploy build info (created in CI)
 test-results.json
+playwright-results.json
 public/build-info.json
+# generated real-data snapshot (optional; absent → cockpit uses synthetic defaults)
+public/cockpit-data.json
 
 # playwright e2e artifacts
 /test-results/

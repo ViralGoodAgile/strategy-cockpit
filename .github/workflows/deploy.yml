@@ -22,7 +22,11 @@ jobs:
       - run: npm ci
       # Run the Gherkin/Vitest suite and capture a JSON report (gates the deploy).
       - run: npm test -- --reporter=json --outputFile=test-results.json
-      # Emit public/build-info.json (commit, timestamp, test counts, Actions run URL).
+      # Run the Playwright e2e suite too, so its count folds into the verifiable badge
+      # (json reporter writes playwright-results.json). A failure here aborts the deploy.
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      # Emit public/build-info.json (commit, timestamp, combined unit+e2e counts, run URL).
       - run: node scripts/build-info.mjs
       - run: npm run build
       - name: Publish to Cloudflare Pages
