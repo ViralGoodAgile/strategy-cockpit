@@ -20,26 +20,26 @@ export function BuildBadge() {
       .catch(() => {});
   }, []);
 
-  if (!info) return null;
-  // The build number is the short commit the live site was built from ("dev" for a local,
-  // unbuilt copy, where build-info.json carries no commit).
-  const build = info.commit ? info.commit.slice(0, 7) : 'dev';
-  const t = info.tests;
-  const tests = t && t.passed != null ? `${t.passed}${info.ok === false ? ' ✗' : ' ✓'}` : null;
-  const builtAt = info.builtAt ? new Date(info.builtAt).toLocaleString() : null;
+  // The badge always shows a build number. It is the short commit the live site was built
+  // from; until (or unless) build-info.json loads it reads "dev" — so a local/unbuilt copy,
+  // or a fresh CI checkout without a generated build-info, still shows the build identifier.
+  const build = info?.commit ? info.commit.slice(0, 7) : 'dev';
+  const t = info?.tests;
+  const tests = t && t.passed != null ? `${t.passed}${info?.ok === false ? ' ✗' : ' ✓'}` : null;
+  const builtAt = info?.builtAt ? new Date(info.builtAt).toLocaleString() : null;
   const title = `build ${build}${builtAt ? ` · built ${builtAt}` : ''}${
-    info.runUrl ? ' · click for the CI run that tested it' : ''
+    info?.runUrl ? ' · click for the CI run that tested it' : ''
   }`;
 
   const body = (
     <>
-      <i className={`hud-build-pip ${info.ok === false ? 'hud-build-bad' : ''}`} />
+      <i className={`hud-build-pip ${info?.ok === false ? 'hud-build-bad' : ''}`} />
       <span className="hud-build-no">build {build}</span>
       {tests && <span className="hud-build-tests"> · tests {tests}</span>}
     </>
   );
 
-  return info.runUrl ? (
+  return info?.runUrl ? (
     <a className="hud-build" href={info.runUrl} target="_blank" rel="noreferrer" title={title}>
       {body}
     </a>
