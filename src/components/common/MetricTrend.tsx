@@ -20,15 +20,21 @@ export function MetricTrend({ metric }: { metric: Metric }) {
   const diverges =
     run.direction !== 'flat' && last.direction !== 'flat' && run.direction !== last.direction;
 
+  const n = metric.series.length;
+  const runHint =
+    `SIGNAL (for systems thinkers): the trend fitted across all ${n} points. ` +
+    `It weighs every reading, so one noisy point can't flip it. This is the arrow to act on.`;
+  const lastHint =
+    `LAST POINT ONLY (${last.detail}): the change from the previous reading. ` +
+    `Reacting to a single data point is chasing noise, not signal — the classic mistake ` +
+    `(Deming's funnel, Wheeler's SPC). Adjusting a process on one bar usually makes it worse.`;
+
   return (
     <span className={`mtrend${diverges ? ' mtrend-diverge' : ''}`}>
-      <span
-        className={`mtrend-run trend-${run.direction}`}
-        title={`signal — ${run.detail} (resists last-point tampering)`}
-      >
+      <span className={`mtrend-run trend-${run.direction}`} title={runHint} aria-label={runHint}>
         {GLYPH[run.direction]}
       </span>
-      <span className={`mtrend-last trend-${last.direction}`} title={`latest point — ${last.detail}`}>
+      <span className={`mtrend-last trend-${last.direction}`} title={lastHint} aria-label={lastHint}>
         {GLYPH[last.direction]}
         <span className="mtrend-last-detail"> {last.detail}</span>
       </span>

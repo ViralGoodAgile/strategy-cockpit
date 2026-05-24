@@ -7,7 +7,15 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('the flow movie opens, pauses, and scrubs to a chosen week', async ({ page }) => {
-  await page.locator('.inst', { hasText: 'Flow.Constraint' }).first().click();
+  // The in-cockpit Flow tile's Theory-of-Constraints board must not be truncated
+  // (regression guard for the double-height row).
+  const flowTile = page.locator('.inst', { hasText: 'Flow.Constraint' }).first();
+  const clipped = await flowTile
+    .locator('.frw-board .fi-board')
+    .evaluate((el) => el.scrollHeight > el.clientHeight + 1);
+  expect(clipped).toBe(false);
+
+  await flowTile.click();
   await expect(page.locator('.overlay-title')).toHaveText('Flow.Constraint');
 
   // Opens auto-playing, so the transport offers "pause".
@@ -99,6 +107,10 @@ test('product outcomes show AARRR/HEART lenses, a customer triad and unserved cu
   // each metric shows a prominent multi-point SIGNAL arrow + a small last-point arrow
   expect(await lenses.nth(0).locator('.po-metric .mtrend-run').count()).toBe(5);
   await expect(lenses.nth(0).locator('.po-metric').first().locator('.mtrend-last')).toBeVisible();
+  // both arrows carry a hoverable hint: signal (for systems thinkers) vs last-point (noise)
+  const firstMetric = lenses.nth(0).locator('.po-metric').first();
+  await expect(firstMetric.locator('.mtrend-run')).toHaveAttribute('title', /SIGNAL/);
+  await expect(firstMetric.locator('.mtrend-last')).toHaveAttribute('title', /single data point/);
   // the headline systems-thinking case: Engagement's signal disagrees with its last point —
   // the prominent arrow points down (the run is sliding) while the last-point arrow points up.
   const eng = lenses.nth(1).locator('.po-metric', { hasText: 'Engagement' });

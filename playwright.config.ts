@@ -15,11 +15,11 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
   },
-  // The cockpit targets wide desktop displays ("very wide, not high"); 1440x900 is the
-  // realistic minimum where the no-scroll cluster is designed to fit. Test at that size,
-  // not Desktop Chrome's default 1280x720 (too short for the instrument density).
+  // The cockpit targets wide desktop displays ("very wide, not high"); 1600x1000 is the
+  // realistic target where the no-scroll cluster fits now that Flow earns a double-height
+  // row. Test at that size, not Desktop Chrome's default 1280x720 (too short/narrow).
   projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 } } },
+    { name: 'chromium', use: { ...devices['Desktop Chrome'], viewport: { width: 1600, height: 1000 } } },
   ],
   webServer: {
     command: 'npm run build && npm run preview -- --port 4173 --strictPort',

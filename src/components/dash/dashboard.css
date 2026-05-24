@@ -155,7 +155,9 @@
   min-height: 0;
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  grid-template-rows: 0.72fr 1fr 1fr 1.04fr 1.04fr;
+  /* Flow.Constraint earns ~double the height of an instrument row — its Theory-of-
+     Constraints board was truncating. Strategy banner stays short; the rest fill out. */
+  grid-template-rows: 0.66fr 1fr 1fr 2fr 1.1fr;
   grid-template-areas:
     'strategy strategy strategy strategy strategy    strategy'
     'loop     mandate  quant    weak     radar       striads'
