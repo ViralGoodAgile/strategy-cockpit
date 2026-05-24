@@ -85,9 +85,10 @@ test('strategy triads show per-triad interpretations from different groups', asy
   expect(await page.locator('.overlay .triad-interp-row').count()).toBeGreaterThanOrEqual(8);
   await expect(page.locator('.overlay .triad-interp-by').first()).not.toBeEmpty();
 
-  // the centroid dot is hoverable — it reveals the quality strengths behind its position
+  // the centroid dot is hoverable — its quality strengths read in the caption beneath
+  // (a reserved line, so hovering never reflows the column or floats text over the dots)
   await page.locator('.overlay .tc-dot-hit').first().hover();
-  await expect(page.locator('.overlay .tc-tip').first()).toBeVisible();
+  await expect(page.locator('.overlay .tc-story').first()).toContainText('authored');
 
   await page.keyboard.press('Escape');
   await expect(page.locator('.overlay')).toHaveCount(0);
@@ -144,10 +145,10 @@ test('product outcomes show AARRR/HEART lenses, a customer triad and unserved cu
     .first()
     .evaluate((el) => parseFloat(getComputedStyle(el).strokeWidth));
   expect(frameW).toBeGreaterThanOrEqual(1.5);
-  // story dots are hoverable — hovering one names its author-role
+  // story dots are hoverable — hovering one names its author-role in the caption beneath
   await page.locator('.po-detail-triad .tc-dot-hit').first().hover();
-  await expect(page.locator('.po-detail-triad .tc-tip')).toHaveCount(1);
-  await expect(page.locator('.po-detail-triad .tc-tip')).not.toBeEmpty();
+  await expect(page.locator('.po-detail-triad .tc-story .tc-role')).toBeVisible();
+  await expect(page.locator('.po-detail-triad .tc-story')).not.toContainText('hover a dot');
 
   await page.keyboard.press('Escape');
   await expect(page.locator('.overlay')).toHaveCount(0);
