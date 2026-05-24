@@ -53,6 +53,12 @@ test('the radar expands to a legible scope', async ({ page }) => {
   await expect(page.locator('.overlay .radar-svg')).toBeVisible();
   // Blips are plotted on the scope.
   expect(await page.locator('.overlay .radar-blip').count()).toBeGreaterThan(0);
+  // Rings must read as bold concentric circles — regression guard against the faint hairline.
+  const ringW = await page
+    .locator('.overlay .radar-ring')
+    .first()
+    .evaluate((el) => parseFloat(getComputedStyle(el).strokeWidth));
+  expect(ringW).toBeGreaterThanOrEqual(1.5);
 
   await page.keyboard.press('Escape');
   await expect(page.locator('.overlay')).toHaveCount(0);
@@ -97,6 +103,12 @@ test('product outcomes show AARRR/HEART lenses, a customer triad and unserved cu
   await expect(page.locator('.outcomes-job-text').first()).toContainText('When ');
   await expect(page.locator('.outcomes-job-evidence').first()).not.toBeEmpty();
   await expect(page.locator('.po-detail-triad .tc-svg')).toBeVisible();
+  // Triangle outline must read as a bold stroke — regression guard against the faint hairline.
+  const frameW = await page
+    .locator('.po-detail-triad .tc-frame')
+    .first()
+    .evaluate((el) => parseFloat(getComputedStyle(el).strokeWidth));
+  expect(frameW).toBeGreaterThanOrEqual(1.5);
 
   await page.keyboard.press('Escape');
   await expect(page.locator('.overlay')).toHaveCount(0);
