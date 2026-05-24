@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware';
 import type { Closure, QualityId, Strategy, StrategyVersion } from '../domain/types';
 import { emptyStrategy } from '../domain/qualities';
 import { SAMPLE_STRATEGY } from '../data/sample';
+import type { ScenarioId } from '../data/scenarios';
 
 // Which screen the cockpit is showing.
 export type CockpitMode = 'cockpit' | 'author';
@@ -34,6 +35,7 @@ interface CockpitState {
   detail: DetailView; // instrument expanded into an overlay
   systemModelIndex: number; // which of the seed CLDs is selected
   seeded: boolean; // has first-visit seeding happened (so we never re-seed)
+  scenario: ScenarioId; // demo scenario driving loop-closure / challenge / hygiene
 
   updateSection: <K extends keyof Strategy>(k: K, patch: Partial<Strategy[K]>) => void;
   setDraft: (s: Strategy) => void;
@@ -45,6 +47,7 @@ interface CockpitState {
   setMode: (m: CockpitMode) => void;
   setDetail: (d: DetailView) => void;
   setSystemModelIndex: (i: number) => void;
+  setScenario: (s: ScenarioId) => void; // switch the demo scenario
   seed: () => void; // first-visit: load the example as v0.1 so the cockpit is alive
   reset: () => void; // "start fresh": wipe to a blank strategy and open the editor
 }
@@ -66,6 +69,7 @@ export const useCockpit = create<CockpitState>()(
       detail: null,
       systemModelIndex: 0,
       seeded: false,
+      scenario: 'baseline',
 
       updateSection: (k, patch) =>
         set((s) => ({ draft: { ...s.draft, [k]: { ...s.draft[k], ...patch } } })),
@@ -92,6 +96,7 @@ export const useCockpit = create<CockpitState>()(
       setMode: (mode) => set({ mode }),
       setDetail: (detail) => set({ detail }),
       setSystemModelIndex: (systemModelIndex) => set({ systemModelIndex }),
+      setScenario: (scenario) => set({ scenario }),
 
       // First visit only: seed the example as v0.1 so the cockpit opens alive, not
       // "offline". A returning visitor (already has versions) is just marked seeded.

@@ -1,10 +1,12 @@
 import { hygieneRows, hygieneSummary } from '../../lib/hygiene';
 import { ageInDays } from '../../lib/freshness';
+import { useCockpit } from '../../store/useCockpit';
 
 // The full hygiene ledger. The cockpit's integrity guard: a finding is only as good as
 // its inputs, and a present-but-stale signal is worse than an absent one.
 export function HygieneSensor() {
-  const rows = hygieneRows();
+  const scenario = useCockpit((s) => s.scenario);
+  const rows = hygieneRows(scenario);
   const sum = hygieneSummary(rows);
 
   const ageText = (iso: string) => {

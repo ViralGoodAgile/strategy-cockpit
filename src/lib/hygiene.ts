@@ -1,5 +1,7 @@
 import type { Freshness } from '../domain/types';
 import { ageInDays } from './freshness';
+import { SCENARIOS } from '../data/scenarios';
+import type { ScenarioId } from '../data/scenarios';
 import { MANDATE_SIGNAL } from '../data/synthetic';
 import {
   DATADOG_SIGNAL,
@@ -36,13 +38,17 @@ const SIGNALS: { name: string; sig: { observedAt: string; freshness: Freshness }
 ];
 
 const RANK: Record<Freshness, number> = { fresh: 0, aging: 1, stale: 2, dead: 3 };
+// One rank worse — used by the "crap in" scenario to degrade every signal.
+const WORSE: Record<Freshness, Freshness> = { fresh: 'aging', aging: 'stale', stale: 'dead', dead: 'dead' };
 
-// The hygiene ledger, worst (least trustworthy) first.
-export function hygieneRows(): HygieneRow[] {
+// The hygiene ledger, worst (least trustworthy) first. A demo scenario can degrade every
+// signal's freshness so "crap in, crap out" is visible in the ledger.
+export function hygieneRows(scenario: ScenarioId = 'baseline'): HygieneRow[] {
+  const degrade = !!SCENARIOS[scenario].degradeHygiene;
   return SIGNALS.map(({ name, sig }) => ({
     name,
     observedAt: sig.observedAt,
-    freshness: sig.freshness,
+    freshness: degrade ? WORSE[sig.freshness] : sig.freshness,
     age: ageInDays(sig.observedAt),
   })).sort((a, b) => RANK[b.freshness] - RANK[a.freshness] || b.age - a.age);
 }

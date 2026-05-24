@@ -10,8 +10,9 @@ export function ChallengeBar() {
   const setMode = useCockpit((s) => s.setMode);
   const setDetail = useCockpit((s) => s.setDetail);
   const focusQuality = useCockpit((s) => s.focusQuality);
+  const scenario = useCockpit((s) => s.scenario);
 
-  const challenges = useMemo(() => composeChallenges(draft), [draft]);
+  const challenges = useMemo(() => composeChallenges(draft, scenario), [draft, scenario]);
   const c = challenges[0];
   if (!c) return null;
 

@@ -14,6 +14,7 @@ import { OutcomesReadout } from './dash/OutcomesReadout';
 import { ReliabilityReadout } from './dash/ReliabilityReadout';
 import { HygieneReadout } from './dash/HygieneReadout';
 import { ChallengeBar } from './dash/ChallengeBar';
+import { ScenarioSelector } from './dash/ScenarioSelector';
 import { BuildBadge } from './dash/BuildBadge';
 import { DetailOverlay } from './dash/DetailOverlay';
 import { AuthorMode } from './dash/AuthorMode';
@@ -48,6 +49,7 @@ export function Cockpit() {
             <span className="hud-offline">offline · no v0.1</span>
           )}
         </div>
+        {gateOpen && <ScenarioSelector />}
         <BuildBadge />
         <button className="hud-author" onClick={() => setMode('author')}>
           Author strategy ›

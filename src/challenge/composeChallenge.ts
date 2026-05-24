@@ -3,6 +3,8 @@ import type { Team } from '../domain/types';
 import { MANDATE_LABELS, levelGap, levelIndex } from '../domain/mandate';
 import { MANDATE_SIGNAL, actualMedian } from '../data/synthetic';
 import { FLOW_CONSTRAINT_SIGNAL, TRIAD_SIGNAL } from '../data/sensorData';
+import { SCENARIOS } from '../data/scenarios';
+import type { ScenarioId } from '../data/scenarios';
 
 // WIP per stream across all teams.
 function wipByStream(teams: Team[]) {
@@ -31,7 +33,10 @@ function meanLean(stories: { a: number; b: number; c: number; period: string }[]
 
 // Compose ALL applicable cross-sensor challenges, framed against the strategy. Each
 // carries the freshness of the input it rests on, so trust can be read off it.
-export function composeChallenges(strategy: Strategy): Challenge[] {
+export function composeChallenges(
+  strategy: Strategy,
+  scenario: ScenarioId = 'baseline',
+): Challenge[] {
   const out: Challenge[] = [];
   const teams = MANDATE_SIGNAL.value;
   const mFresh = { source: 'Mandate Levels', freshness: MANDATE_SIGNAL.freshness, observedAt: MANDATE_SIGNAL.observedAt };
@@ -111,6 +116,21 @@ export function composeChallenges(strategy: Strategy): Challenge[] {
         ...mFresh,
       });
     }
+  }
+
+  // A demo scenario contributes a headline challenge, surfaced first.
+  const sc = SCENARIOS[scenario].challenge;
+  if (sc) {
+    out.unshift({
+      id: sc.id,
+      title: sc.title,
+      question: sc.question,
+      references: sc.refs ?? [],
+      source: 'scenario',
+      freshness: sc.freshness,
+      observedAt: new Date().toISOString(),
+      trendNote: sc.trendNote,
+    });
   }
 
   return out;

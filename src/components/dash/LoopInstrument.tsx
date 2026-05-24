@@ -7,7 +7,8 @@ import { LoopDiagram } from '../loop/LoopDiagram';
 export function LoopInstrument() {
   const setDetail = useCockpit((s) => s.setDetail);
   const versions = useCockpit((s) => s.versions);
-  const lc = loopClosure(versions);
+  const scenario = useCockpit((s) => s.scenario);
+  const lc = loopClosure(versions, scenario);
 
   return (
     <section className="inst inst-loop" style={{ gridArea: 'loop' }}>

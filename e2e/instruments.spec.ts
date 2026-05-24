@@ -139,6 +139,29 @@ test('product outcomes show AARRR/HEART lenses, a customer triad and unserved cu
   await expect(page.locator('.overlay')).toHaveCount(0);
 });
 
+test('scenario toggles make the loop and challenge react', async ({ page }) => {
+  const ret = page.locator('.inst-loop .loop-return');
+
+  // stalled → return path open / stop, challenge reframed
+  await page.locator('.scn-pill', { hasText: 'Loop stalled' }).click();
+  await expect(ret).toContainText('open');
+  await expect(ret).toHaveClass(/loop-return-stop/);
+  await expect(page.locator('.challenge-bar .cb-q')).toContainText('Reality has moved');
+
+  // closing → return path closed / flow
+  await page.locator('.scn-pill', { hasText: 'Loop closing' }).click();
+  await expect(ret).toContainText('closed');
+  await expect(ret).toHaveClass(/loop-return-flow/);
+  await expect(page.locator('.challenge-bar .cb-q')).toContainText('Intent followed');
+
+  // crap in → hygiene degrades; challenge is about trust
+  await page.locator('.scn-pill', { hasText: 'Crap in' }).click();
+  await expect(page.locator('.challenge-bar .cb-q')).toContainText('trust');
+
+  // back to baseline
+  await page.locator('.scn-pill', { hasText: 'Baseline' }).click();
+});
+
 test('the reliability instrument expands to the production subset, shown as trend', async ({ page }) => {
   const tile = page.locator('.inst', { hasText: 'Reliability' }).first();
   await expect(tile).toContainText('production subset');
