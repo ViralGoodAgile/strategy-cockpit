@@ -2,12 +2,33 @@
    Letterboxed in the dark field. Nothing scrolls. */
 
 .cockpit {
+  position: relative;
   height: 100vh;
   display: flex;
   flex-direction: column;
   padding: var(--s-2) var(--s-1);
   gap: var(--s-2);
   overflow: hidden;
+}
+/* Starlight — sparse, dim points of light on the obsidian field (atmosphere, not noise). */
+.cockpit::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(1.2px 1.2px at 12% 22%, rgba(255, 255, 255, 0.16), transparent),
+    radial-gradient(1px 1px at 84% 16%, rgba(201, 171, 115, 0.18), transparent),
+    radial-gradient(1px 1px at 67% 78%, rgba(255, 255, 255, 0.13), transparent),
+    radial-gradient(1.2px 1.2px at 28% 86%, rgba(201, 171, 115, 0.14), transparent),
+    radial-gradient(1px 1px at 47% 8%, rgba(255, 255, 255, 0.10), transparent),
+    radial-gradient(1px 1px at 92% 64%, rgba(255, 255, 255, 0.12), transparent),
+    radial-gradient(1px 1px at 6% 60%, rgba(201, 171, 115, 0.12), transparent);
+}
+.cockpit > * {
+  position: relative;
+  z-index: 1;
 }
 
 /* --- HUD: thin top strip --- */
@@ -23,9 +44,10 @@
   gap: var(--s-3);
 }
 .hud-title {
+  font-family: var(--font-display);
   font-size: var(--t-m);
-  font-weight: var(--w-light);
-  letter-spacing: 0.02em;
+  font-weight: 500;
+  letter-spacing: 0.01em;
   color: var(--ink);
 }
 .hud-sub {
@@ -83,11 +105,11 @@
   gap: var(--s-2);
 }
 
-/* --- glass instrument tile (S-class material: subtle gradient + top highlight) --- */
+/* --- instrument dial (Rolls finish: machined bezel + inset highlight + depth) --- */
 .inst {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.012));
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 13px;
+  background: var(--panel);
+  border: 1px solid var(--bezel);
+  border-radius: var(--radius);
   padding: var(--s-3) var(--s-4) var(--s-4);
   display: flex;
   flex-direction: column;
@@ -95,15 +117,15 @@
   min-height: 0;
   min-width: 0;
   overflow: hidden;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), var(--glow);
+  box-shadow: inset 0 1px 0 var(--bezel-top), var(--glow);
   transition: border-color 0.2s ease, background 0.2s ease;
 }
 .inst-clickable {
   cursor: pointer;
 }
 .inst-clickable:hover {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
-  border-color: rgba(224, 122, 63, 0.4);
+  background: var(--panel-2);
+  border-color: var(--accent);
 }
 .inst-live {
   box-shadow: var(--glow), inset 2px 0 0 var(--accent);
@@ -547,9 +569,11 @@
 }
 .cb-q {
   flex: 1;
-  font-size: var(--t-s);
+  font-family: var(--font-display);
+  font-size: var(--t-m);
+  font-weight: 400;
   color: var(--ink);
-  line-height: 1.35;
+  line-height: 1.3;
 }
 .cb-side {
   flex: 0 0 auto;
@@ -606,8 +630,18 @@
   border-bottom: 1px solid var(--hair);
 }
 .overlay-title {
+  font-family: var(--font-display);
   font-size: var(--t-m);
-  font-weight: var(--w-light);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+/* backlit numerals (champagne illumination, subtle) */
+.numeral-value,
+.ro-val,
+.fi-done-count,
+.tr-count {
+  text-shadow: var(--numeral-glow);
 }
 .overlay-close {
   font-size: var(--t-xs);

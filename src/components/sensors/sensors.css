@@ -27,8 +27,10 @@
   gap: var(--s-3);
 }
 .sensor-name {
+  font-family: var(--font-display);
   font-size: var(--t-m);
-  font-weight: var(--w-light);
+  font-weight: 500;
+  letter-spacing: 0.01em;
 }
 .sensor-no {
   font-size: var(--t-xs);
@@ -307,10 +309,10 @@
   background: var(--accent);
 }
 .fi-bug {
-  background: #c9923f;
+  background: #b5705a; /* warm copper — distinct from champagne */
 }
 .fi-debt {
-  background: #9a9384;
+  background: #8a8f98; /* cool pewter */
 }
 .fi-stage-done {
   align-items: flex-start;
@@ -493,7 +495,7 @@
 }
 .radar-blip.radar-high {
   fill: var(--accent);
-  filter: drop-shadow(0 0 5px rgba(224, 122, 63, 0.5));
+  filter: drop-shadow(0 0 5px rgba(201, 171, 115, 0.5));
 }
 .radar-blip.radar-med {
   fill: var(--ink);
