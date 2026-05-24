@@ -47,3 +47,15 @@ jobs:
             playwright-report/
             test-results/
           retention-days: 14
+
+  dependency-review:
+    # On PRs only: blocks a PR that introduces a dependency with a known high/critical
+    # advisory, before it can reach main. Complements Dependabot (which alerts on what's
+    # already in) by gating what's coming in. Reviews only the PR's dependency diff.
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: high
