@@ -77,6 +77,10 @@ test('strategy triads show per-triad interpretations from different groups', asy
   expect(await page.locator('.overlay .triad-interp-row').count()).toBeGreaterThanOrEqual(8);
   await expect(page.locator('.overlay .triad-interp-by').first()).not.toBeEmpty();
 
+  // the centroid dot is hoverable — it reveals the quality strengths behind its position
+  await page.locator('.overlay .tc-dot-hit').first().hover();
+  await expect(page.locator('.overlay .tc-tip').first()).toBeVisible();
+
   await page.keyboard.press('Escape');
   await expect(page.locator('.overlay')).toHaveCount(0);
 });

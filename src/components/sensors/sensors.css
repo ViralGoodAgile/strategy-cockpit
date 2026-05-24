@@ -284,6 +284,11 @@
 .tc-centroid {
   fill: var(--accent);
 }
+.tc-centroid-on {
+  stroke: var(--ink);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
 .tc-pole {
   fill: var(--ink-2);
   font-size: 11px;
