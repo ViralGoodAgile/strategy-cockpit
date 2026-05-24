@@ -25,7 +25,7 @@ function blip(im: Impediment) {
 // A ship's-radar of impediments. Range = organisational scope; high-severity blips
 // glow in the accent. Each blip is hoverable: it highlights and names itself, so you can
 // tell which impediment is which (the scope is too dense for permanent labels).
-export function RadarScope({ set }: { set: RadarSet }) {
+export function RadarScope({ set, onInspect }: { set: RadarSet; onInspect?: () => void }) {
   const [hover, setHover] = useState<string | null>(null);
   const hovered = hover ? set.impediments.find((i) => i.id === hover) : null;
 
@@ -50,7 +50,10 @@ export function RadarScope({ set }: { set: RadarSet }) {
           <g
             key={im.id}
             className="radar-blip-hit"
-            onMouseEnter={() => setHover(im.id)}
+            onMouseEnter={() => {
+              onInspect?.();
+              setHover(im.id);
+            }}
             onMouseLeave={() => setHover((h) => (h === im.id ? null : h))}
           >
             <title>{`${im.label} · ${im.level} · ${im.severity}`}</title>

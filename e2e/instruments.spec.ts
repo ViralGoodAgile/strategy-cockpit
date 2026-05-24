@@ -81,6 +81,38 @@ test('time travel: the radar view scrubs from emerging to "now"', async ({ page 
   expect(now).toBeGreaterThan(early);
 });
 
+test('time travel: hovering a dot pauses the movie (incl. your own), with no shake', async ({
+  page,
+}) => {
+  // signify a story so there's an "own" (captured) dot to inspect later
+  await page.locator('.hud-signify').click();
+  await page.locator('.sig-story').fill('We ran a small probe before deciding this week.');
+  await page.locator('.sig-svg').click({ position: { x: 150, y: 150 } });
+  await page.locator('.sig-submit').click();
+  await page.locator('.author-back').click();
+
+  // open the Cynefin triads movie — it autoplays
+  await page.locator('.inst', { hasText: 'Cynefin triads' }).first().click();
+  await expect(page.locator('.overlay .toc-play')).toContainText('pause');
+  await page.locator('.overlay .toc-speed', { hasText: '0.5×' }).click(); // slow it to hover safely
+
+  // hovering a dot pauses the movie, so dots stop moving under the cursor (the shake fix)
+  await page.locator('.overlay .tc-dot').first().hover({ force: true });
+  await expect(page.locator('.overlay .toc-play')).toContainText('play');
+
+  // now inspect your OWN dot at "now": its caption shows and stays put across >1 frame
+  const scrub = page.locator('.overlay .toc-scrub');
+  await scrub.focus();
+  await page.keyboard.press('End');
+  await expect(page.locator('.overlay .toc-asof')).toHaveText('now');
+  await page.locator('.overlay .tc-dot-captured').first().hover({ force: true });
+  const role = page.locator('.overlay .tc-story .tc-role').first();
+  await expect(role).toBeVisible();
+  await page.waitForTimeout(1300); // longer than a frame — would flicker if still advancing
+  await expect(role).toBeVisible();
+  await expect(page.locator('.overlay .toc-play')).toContainText('play');
+});
+
 test('the system model expands and switches among the seed CLDs', async ({ page }) => {
   await page.locator('.inst', { hasText: 'System model' }).first().click();
   await expect(page.locator('.overlay-title')).toHaveText('System Model');
