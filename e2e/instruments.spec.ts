@@ -229,3 +229,25 @@ test('signify: every triad allows "not applicable" without a story or placement'
   await page.locator('.sig-submit').click();
   await expect(page.locator('.author-fresh')).toContainText('1 captured');
 });
+
+test('the colour-scheme switcher re-themes the cockpit (incl. colour-blind-safe)', async ({ page }) => {
+  const html = page.locator('html');
+  await expect(html).toHaveAttribute('data-theme', 'obsidian');
+  const tlRed = () =>
+    page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--tl-red').trim());
+  const obsidianRed = await tlRed();
+
+  // colour-safe remaps the red/green status palette
+  await page.locator('.thm-colorsafe').click();
+  await expect(html).toHaveAttribute('data-theme', 'colorsafe');
+  expect(await tlRed()).not.toBe(obsidianRed);
+
+  // slate switches the field/accent
+  await page.locator('.thm-slate').click();
+  await expect(html).toHaveAttribute('data-theme', 'slate');
+
+  // persists across reload
+  await page.reload();
+  await expect(html).toHaveAttribute('data-theme', 'slate');
+  await page.locator('.thm-obsidian').click();
+});

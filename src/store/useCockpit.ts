@@ -8,6 +8,8 @@ import type { ScenarioId } from '../data/scenarios';
 
 // Which screen the cockpit is showing.
 export type CockpitMode = 'cockpit' | 'author' | 'signify';
+// Colour scheme (data-theme on <html>); 'colorsafe' is colour-blind-safe.
+export type ThemeId = 'obsidian' | 'slate' | 'colorsafe';
 // Which instrument is expanded into a detail overlay (null = none).
 export type DetailView =
   | 'mandate'
@@ -38,6 +40,7 @@ interface CockpitState {
   seeded: boolean; // has first-visit seeding happened (so we never re-seed)
   scenario: ScenarioId; // demo scenario driving loop-closure / challenge / hygiene
   capturedStories: CapturedStory[]; // stories signified by survey takers (/signify)
+  theme: ThemeId; // colour scheme
 
   updateSection: <K extends keyof Strategy>(k: K, patch: Partial<Strategy[K]>) => void;
   setDraft: (s: Strategy) => void;
@@ -52,6 +55,7 @@ interface CockpitState {
   setScenario: (s: ScenarioId) => void; // switch the demo scenario
   captureStory: (s: Omit<CapturedStory, 'id' | 'at'>) => void; // a survey taker signifies a story
   clearCaptured: () => void; // wipe captured stories (demo reset)
+  setTheme: (t: ThemeId) => void; // switch colour scheme
   seed: () => void; // first-visit: load the example as v0.1 so the cockpit is alive
   reset: () => void; // "start fresh": wipe to a blank strategy and open the editor
 }
@@ -75,6 +79,7 @@ export const useCockpit = create<CockpitState>()(
       seeded: false,
       scenario: 'baseline',
       capturedStories: [],
+      theme: 'obsidian',
 
       updateSection: (k, patch) =>
         set((s) => ({ draft: { ...s.draft, [k]: { ...s.draft[k], ...patch } } })),
@@ -112,6 +117,13 @@ export const useCockpit = create<CockpitState>()(
         })),
       clearCaptured: () => set({ capturedStories: [] }),
 
+      // Apply the data-theme attribute synchronously (before the re-render) so colour
+      // tokens — including the loop arrows that read them — update in the same frame.
+      setTheme: (theme) => {
+        if (typeof document !== 'undefined') document.documentElement.dataset.theme = theme;
+        set({ theme });
+      },
+
       // First visit only: seed the example as v0.1 so the cockpit opens alive, not
       // "offline". A returning visitor (already has versions) is just marked seeded.
       seed: () => {
@@ -145,6 +157,7 @@ export const useCockpit = create<CockpitState>()(
         closures: s.closures,
         seeded: s.seeded,
         capturedStories: s.capturedStories,
+        theme: s.theme,
       }),
     },
   ),

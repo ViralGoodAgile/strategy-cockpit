@@ -130,6 +130,34 @@
   background: var(--accent-wash);
   color: var(--accent);
 }
+
+/* --- colour-scheme swatches --- */
+.hud-theme {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.thm {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid var(--hair);
+  cursor: pointer;
+  padding: 0;
+}
+.thm-on {
+  box-shadow: 0 0 0 2px var(--accent);
+  border-color: var(--accent);
+}
+.thm-obsidian {
+  background: #c9ab73;
+}
+.thm-slate {
+  background: #a9b8cc;
+}
+.thm-colorsafe {
+  background: linear-gradient(135deg, #4c9be8 50%, #e0772e 50%);
+}
 .hud-author,
 .hud-signify {
   color: var(--accent);

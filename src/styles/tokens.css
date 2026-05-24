@@ -29,6 +29,12 @@
   --tl-amber: #c9a25c;
   --tl-red: #b65f61;
 
+  /* work-item type colours (flow board) — tokenised so themes can re-map them */
+  --type-feature: var(--ink);
+  --type-enterprise: var(--accent);
+  --type-bug: #b5705a; /* warm copper */
+  --type-debt: #8a8f98; /* cool pewter */
+
   /* --- lines, bezels, glow (material via light, low opacity) --- */
   --hair: rgba(255, 255, 255, 0.10);
   --bezel: rgba(255, 255, 255, 0.14);          /* fine framing line on a dial */
@@ -63,4 +69,30 @@
   --shadow: var(--glow);
   --radius: 14px;          /* dials carry a soft, machined radius */
   --measure: 60ch;
+}
+
+/* --- Theme: Slate (cooler field + steel accent for brighter rooms) --- */
+[data-theme='slate'] {
+  --bg: #13161c;
+  --bg-2: #20242d;
+  --paper: #13161c;
+  --accent: #a9b8cc; /* cool steel instead of champagne */
+  --accent-dim: #5a6a7e;
+  --accent-wash: rgba(169, 184, 204, 0.1);
+  --accent-glow: 0 0 16px rgba(169, 184, 204, 0.28);
+  --numeral-glow: 0 0 18px rgba(169, 184, 204, 0.13);
+}
+
+/* --- Theme: Colour-safe (deuteranopia/protanopia-safe) --- */
+/* Red/green is the classic failure, so loop status becomes blue (good) / yellow (partial)
+   / orange (stop), and work-item types use a blue–orange–grey set. Loop "stop" also keeps
+   its dashed/static treatment, so colour is never the only cue. */
+[data-theme='colorsafe'] {
+  --tl-green: #4c9be8; /* blue = flowing/good */
+  --tl-amber: #e8c14a; /* yellow = partial */
+  --tl-red: #e0772e; /* orange = stopped */
+  --type-feature: #e6e9ec;
+  --type-enterprise: #4c9be8;
+  --type-bug: #e0772e;
+  --type-debt: #9aa0a8;
 }

@@ -15,12 +15,18 @@ import { LoopNode, type LoopNodeData } from './LoopNode';
 // Register the single custom node type once (must be stable across renders).
 const nodeTypes = { loop: LoopNode };
 
-// Jewel-tone flow status (mirrors tokens.css --tl-*): emerald flowing, topaz slowing, garnet stopped.
-const COLOR: Record<Closure, string> = {
-  flow: '#6fa987',
-  partial: '#c9a25c',
-  stop: '#b65f61',
-};
+// Flow-status colours come from the live theme tokens (--tl-*) so they re-colour with the
+// colour scheme (incl. the colour-blind-safe one). React Flow edges take an inline stroke,
+// so we resolve the computed custom properties rather than hard-coding hex.
+function statusColors(): Record<Closure, string> {
+  const cs = typeof window !== 'undefined' ? getComputedStyle(document.documentElement) : null;
+  const v = (name: string, fallback: string) => cs?.getPropertyValue(name).trim() || fallback;
+  return {
+    flow: v('--tl-green', '#6fa987'),
+    partial: v('--tl-amber', '#c9a25c'),
+    stop: v('--tl-red', '#b65f61'),
+  };
+}
 
 // Fixed loop layout — the eight nodes the spec draws, positioned as a rectangle.
 const NODES: Node<LoopNodeData>[] = [
@@ -54,6 +60,9 @@ export function LoopDiagram() {
   const setClosure = useCockpit((s) => s.setClosure);
   const versions = useCockpit((s) => s.versions);
   const scenario = useCockpit((s) => s.scenario);
+  const theme = useCockpit((s) => s.theme);
+  // Recompute the status palette whenever the theme changes.
+  const COLOR = useMemo(() => statusColors(), [theme]);
 
   // The return path (Reality → Intent) is EVIDENCE-DRIVEN, not manual: it closes only
   // if Intent was revised after a real outcome shift (Loop.Closure) — or as a demo scenario dictates.
@@ -84,7 +93,7 @@ export function LoopDiagram() {
           markerEnd: { type: MarkerType.ArrowClosed, color, width: 14, height: 14 },
         };
       }),
-    [closures, returnState],
+    [closures, returnState, COLOR],
   );
 
   // Click a FORWARD arrow to cycle: flow -> partial -> stop -> flow. The return arrow
