@@ -1,0 +1,31 @@
+version: 2
+updates:
+  # npm dependencies — weekly PRs for patches/minors/security fixes.
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    groups:
+      # Batch low-risk dev tooling into one PR to cut noise.
+      dev-tooling:
+        dependency-type: "development"
+        update-types: ["minor", "patch"]
+    ignore:
+      # Deliberate pins (test pipeline): keep Vitest on 3.x, Vite on 5.x, and
+      # @amiceli/vitest-cucumber on 5.x. Vitest 4 / Vite 6 break `npm ci` on Linux
+      # (esbuild netbsd-arm64) and vitest-cucumber 6 requires Vitest 4. Block majors;
+      # still allow security/minor/patch within the pinned majors.
+      - dependency-name: "vitest"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "vite"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@amiceli/vitest-cucumber"
+        update-types: ["version-update:semver-major"]
+
+  # GitHub Actions — keeps the SHA pins current (Dependabot bumps SHA + version comment).
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
