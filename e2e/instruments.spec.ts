@@ -69,6 +69,9 @@ test('product outcomes show AARRR/HEART lenses, a customer triad and unserved cu
   await expect(lenses.nth(1)).toContainText('HEART');
   expect(await lenses.nth(0).locator('.po-metric').count()).toBe(5);
   expect(await lenses.nth(1).locator('.po-metric').count()).toBe(5);
+  // each metric shows a prominent multi-point SIGNAL arrow + a small last-point arrow
+  expect(await lenses.nth(0).locator('.po-metric .mtrend-run').count()).toBe(5);
+  await expect(lenses.nth(0).locator('.po-metric').first().locator('.mtrend-last')).toBeVisible();
 
   // customer sense-making triad renders and reports its lean
   await expect(tile.locator('.po-triad-chart .tc-svg')).toBeVisible();
@@ -103,8 +106,8 @@ test('the reliability instrument expands to the production subset, shown as tren
   await expect(page.locator('.overlay')).toContainText('Uptime');
   await expect(page.locator('.overlay')).toContainText('MTTR');
   expect(await page.locator('.overlay .numeral').count()).toBeGreaterThan(2);
-  // …each with a direction-of-travel mark (trend, not a pass/fail target)
-  expect(await page.locator('.overlay .trend').count()).toBeGreaterThan(0);
+  // …each with a prominent multi-point signal arrow (trend, not a pass/fail target)
+  expect(await page.locator('.overlay .mtrend-run').count()).toBeGreaterThan(2);
 
   await page.keyboard.press('Escape');
   await expect(page.locator('.overlay')).toHaveCount(0);

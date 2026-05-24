@@ -212,10 +212,11 @@ export const BACKLOG: Backlog = {
 const DORA: DoraSet = {
   maps: ['quantification'],
   metrics: [
-    { key: 'deployFreq', label: 'Deploy frequency', display: '2.3 / day', value: 2.3, prior: 1.8, unit: '/day', better: 'higher' },
-    { key: 'leadTime', label: 'Lead time for changes', display: '31 h', value: 31, prior: 27, unit: 'h', better: 'lower' },
-    { key: 'changeFail', label: 'Change failure rate', display: '14 %', value: 14, prior: 18, unit: '%', better: 'lower' },
-    { key: 'mttr', label: 'Mean time to restore', display: '4.2 h', value: 4.2, prior: 5.1, unit: 'h', better: 'lower' },
+    { key: 'deployFreq', label: 'Deploy frequency', display: '2.3 / day', value: 2.3, prior: 1.8, unit: '/day', better: 'higher', series: [1.5, 1.7, 1.6, 1.9, 1.8, 2.3] },
+    // Lead time: the run is improving (38h → 31h) even though the last point ticked up.
+    { key: 'leadTime', label: 'Lead time for changes', display: '31 h', value: 31, prior: 27, unit: 'h', better: 'lower', series: [38, 35, 33, 30, 27, 31] },
+    { key: 'changeFail', label: 'Change failure rate', display: '14 %', value: 14, prior: 18, unit: '%', better: 'lower', series: [22, 20, 19, 18, 18, 14] },
+    { key: 'mttr', label: 'Mean time to restore', display: '4.2 h', value: 4.2, prior: 5.1, unit: 'h', better: 'lower', series: [6.0, 5.6, 5.3, 5.0, 5.1, 4.2] },
   ],
 };
 
@@ -224,9 +225,10 @@ const DATADOG: DataDogSet = {
   lag: true,
   maps: ['quantification'],
   metrics: [
-    { key: 'p95', label: 'p95 latency', display: '412 ms', value: 412, prior: 388, unit: 'ms', better: 'lower' },
-    { key: 'errorRate', label: 'Error rate', display: '0.7 %', value: 0.7, prior: 0.9, unit: '%', better: 'lower' },
-    { key: 'uptime', label: 'Uptime (30d)', display: '99.94 %', value: 99.94, prior: 99.9, unit: '%', better: 'higher' },
+    // p95: the run is down (430ms → 412ms) despite a worse last point — don't react to the tick.
+    { key: 'p95', label: 'p95 latency', display: '412 ms', value: 412, prior: 388, unit: 'ms', better: 'lower', series: [430, 420, 405, 395, 388, 412] },
+    { key: 'errorRate', label: 'Error rate', display: '0.7 %', value: 0.7, prior: 0.9, unit: '%', better: 'lower', series: [1.2, 1.0, 0.95, 0.9, 0.9, 0.7] },
+    { key: 'uptime', label: 'Uptime (30d)', display: '99.94 %', value: 99.94, prior: 99.9, unit: '%', better: 'higher', series: [99.85, 99.88, 99.9, 99.92, 99.9, 99.94] },
   ],
 };
 
@@ -427,20 +429,22 @@ const OUTCOMES: OutcomeSet = {
   maps: ['intent', 'quantification', 'learning'],
   // PIRATE / AARRR — the growth funnel, acquisition through revenue.
   aarrr: [
-    { key: 'acq', label: 'Acquisition · new workspaces / wk', display: '142', value: 142, prior: 118, unit: '', better: 'higher' },
-    { key: 'act', label: 'Activation · reached first artefact', display: '64 %', value: 64, prior: 57, unit: '%', better: 'higher' },
-    { key: 'ret', label: 'Retention · 30-day', display: '62 %', value: 62, prior: 58, unit: '%', better: 'higher' },
-    { key: 'ref', label: 'Referral · invite k-factor', display: '0.38', value: 0.38, prior: 0.29, unit: '', better: 'higher' },
-    { key: 'rev', label: 'Revenue · net revenue retention', display: '112 %', value: 112, prior: 104, unit: '%', better: 'higher' },
+    { key: 'acq', label: 'Acquisition · new workspaces / wk', display: '142', value: 142, prior: 118, unit: '', better: 'higher', series: [96, 108, 115, 120, 118, 142] },
+    { key: 'act', label: 'Activation · reached first artefact', display: '64 %', value: 64, prior: 57, unit: '%', better: 'higher', series: [48, 52, 55, 58, 57, 64] },
+    { key: 'ret', label: 'Retention · 30-day', display: '62 %', value: 62, prior: 58, unit: '%', better: 'higher', series: [55, 57, 59, 61, 58, 62] },
+    { key: 'ref', label: 'Referral · invite k-factor', display: '0.38', value: 0.38, prior: 0.29, unit: '', better: 'higher', series: [0.22, 0.26, 0.3, 0.31, 0.29, 0.38] },
+    { key: 'rev', label: 'Revenue · net revenue retention', display: '112 %', value: 112, prior: 104, unit: '%', better: 'higher', series: [98, 101, 103, 106, 104, 112] },
   ],
   // HEART — experience quality. Retention is the shared anchor with AARRR (shown in both
   // lenses on purpose: the frameworks overlap there).
   heart: [
-    { key: 'hap', label: 'Happiness · CSAT', display: '4.3 / 5', value: 4.3, prior: 4.1, unit: '', better: 'higher' },
-    { key: 'eng', label: 'Engagement · DAU/WAU stickiness', display: '0.46', value: 0.46, prior: 0.41, unit: '', better: 'higher' },
-    { key: 'ado', label: 'Adoption · new-collab', display: '21 %', value: 21, prior: 12, unit: '%', better: 'higher' },
-    { key: 'hret', label: 'Retention · 30-day (shared)', display: '62 %', value: 62, prior: 58, unit: '%', better: 'higher' },
-    { key: 'tsk', label: 'Task success · completion', display: '88 %', value: 88, prior: 83, unit: '%', better: 'higher' },
+    { key: 'hap', label: 'Happiness · CSAT', display: '4.3 / 5', value: 4.3, prior: 4.1, unit: '', better: 'higher', series: [3.9, 4.0, 4.2, 4.1, 4.1, 4.3] },
+    // Engagement: the last point ticked up, but the run is sliding (0.52 → 0.46) — the
+    // prominent signal arrow points down; don't celebrate the latest bar.
+    { key: 'eng', label: 'Engagement · DAU/WAU stickiness', display: '0.46', value: 0.46, prior: 0.41, unit: '', better: 'higher', series: [0.52, 0.5, 0.48, 0.44, 0.41, 0.46] },
+    { key: 'ado', label: 'Adoption · new-collab', display: '21 %', value: 21, prior: 12, unit: '%', better: 'higher', series: [6, 9, 11, 13, 12, 21] },
+    { key: 'hret', label: 'Retention · 30-day (shared)', display: '62 %', value: 62, prior: 58, unit: '%', better: 'higher', series: [55, 57, 59, 61, 58, 62] },
+    { key: 'tsk', label: 'Task success · completion', display: '88 %', value: 88, prior: 83, unit: '%', better: 'higher', series: [78, 80, 82, 84, 83, 88] },
   ],
   customerTriad: CUSTOMER_TRIAD,
   // Prioritised-but-unserved CUSTOMER jobs-to-be-done — the demand the strategy has
@@ -480,10 +484,10 @@ const OUTCOMES: OutcomeSet = {
 const RELIABILITY: ReliabilitySet = {
   maps: ['durability', 'quantification'],
   metrics: [
-    { key: 'up', label: 'Uptime · 30-day', display: '99.95 %', value: 99.95, prior: 99.91, unit: '%', better: 'higher' },
-    { key: 'mttr', label: 'MTTR', display: '38 min', value: 38, prior: 52, unit: ' min', better: 'lower' },
-    { key: 'inc', label: 'Incidents / wk', display: '1.2', value: 1.2, prior: 1.8, unit: '', better: 'lower' },
-    { key: 'err', label: 'Error rate', display: '0.21 %', value: 0.21, prior: 0.34, unit: '%', better: 'lower' },
+    { key: 'up', label: 'Uptime · 30-day', display: '99.95 %', value: 99.95, prior: 99.91, unit: '%', better: 'higher', series: [99.82, 99.86, 99.9, 99.93, 99.91, 99.95] },
+    { key: 'mttr', label: 'MTTR', display: '38 min', value: 38, prior: 52, unit: ' min', better: 'lower', series: [70, 62, 55, 48, 52, 38] },
+    { key: 'inc', label: 'Incidents / wk', display: '1.2', value: 1.2, prior: 1.8, unit: '', better: 'lower', series: [2.6, 2.2, 1.9, 1.6, 1.8, 1.2] },
+    { key: 'err', label: 'Error rate', display: '0.21 %', value: 0.21, prior: 0.34, unit: '%', better: 'lower', series: [0.5, 0.42, 0.38, 0.3, 0.34, 0.21] },
   ],
 };
 

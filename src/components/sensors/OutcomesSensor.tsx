@@ -1,6 +1,6 @@
 import type { Signal } from '../../domain/types';
 import type { OutcomeSet, Triad } from '../../domain/sensors';
-import { Numeral, metricTrend } from '../common/Numeral';
+import { Numeral } from '../common/Numeral';
 import { SensorModule } from './SensorModule';
 import { TriadChart } from './TriadChart';
 
@@ -39,13 +39,13 @@ export function OutcomesSensor({ signal }: { signal: Signal<OutcomeSet> }) {
           <div className="po-detail-head">Acquisition → Revenue · AARRR</div>
           <div className="outcomes-grid">
             {aarrr.map((m) => (
-              <Numeral key={m.key} value={m.display} label={m.label} trend={metricTrend(m)} />
+              <Numeral key={m.key} value={m.display} label={m.label} metric={m} />
             ))}
           </div>
           <div className="po-detail-head">Experience · HEART</div>
           <div className="outcomes-grid">
             {heart.map((m) => (
-              <Numeral key={m.key} value={m.display} label={m.label} trend={metricTrend(m)} />
+              <Numeral key={m.key} value={m.display} label={m.label} metric={m} />
             ))}
           </div>
         </div>

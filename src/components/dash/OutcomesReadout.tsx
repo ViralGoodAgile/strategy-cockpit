@@ -1,8 +1,7 @@
 import { OUTCOMES_SIGNAL } from '../../data/sensorData';
 import type { Metric, Triad } from '../../domain/sensors';
 import { useCockpit } from '../../store/useCockpit';
-import { metricTrend } from '../common/Numeral';
-import { TrendMark } from '../common/TrendMark';
+import { MetricTrend } from '../common/MetricTrend';
 import { TriadChart } from '../sensors/TriadChart';
 import { Instrument } from './Instrument';
 
@@ -23,7 +22,7 @@ function Lens({ title, metrics }: { title: string; metrics: Metric[] }) {
           <li className="po-metric" key={m.key}>
             <span className="po-m-label">{m.label}</span>
             <span className="po-m-val num">{m.display}</span>
-            <TrendMark trend={metricTrend(m)} />
+            <MetricTrend metric={m} />
           </li>
         ))}
       </ul>

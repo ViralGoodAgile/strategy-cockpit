@@ -42,3 +42,9 @@ Feature: Product outcomes
     Then each is phrased as a customer job-to-be-done
     And each carries evidence
     And they are uniquely ranked
+
+  Scenario: metrics carry a multi-point series so the signal resists last-point tampering
+    Given the product outcomes
+    Then every metric has a series of at least three points
+    And each series ends with the prior then the current value
+    And at least one metric's signal trend disagrees with its last-point delta
