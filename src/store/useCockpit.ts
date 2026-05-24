@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware';
 import type { Closure, QualityId, Strategy, StrategyVersion } from '../domain/types';
 import type { CapturedStory } from '../domain/sensors';
 import { removeCapturedFrom, updateCapturedIn, type CapturedEdit } from '../mirrors/capturedTriads';
+import { DEFAULT_SEGMENTS } from '../data/segments';
 import { emptyStrategy } from '../domain/qualities';
 import { SAMPLE_STRATEGY } from '../data/sample';
 import type { ScenarioId } from '../data/scenarios';
@@ -42,6 +43,7 @@ interface CockpitState {
   scenario: ScenarioId; // demo scenario driving loop-closure / challenge / hygiene
   capturedStories: CapturedStory[]; // stories signified by survey takers (/signify)
   theme: ThemeId; // colour scheme
+  segments: string[]; // configurable "whose situation" list for /signify (C4: segments only)
 
   updateSection: <K extends keyof Strategy>(k: K, patch: Partial<Strategy[K]>) => void;
   setDraft: (s: Strategy) => void;
@@ -58,6 +60,8 @@ interface CockpitState {
   updateCaptured: (id: string, patch: CapturedEdit) => void; // edit a captured story in place
   deleteCaptured: (id: string) => void; // remove a single captured story
   clearCaptured: () => void; // wipe captured stories (demo reset)
+  addSegment: (name: string) => void; // add a "whose situation" segment
+  removeSegment: (name: string) => void; // remove a segment
   setTheme: (t: ThemeId) => void; // switch colour scheme
   seed: () => void; // first-visit: load the example as v0.1 so the cockpit is alive
   reset: () => void; // "start fresh": wipe to a blank strategy and open the editor
@@ -83,6 +87,7 @@ export const useCockpit = create<CockpitState>()(
       scenario: 'baseline',
       capturedStories: [],
       theme: 'obsidian',
+      segments: [...DEFAULT_SEGMENTS],
 
       updateSection: (k, patch) =>
         set((s) => ({ draft: { ...s.draft, [k]: { ...s.draft[k], ...patch } } })),
@@ -123,6 +128,14 @@ export const useCockpit = create<CockpitState>()(
       deleteCaptured: (id) =>
         set((st) => ({ capturedStories: removeCapturedFrom(st.capturedStories, id) })),
       clearCaptured: () => set({ capturedStories: [] }),
+
+      addSegment: (name) =>
+        set((st) => {
+          const t = name.trim();
+          return t && !st.segments.includes(t) ? { segments: [...st.segments, t] } : {};
+        }),
+      removeSegment: (name) =>
+        set((st) => ({ segments: st.segments.filter((s) => s !== name) })),
 
       // Apply the data-theme attribute synchronously (before the re-render) so colour
       // tokens — including the loop arrows that read them — update in the same frame.
@@ -165,6 +178,7 @@ export const useCockpit = create<CockpitState>()(
         seeded: s.seeded,
         capturedStories: s.capturedStories,
         theme: s.theme,
+        segments: s.segments,
       }),
     },
   ),

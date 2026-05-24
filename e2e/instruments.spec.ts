@@ -383,6 +383,23 @@ test('signify: every triad allows "not applicable" without a story or placement'
   await expect(page.locator('.author-fresh')).toContainText('1 captured');
 });
 
+test('signify: the "whose situation" segment list is configurable', async ({ page }) => {
+  await page.locator('.hud-signify').click();
+  const select = page.locator('.sig-role');
+  // a custom segment isn't offered yet
+  await expect(select.locator('option', { hasText: 'beta cohort' })).toHaveCount(0);
+
+  // open the editor and add one — it appears in the picker
+  await page.locator('.sig-seg-toggle').click();
+  await page.locator('.sig-seg-input').fill('beta cohort');
+  await page.locator('.sig-seg-addbtn').click();
+  await expect(select.locator('option', { hasText: 'beta cohort' })).toHaveCount(1);
+
+  // remove a default segment — it leaves the picker
+  await page.locator('.sig-seg-chip', { hasText: 'evaluators' }).locator('.sig-seg-del').click();
+  await expect(select.locator('option', { hasText: 'evaluators' })).toHaveCount(0);
+});
+
 test('signify: a captured story can be edited, and deleted only after confirming', async ({
   page,
 }) => {
