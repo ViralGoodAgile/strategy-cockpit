@@ -72,6 +72,12 @@ test('product outcomes show AARRR/HEART lenses, a customer triad and unserved cu
   // each metric shows a prominent multi-point SIGNAL arrow + a small last-point arrow
   expect(await lenses.nth(0).locator('.po-metric .mtrend-run').count()).toBe(5);
   await expect(lenses.nth(0).locator('.po-metric').first().locator('.mtrend-last')).toBeVisible();
+  // the headline systems-thinking case: Engagement's signal disagrees with its last point —
+  // the prominent arrow points down (the run is sliding) while the last-point arrow points up.
+  const eng = lenses.nth(1).locator('.po-metric', { hasText: 'Engagement' });
+  await expect(eng.locator('.mtrend')).toHaveClass(/mtrend-diverge/);
+  await expect(eng.locator('.mtrend-run')).toHaveClass(/trend-down/);
+  await expect(eng.locator('.mtrend-last')).toHaveClass(/trend-up/);
 
   // customer sense-making triad renders and reports its lean
   await expect(tile.locator('.po-triad-chart .tc-svg')).toBeVisible();

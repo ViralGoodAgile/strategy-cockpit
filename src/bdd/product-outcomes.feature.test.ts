@@ -109,4 +109,17 @@ describeFeature(feature, ({ ScenarioOutline, Scenario }) => {
       expect(disagrees).toBe(true);
     });
   });
+
+  Scenario('the engagement signal warns against celebrating the latest bar', ({ Given, Then, And }) => {
+    const eng = O.heart.find((m) => m.key === 'eng');
+    Given('the product outcomes', () => {
+      expect(eng).toBeTruthy();
+    });
+    Then('the engagement signal trend is down', () => {
+      expect(metricRunTrend(eng!).direction).toBe('down');
+    });
+    And('its last-point delta is up', () => {
+      expect(metricTrend(eng!).direction).toBe('up');
+    });
+  });
 });
