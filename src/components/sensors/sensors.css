@@ -397,16 +397,16 @@
   display: inline-block;
 }
 .fi-feature {
-  background: var(--ink);
+  background: var(--type-feature);
 }
 .fi-enterprise {
-  background: var(--accent);
+  background: var(--type-enterprise);
 }
 .fi-bug {
-  background: #b5705a; /* warm copper — distinct from champagne */
+  background: var(--type-bug);
 }
 .fi-debt {
-  background: #8a8f98; /* cool pewter */
+  background: var(--type-debt);
 }
 .fi-stage-done {
   align-items: flex-start;

@@ -15,6 +15,7 @@ import { ReliabilityReadout } from './dash/ReliabilityReadout';
 import { HygieneReadout } from './dash/HygieneReadout';
 import { ChallengeBar } from './dash/ChallengeBar';
 import { ScenarioSelector } from './dash/ScenarioSelector';
+import { ThemeSelector } from './dash/ThemeSelector';
 import { BuildBadge } from './dash/BuildBadge';
 import { DetailOverlay } from './dash/DetailOverlay';
 import { AuthorMode } from './dash/AuthorMode';
@@ -52,6 +53,7 @@ export function Cockpit() {
           )}
         </div>
         {gateOpen && <ScenarioSelector />}
+        <ThemeSelector />
         <BuildBadge />
         {gateOpen && (
           <button className="hud-signify" onClick={() => setMode('signify')}>
