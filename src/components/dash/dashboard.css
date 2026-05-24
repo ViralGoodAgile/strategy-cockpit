@@ -832,6 +832,15 @@
   font-size: var(--t-xs);
   color: var(--ink-2);
 }
+.author-fresh {
+  margin-left: auto;
+  font-size: var(--t-xs);
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+}
+.author-fresh:hover {
+  color: var(--accent);
+}
 .author-body {
   flex: 1;
   min-height: 0;

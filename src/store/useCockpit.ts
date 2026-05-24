@@ -30,6 +30,7 @@ interface CockpitState {
   mode: CockpitMode; // cockpit instrument cluster vs author editor
   detail: DetailView; // instrument expanded into an overlay
   systemModelIndex: number; // which of the seed CLDs is selected
+  seeded: boolean; // has first-visit seeding happened (so we never re-seed)
 
   updateSection: <K extends keyof Strategy>(k: K, patch: Partial<Strategy[K]>) => void;
   setDraft: (s: Strategy) => void;
@@ -41,6 +42,8 @@ interface CockpitState {
   setMode: (m: CockpitMode) => void;
   setDetail: (d: DetailView) => void;
   setSystemModelIndex: (i: number) => void;
+  seed: () => void; // first-visit: load the example as v0.1 so the cockpit is alive
+  reset: () => void; // "start fresh": wipe to a blank strategy and open the editor
 }
 
 // Next version label: 0.1, 0.2, ... by count of existing versions.
@@ -59,6 +62,7 @@ export const useCockpit = create<CockpitState>()(
       mode: 'cockpit',
       detail: null,
       systemModelIndex: 0,
+      seeded: false,
 
       updateSection: (k, patch) =>
         set((s) => ({ draft: { ...s.draft, [k]: { ...s.draft[k], ...patch } } })),
@@ -85,6 +89,31 @@ export const useCockpit = create<CockpitState>()(
       setMode: (mode) => set({ mode }),
       setDetail: (detail) => set({ detail }),
       setSystemModelIndex: (systemModelIndex) => set({ systemModelIndex }),
+
+      // First visit only: seed the example as v0.1 so the cockpit opens alive, not
+      // "offline". A returning visitor (already has versions) is just marked seeded.
+      seed: () => {
+        if (get().versions.length > 0) {
+          set({ seeded: true });
+          return;
+        }
+        set({ draft: structuredClone(SAMPLE_STRATEGY) });
+        get().saveVersion();
+        set({ seeded: true });
+      },
+
+      // "Start fresh": blank strategy, open the editor. Stays seeded so it won't re-seed.
+      reset: () =>
+        set({
+          draft: emptyStrategy(),
+          versions: [],
+          closures: {},
+          activeQuality: null,
+          selectedTeam: null,
+          detail: null,
+          mode: 'author',
+          seeded: true,
+        }),
     }),
     {
       name: 'strategy-cockpit',
@@ -92,6 +121,7 @@ export const useCockpit = create<CockpitState>()(
         draft: s.draft,
         versions: s.versions,
         closures: s.closures,
+        seeded: s.seeded,
       }),
     },
   ),
