@@ -398,6 +398,34 @@ const OUTCOMES: OutcomeSet = {
     { key: 'stickiness', label: 'DAU/WAU stickiness', display: '0.46', value: 0.46, prior: 0.41, unit: '', better: 'higher' },
     { key: 'sessions', label: 'Sessions / team / wk (telemetry)', display: '5.8', value: 5.8, prior: 5.2, unit: '', better: 'higher' },
   ],
+  // Prioritised-but-unserved customer jobs — the demand the strategy has chosen to
+  // pursue next. Ranked, evidence-backed, jobs not features. (C4: situations, not people.)
+  jobs: [
+    {
+      id: 'j1',
+      rank: 1,
+      job: 'When a teammate joins a project mid-flight, get them productive without a setup call.',
+      evidence: 'New-collab adoption 12 → 21 %, but onboarding drop-off still the top support theme.',
+    },
+    {
+      id: 'j2',
+      rank: 2,
+      job: 'When I return after a week away, see what changed and what needs me — without re-reading everything.',
+      evidence: 'Weak signal: returning-user sessions start with 3+ min of scrolling before first action.',
+    },
+    {
+      id: 'j3',
+      rank: 3,
+      job: 'When I hand work to another team, prove it landed without chasing a status update.',
+      evidence: 'Stickiness 0.41 → 0.46, yet cross-team hand-offs absent from telemetry — a blind spot.',
+    },
+    {
+      id: 'j4',
+      rank: 4,
+      job: "When the data looks wrong, tell whether it's stale or whether reality moved.",
+      evidence: 'Hygiene ledger: two sources aging/stale; trust questions recur in qualitative triads.',
+    },
+  ],
 };
 
 // Exported signals with deliberately varied freshness to exercise the layer.

@@ -110,18 +110,21 @@
   gap: var(--s-2);
 }
 
-/* Three rows now (the user asked for the extra length); Flow owns the whole bottom row.
-   The grid fills the height between HUD and Challenge — still no scroll. */
+/* Four rows now (the user asked for the extra length). Flow owns one full bottom row;
+   Production outcomes earns its own full-width row beneath it, equal in height. Hygiene
+   takes the cell outcomes vacated. The grid fills the height between HUD and Challenge —
+   still no scroll. */
 .dash-grid {
   flex: 1;
   min-height: 0;
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  grid-template-rows: 1fr 1fr 1.05fr;
+  grid-template-rows: 1fr 1fr 1.05fr 1.05fr;
   grid-template-areas:
-    'strategy mandate quant   weak     radar    striads'
-    'loop     system  triads  outcomes hygiene  striads'
-    'flow     flow    flow    flow     flow     flow';
+    'strategy mandate quant   weak    radar   striads'
+    'loop     system  triads  hygiene hygiene striads'
+    'flow     flow    flow    flow    flow    flow'
+    'outcomes outcomes outcomes outcomes outcomes outcomes';
   gap: var(--s-2);
 }
 
@@ -555,6 +558,74 @@
   height: 100%;
   align-content: start;
   gap: var(--s-5);
+}
+
+/* --- production outcomes: full-width row, supply (metrics) beside demand (jobs) --- */
+.orw {
+  display: flex;
+  gap: var(--s-6);
+  height: 100%;
+  min-height: 0;
+}
+.orw-metrics {
+  flex: 1 1 46%;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 1fr;
+  gap: var(--s-2) var(--s-4);
+  align-content: space-between;
+}
+.orw-metrics .numeral-value {
+  font-size: var(--t-m);
+}
+.orw-jobs {
+  flex: 1 1 54%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  min-height: 0;
+  border-left: 1px solid var(--hair);
+  padding-left: var(--s-5);
+}
+.orw-jobs-head {
+  flex: 0 0 auto;
+  font-size: var(--t-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.orw-job-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.orw-job {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-3);
+}
+.orw-rank {
+  flex: 0 0 auto;
+  width: 1.4em;
+  font-size: var(--t-s);
+  color: var(--accent);
+  text-align: center;
+}
+.orw-job-text {
+  font-size: var(--t-s);
+  color: var(--ink);
+  line-height: 1.35;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 /* --- data hygiene (freshness ledger) --- */
