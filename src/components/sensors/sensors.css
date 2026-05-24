@@ -1,0 +1,644 @@
+/* Sensor stack: each sensor a calm module; numerals do the talking. */
+
+.sensor-stack {
+  display: flex;
+  flex-direction: column;
+}
+.sensors-gate {
+  font-size: var(--t-s);
+  color: var(--ink-2);
+  max-width: var(--measure);
+  padding: var(--s-4) 0;
+}
+
+.sensor-stack {
+  gap: var(--s-6);
+}
+.sensor {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+.sensor-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+.sensor-name {
+  font-size: var(--t-m);
+  font-weight: var(--w-light);
+}
+.sensor-no {
+  font-size: var(--t-xs);
+  color: var(--ink-3);
+}
+.sensor-maps {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+  margin-top: calc(-1 * var(--s-2));
+}
+.sensor-body {
+  margin: var(--s-1) 0;
+}
+.sensor-insight {
+  font-size: var(--t-s);
+  color: var(--ink);
+  line-height: 1.5;
+}
+.sensor-insight strong {
+  font-weight: var(--w-regular);
+  color: var(--accent);
+}
+.sensor-warn {
+  display: block;
+  margin-top: var(--s-1);
+  color: var(--accent);
+  font-style: normal;
+  font-size: var(--t-xs);
+}
+.sensor-foot {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+
+/* --- focal numerals --- */
+.numeral {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+}
+.numeral-value {
+  font-size: var(--t-l);
+  line-height: 1;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.numeral-label {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+  letter-spacing: 0.01em;
+}
+
+/* --- triad (Cynefin signification set) --- */
+.triad-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(196px, 1fr));
+  gap: var(--s-5) var(--s-4);
+}
+.triad-chart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+.triad-title {
+  font-size: var(--t-s);
+  color: var(--ink);
+}
+.triad-q {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+  min-height: 2.6em;
+}
+.triad-svg {
+  width: 100%;
+  max-width: 240px;
+  height: auto;
+}
+.triad-lean {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+}
+.triad-lean strong {
+  font-weight: var(--w-regular);
+  color: var(--ink);
+}
+.triad-frame {
+  fill: none;
+  stroke: var(--hair);
+  stroke-width: 1;
+}
+.triad-pole {
+  fill: var(--ink-2);
+  font-size: 10.5px;
+}
+.triad-dot {
+  fill: var(--ink);
+  opacity: 0.55;
+  cursor: pointer;
+}
+.triad-dot:hover {
+  fill: var(--accent);
+  opacity: 1;
+}
+.triad-centroid {
+  fill: var(--accent);
+}
+.triad-centroid-prior {
+  fill: none;
+  stroke: var(--ink-3);
+  stroke-width: 1.4;
+}
+.triad-drift {
+  stroke: var(--ink-3);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+.triad-story {
+  font-size: var(--t-s);
+  color: var(--ink);
+  max-width: var(--measure);
+}
+.triad-role {
+  color: var(--ink-2);
+  font-size: var(--t-xs);
+  margin-right: var(--s-2);
+}
+
+/* --- triad chart (shared by dashboard pod + overlay) --- */
+.tc {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  align-items: center;
+  min-height: 0;
+}
+.tc-svg {
+  width: 100%;
+  max-width: 240px;
+  height: auto;
+}
+.tc-frame {
+  fill: rgba(255, 255, 255, 0.015);
+  stroke: var(--hair);
+  stroke-width: 1;
+}
+.tc-guide {
+  stroke: var(--hair);
+  stroke-width: 1;
+}
+.tc-drift {
+  stroke: var(--accent-dim);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 3;
+}
+.tc-prior {
+  fill: none;
+  stroke: var(--ink-3);
+  stroke-width: 1.5;
+}
+.tc-dot {
+  fill: var(--ink);
+  opacity: 0.5;
+  cursor: pointer;
+}
+.tc-dot:hover {
+  fill: var(--accent);
+  opacity: 1;
+}
+.tc-centroid {
+  fill: var(--accent);
+}
+.tc-pole {
+  fill: var(--ink-2);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+}
+.tc-story {
+  font-size: var(--t-xs);
+  color: var(--ink);
+  max-width: var(--measure);
+}
+.tc-role {
+  color: var(--ink-2);
+  margin-right: var(--s-2);
+}
+
+/* --- flow --- */
+.flow-grid,
+.dora-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-4) var(--s-5);
+}
+.flow-spark {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.spark {
+  width: 96px;
+  height: 22px;
+}
+.spark-line {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.5;
+}
+.flow-sub {
+  font-size: var(--t-xs);
+  color: var(--ink-3);
+}
+
+/* --- Flow.Constraint (item-level Theory of Constraints movie) --- */
+.fi {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+.fi-board {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: var(--s-4);
+  align-items: start;
+}
+.fi-stage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+.fi-stage-head {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+  letter-spacing: 0.04em;
+}
+.fi-stage-c .fi-stage-head {
+  color: var(--accent);
+}
+.fi-flag {
+  color: var(--accent);
+}
+.fi-zone {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--s-2) 0;
+}
+.fi-zone-active {
+  border-top: 1px solid var(--hair);
+}
+.fi-zone-label {
+  font-size: var(--t-xs);
+  color: var(--ink-3);
+}
+.fi-cap {
+  color: var(--ink-3);
+}
+.fi-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  min-height: 14px;
+}
+/* a work item; colour-coded by type (warm set, a deliberate nudge past the 4-colour
+   budget for legibility — see report). */
+.fi-tile {
+  width: 13px;
+  height: 13px;
+  border-radius: 2px;
+  display: inline-block;
+}
+.fi-feature {
+  background: var(--ink);
+}
+.fi-enterprise {
+  background: var(--accent);
+}
+.fi-bug {
+  background: #c9923f;
+}
+.fi-debt {
+  background: #9a9384;
+}
+.fi-stage-done {
+  align-items: flex-start;
+  max-width: 140px;
+}
+.fi-done-count {
+  font-size: var(--t-l);
+  color: var(--ink);
+  line-height: 1;
+}
+.fi-done-tiles {
+  opacity: 0.55;
+}
+.fi-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+}
+.fi-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.toc-player {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+.toc-play {
+  color: var(--accent);
+  font-size: var(--t-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  min-width: 44px;
+  text-align: left;
+}
+.toc-scrub {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 1px;
+  background: var(--ink-3);
+  cursor: pointer;
+}
+.toc-scrub::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.toc-scrub::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border: none;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.toc-speeds {
+  display: flex;
+  gap: var(--s-1);
+}
+.toc-speed {
+  font-size: var(--t-xs);
+  color: var(--ink-3);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+.toc-speed-on {
+  color: var(--accent);
+  background: var(--accent-wash);
+}
+.toc-week {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+  min-width: 52px;
+  text-align: right;
+}
+
+/* --- production outcomes grid --- */
+.outcomes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--s-4) var(--s-5);
+}
+
+/* --- triad human interpretations --- */
+.triad-interp {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  border-top: 1px solid var(--hair);
+  padding-top: var(--s-2);
+}
+.triad-interp-head {
+  font-size: var(--t-xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.triad-interp-row {
+  font-size: var(--t-xs);
+  color: var(--ink);
+  line-height: 1.45;
+}
+.triad-interp-by {
+  color: var(--accent);
+  margin-right: var(--s-2);
+}
+
+/* --- weak signals --- */
+.ws-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+.ws-item {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+}
+.ws-text {
+  flex: 1;
+  font-size: var(--t-s);
+  color: var(--ink);
+}
+.ws-text strong {
+  font-weight: var(--w-regular);
+  color: var(--accent);
+}
+.ws-since {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.ws-pip {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ink-3);
+  flex: 0 0 auto;
+  align-self: center;
+}
+.ws-rising {
+  background: var(--accent);
+  box-shadow: var(--accent-glow);
+}
+
+/* --- radar (impediments) --- */
+.radar-svg {
+  width: 100%;
+  height: auto;
+}
+.radar-ring {
+  fill: none;
+  stroke: var(--hair);
+  stroke-width: 1;
+}
+.radar-spoke {
+  stroke: var(--hair);
+  stroke-width: 1;
+}
+.radar-hub {
+  fill: var(--ink-2);
+}
+.radar-ring-label {
+  fill: var(--ink-3);
+  font-size: 9px;
+  letter-spacing: 0.04em;
+}
+.radar-blip {
+  fill: var(--ink);
+}
+.radar-blip.radar-high {
+  fill: var(--accent);
+  filter: drop-shadow(0 0 5px rgba(224, 122, 63, 0.5));
+}
+.radar-blip.radar-med {
+  fill: var(--ink);
+}
+.radar-blip.radar-low {
+  fill: var(--ink-2);
+}
+.radar-blip-label {
+  fill: var(--ink-2);
+  font-size: 9.5px;
+}
+.radar-detail {
+  display: flex;
+  gap: var(--s-5);
+  flex-wrap: wrap;
+}
+.radar-legend {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-3) var(--s-4);
+  flex: 1;
+  min-width: 240px;
+}
+.radar-grp-head {
+  font-size: var(--t-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: var(--s-1);
+}
+.radar-grp-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+  font-size: var(--t-s);
+  color: var(--ink);
+}
+.radar-pip {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  background: var(--ink);
+}
+.radar-pip.radar-high {
+  background: var(--accent);
+}
+.radar-pip.radar-low {
+  background: var(--ink-2);
+}
+
+/* --- system model switcher --- */
+.sm-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+.sm-tab {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+  padding: 3px 10px;
+  border: 1px solid var(--hair);
+  border-radius: 999px;
+}
+.sm-tab:hover {
+  color: var(--ink);
+  border-color: var(--ink-3);
+}
+.sm-tab-on {
+  color: var(--accent);
+  border-color: var(--accent-dim);
+  background: var(--accent-wash);
+}
+
+/* --- system model CLD --- */
+.cld-svg {
+  width: 100%;
+  height: auto;
+}
+.cld-link {
+  stroke: var(--ink-2);
+  stroke-width: 1.4;
+  fill: none;
+}
+.cld-arrowhead {
+  fill: var(--ink-2);
+}
+.cld-node {
+  fill: var(--accent);
+}
+.cld-label {
+  fill: var(--ink);
+  font-size: 10.5px;
+}
+.cld-sign {
+  fill: var(--ink-2);
+  font-size: 12px;
+}
+.cld-sign-neg {
+  fill: var(--accent);
+}
+.cld-loop {
+  fill: var(--ink-2);
+  font-size: 13px;
+  font-style: italic;
+}
+.cld-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+}
+.cld-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+.cld-key {
+  width: 16px;
+  height: 0;
+  border-top: 1.6px solid var(--ink-2);
+}
+.cld-key-corr {
+  border-top-style: dashed;
+}
+.cld-key-hyp {
+  border-top-style: dotted;
+}
+.cld-legend-note {
+  margin-left: auto;
+  color: var(--ink-3);
+}
+
+/* --- datadog --- */
+.dd-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+}
+.dd-tag {
+  font-size: var(--t-xs);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 2px;
+  padding: 0 4px;
+  letter-spacing: 0.08em;
+}

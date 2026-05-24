@@ -1,0 +1,98 @@
+/* Patterns panel: findings as quiet, threaded type. */
+
+.freshness-finding {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+}
+
+.patterns-section-label {
+  font-size: var(--t-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin: var(--s-5) 0 var(--s-4);
+}
+.gated {
+  color: var(--accent);
+  text-transform: none;
+  letter-spacing: 0;
+}
+.gated-note {
+  font-size: var(--t-s);
+  color: var(--ink-2);
+  max-width: var(--measure);
+}
+
+.mirror-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+.mirror-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  width: 100%;
+  text-align: left;
+}
+.mirror-row:hover:not(:disabled) .mirror-id {
+  color: var(--accent);
+}
+.mirror-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--s-3);
+}
+.mirror-id {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+  letter-spacing: 0;
+}
+.mirror-body {
+  font-size: var(--t-s);
+  color: var(--ink);
+  line-height: 1.55;
+}
+
+/* The challenge: the one focal surface — the cockpit's payoff. */
+.challenge {
+  background: var(--accent-wash);
+  border-radius: var(--radius);
+  padding: var(--s-5);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+.challenge-tag {
+  font-size: var(--t-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.challenge-q {
+  font-size: var(--t-m);
+  font-weight: var(--w-light);
+  line-height: 1.38;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.challenge-trend {
+  font-size: var(--t-s);
+  color: var(--ink-2);
+}
+.challenge-refs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+}
+.challenge-ref {
+  font-size: var(--t-xs);
+}
+.challenge-meta {
+  margin-top: var(--s-1);
+}

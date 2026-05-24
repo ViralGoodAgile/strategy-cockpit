@@ -1,0 +1,813 @@
+/* The instrument cluster: a wide, short, panoramic band — like a car dashboard.
+   Letterboxed in the dark field. Nothing scrolls. */
+
+.cockpit {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: var(--s-2) var(--s-1);
+  gap: var(--s-2);
+  overflow: hidden;
+}
+
+/* --- HUD: thin top strip --- */
+.hud {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-4);
+}
+.hud-id {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-3);
+}
+.hud-title {
+  font-size: var(--t-m);
+  font-weight: var(--w-light);
+  letter-spacing: 0.02em;
+  color: var(--ink);
+}
+.hud-sub {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+}
+.hud-status {
+  margin-left: auto;
+  font-size: var(--t-xs);
+}
+.hud-online {
+  color: var(--ink-2);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+.hud-pip {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: var(--accent-glow);
+}
+.hud-offline {
+  color: var(--accent);
+}
+.hud-author {
+  color: var(--accent);
+  font-size: var(--t-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* --- the band: vertically centred -> letterbox above and below --- */
+.band {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+/* Three rows now (the user asked for the extra length); Flow owns the whole bottom row.
+   The grid fills the height between HUD and Challenge — still no scroll. */
+.dash-grid {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: 1fr 1fr 1.05fr;
+  grid-template-areas:
+    'strategy mandate quant   weak     radar    striads'
+    'loop     system  triads  outcomes outcomes striads'
+    'flow     flow    flow    flow     flow     flow';
+  gap: var(--s-2);
+}
+
+/* --- glass instrument tile (S-class material: subtle gradient + top highlight) --- */
+.inst {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.012));
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 13px;
+  padding: var(--s-3) var(--s-4) var(--s-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), var(--glow);
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.inst-clickable {
+  cursor: pointer;
+}
+.inst-clickable:hover {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+  border-color: rgba(224, 122, 63, 0.4);
+}
+.inst-live {
+  box-shadow: var(--glow), inset 2px 0 0 var(--accent);
+}
+.inst-head {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+}
+.inst-head-click {
+  cursor: pointer;
+}
+.inst-head-click:hover .inst-label,
+.inst-head-click:hover .inst-expand {
+  color: var(--accent);
+}
+.inst-label {
+  font-size: var(--t-xs);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.inst-sub {
+  font-size: var(--t-xs);
+  color: var(--ink-3);
+  margin-left: auto;
+}
+.inst-expand {
+  color: var(--ink-3);
+  margin-left: var(--s-2);
+  font-size: var(--t-s);
+}
+.inst-clickable:hover .inst-expand {
+  color: var(--accent);
+}
+.inst-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* loop is one instrument among others (not the centrepiece); it fills its tile */
+.loop-instrument-body {
+  gap: var(--s-2);
+}
+.inst-loop .loop-canvas {
+  flex: 1;
+  height: auto;
+  min-height: 0;
+}
+.inst-loop .loop-legend {
+  flex: 0 0 auto;
+}
+
+/* --- Strategy readout --- */
+.sr {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  min-height: 0;
+}
+.sr-intent {
+  color: var(--ink);
+  font-size: var(--t-s);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.sr-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1) var(--s-2);
+}
+.sr-chip {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+  border: 1px solid var(--hair);
+  border-radius: 999px;
+  padding: 1px 8px;
+}
+.sr-chip-not {
+  color: var(--accent);
+  border-color: var(--accent-dim);
+}
+.sr-crux {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* --- Mirrors annunciator (2-col, glanceable) --- */
+.ann {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  justify-content: space-between;
+  min-height: 0;
+  height: 100%;
+}
+.ann-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  width: 100%;
+  text-align: left;
+}
+.ann-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ink-3);
+  flex: 0 0 auto;
+}
+.ann-observation .ann-dot {
+  background: var(--accent);
+  box-shadow: var(--accent-glow);
+}
+.ann-label {
+  font-size: var(--t-xs);
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ann-row:hover .ann-label {
+  color: var(--accent);
+}
+
+/* --- numeric readouts (mandate) --- */
+.readout-3 {
+  display: flex;
+  gap: var(--s-4);
+  align-items: flex-end;
+  height: 100%;
+}
+.ro-val {
+  font-size: var(--t-xl);
+  line-height: 0.9;
+  color: var(--ink);
+}
+.ro-alert {
+  color: var(--accent);
+  text-shadow: var(--accent-glow);
+}
+.ro-lab {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+  margin-top: var(--s-1);
+}
+
+/* --- triads readout --- */
+.tr-read {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  min-height: 0;
+  flex: 1;
+}
+.tr-chart {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  justify-content: center;
+}
+.tr-chart .tc {
+  height: 100%;
+}
+.tr-chart .tc-svg {
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+}
+.tr-finding {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+  line-height: 1.4;
+}
+.tr-finding strong {
+  font-weight: var(--w-regular);
+  color: var(--accent);
+}
+.tr-name {
+  color: var(--ink);
+}
+
+/* --- flow readout --- */
+.fr {
+  display: flex;
+  gap: var(--s-3);
+  height: 100%;
+  align-items: center;
+}
+.fr-left {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+}
+.fr-constraint {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+}
+.fr-constraint strong {
+  display: block;
+  font-size: var(--t-m);
+  color: var(--accent);
+  font-weight: var(--w-light);
+}
+.fr-stats {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+}
+.fr-mini {
+  display: flex;
+  gap: var(--s-3);
+  margin-left: auto;
+}
+.fr-col {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: center;
+}
+.fr-tiles,
+.fr-active {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  width: 34px;
+  justify-content: center;
+}
+.fr-active {
+  padding-top: 3px;
+  border-top: 1px solid var(--hair);
+}
+.fr-active-c {
+  border-top-color: var(--accent);
+}
+.fr-stage {
+  font-size: var(--t-xs);
+  color: var(--ink-3);
+}
+
+/* --- strategy triads (the Mirror, as triads) --- */
+.st-grid {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: var(--s-2);
+}
+.st-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 0;
+}
+.st-title {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+  letter-spacing: 0.04em;
+}
+.st-cell .tc-svg {
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  min-height: 0;
+}
+.st-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+.st-lead {
+  font-size: var(--t-s);
+  color: var(--ink-2);
+  max-width: var(--measure);
+}
+.st-weak {
+  color: var(--accent);
+}
+.st-author {
+  align-self: flex-start;
+  color: var(--accent);
+  font-size: var(--t-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* --- radar readout --- */
+.radar-read {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.radar-read .radar-svg {
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+}
+
+/* --- system model readout --- */
+.sm-read {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.sm-read .cld-svg {
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+}
+.sm-name {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+  text-align: center;
+}
+
+/* --- weak signals readout --- */
+.ws-read {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  min-height: 0;
+}
+.ws-read-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+}
+.ws-read-text {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.ws-read-text strong {
+  font-weight: var(--w-regular);
+  color: var(--ink);
+}
+
+/* --- overlay stack (multiple sensors in one detail page) --- */
+.overlay-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+}
+
+/* --- flow tile: the whole board, skimmable in place (full-width row) --- */
+.frw {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  height: 100%;
+  min-height: 0;
+}
+.frw-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-4);
+  flex-wrap: wrap;
+}
+.frw-constraint,
+.frw-stat,
+.frw-week {
+  font-size: var(--t-s);
+  color: var(--ink-2);
+}
+.frw-constraint strong {
+  color: var(--accent);
+  font-weight: var(--w-light);
+}
+.frw-stat .num {
+  color: var(--ink);
+  font-size: var(--t-m);
+  margin-right: 2px;
+}
+.frw-head .fi-legend {
+  margin-left: auto;
+}
+.frw-board {
+  flex: 1;
+  min-height: 0;
+}
+.frw-board .fi-board {
+  height: 100%;
+  align-content: start;
+  gap: var(--s-5);
+}
+
+/* --- quant grid --- */
+.quant-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-2) var(--s-3);
+  align-content: space-between;
+  height: 100%;
+}
+.quant-grid .numeral-value {
+  font-size: var(--t-m);
+}
+
+/* --- Challenge: the primary message bar --- */
+.challenge-bar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  background: var(--accent-wash);
+  border: 1px solid var(--accent-dim);
+  border-radius: var(--radius);
+  padding: var(--s-3) var(--s-4);
+}
+.cb-tag {
+  flex: 0 0 auto;
+  font-size: var(--t-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.cb-q {
+  flex: 1;
+  font-size: var(--t-s);
+  color: var(--ink);
+  line-height: 1.35;
+}
+.cb-side {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  max-width: 280px;
+  text-align: right;
+}
+.cb-trend {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+}
+.cb-refs {
+  display: flex;
+  gap: var(--s-3);
+}
+.cb-ref {
+  font-size: var(--t-xs);
+  color: var(--accent);
+  border-bottom: 1px solid var(--accent-dim);
+}
+
+/* --- detail overlay (MFD page) --- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 7, 9, 0.72);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s-6);
+  z-index: 50;
+}
+.overlay-panel {
+  background: var(--bg-2);
+  border: 1px solid var(--hair);
+  border-radius: var(--radius);
+  box-shadow: var(--glow);
+  width: 96vw;
+  height: 92vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.overlay-head {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: var(--s-4) var(--s-5);
+  border-bottom: 1px solid var(--hair);
+}
+.overlay-title {
+  font-size: var(--t-m);
+  font-weight: var(--w-light);
+}
+.overlay-close {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+  letter-spacing: 0.06em;
+}
+.overlay-close:hover {
+  color: var(--accent);
+}
+/* Detail content fits the screen — no scrolling (it's a dashboard). SVGs scale to the
+   viewport height; heavy content lays out horizontally. */
+.overlay-body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  padding: var(--s-4) var(--s-5);
+  display: flex;
+  flex-direction: column;
+}
+.overlay-body > * {
+  min-height: 0;
+}
+.overlay-body .triad-grid {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--s-4);
+  justify-content: center;
+}
+.overlay-body .triad-chart {
+  flex: 1 1 0;
+  min-width: 0;
+}
+.overlay-body .tc-svg {
+  max-height: 36vh;
+}
+.overlay-body .cld-svg {
+  max-height: 62vh;
+}
+.overlay-body .radar-svg {
+  max-height: 54vh;
+  max-width: 360px;
+}
+.overlay-body .radar-detail {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-4);
+}
+.overlay-body .radar-legend {
+  grid-template-columns: repeat(4, auto);
+  justify-content: center;
+  flex: 0 0 auto;
+}
+.overlay-stack {
+  flex-direction: row;
+  align-items: stretch;
+}
+.overlay-stack > * {
+  flex: 1;
+  min-width: 0;
+}
+
+/* loop return-closure indicator (tile header) */
+.loop-return-flow {
+  color: var(--tl-green);
+}
+.loop-return-stop {
+  color: var(--tl-red);
+}
+.loop-return-partial {
+  color: var(--tl-amber);
+}
+
+/* loop, full-screen */
+.loop-detail {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+.loop-closure {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-3);
+  flex-wrap: wrap;
+  padding: var(--s-3) var(--s-4);
+  border: 1px solid var(--hair);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.02);
+}
+.loop-closure-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  align-self: center;
+}
+.loop-closure-flow .loop-closure-dot {
+  background: var(--tl-green);
+  box-shadow: 0 0 12px rgba(95, 178, 122, 0.5);
+}
+.loop-closure-stop .loop-closure-dot {
+  background: var(--tl-red);
+}
+.loop-closure-partial .loop-closure-dot {
+  background: var(--tl-amber);
+}
+.loop-closure-label {
+  font-size: var(--t-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.loop-closure-flow .loop-closure-label {
+  color: var(--tl-green);
+}
+.loop-closure-stop .loop-closure-label {
+  color: var(--tl-red);
+}
+.loop-closure-evidence {
+  flex: 1;
+  min-width: 200px;
+  font-size: var(--t-s);
+  color: var(--ink);
+}
+.loop-closure-act {
+  color: var(--accent);
+  font-size: var(--t-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.loop-detail-lead {
+  font-size: var(--t-s);
+  color: var(--ink-2);
+  max-width: var(--measure);
+}
+.loop-detail-canvas {
+  flex: 1;
+  min-height: 0;
+}
+.loop-detail-canvas .loop-canvas {
+  height: 100%;
+}
+
+/* --- offline state --- */
+.cockpit-offline {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-3);
+  text-align: center;
+}
+.cockpit-offline p {
+  font-size: var(--t-m);
+  color: var(--ink);
+  font-weight: var(--w-light);
+}
+.cockpit-offline-note {
+  font-size: var(--t-s) !important;
+  color: var(--ink-2) !important;
+  max-width: 48ch;
+}
+
+/* --- Author mode (the one screen that scrolls) --- */
+.author {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: var(--s-4) var(--s-5);
+  gap: var(--s-4);
+}
+.author-head {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-3);
+}
+.author-back {
+  color: var(--accent);
+  font-size: var(--t-s);
+}
+.author-title {
+  font-size: var(--t-m);
+  font-weight: var(--w-light);
+}
+.author-note {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+}
+.author-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  width: 100%;
+  max-width: 820px;
+  margin: 0 auto;
+}
+.author-body .panel {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+}

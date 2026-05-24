@@ -1,0 +1,97 @@
+/* Cockpit layout + shared component styles. Calm, few, large surfaces.
+   Separation is whitespace, not lines. */
+
+.cockpit {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: var(--s-5) var(--s-6);
+  gap: var(--s-5);
+  max-width: 1760px;
+  margin: 0 auto;
+}
+
+.cockpit-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-3);
+}
+.cockpit-head h1 {
+  font-size: var(--t-l);
+  font-weight: var(--w-light);
+  letter-spacing: -0.025em;
+  color: var(--ink);
+}
+.cockpit-sub {
+  color: var(--ink-2);
+  font-size: var(--t-s);
+}
+
+/* Three columns separated by generous whitespace — no dividers. */
+.cockpit-grid {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(320px, 0.92fr) minmax(440px, 1.18fr) minmax(360px, 1fr);
+  gap: var(--s-6);
+}
+
+.panel {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  overflow: hidden;
+}
+.panel-scroll {
+  overflow-y: auto;
+  padding-right: var(--s-3);
+}
+.panel-title {
+  font-size: var(--t-l);
+  font-weight: var(--w-light);
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  line-height: 1.05;
+}
+.panel-note {
+  color: var(--ink-2);
+  font-size: var(--t-xs);
+}
+
+/* --- common: synthetic badge, trend, freshness --- */
+.synthetic-badge {
+  color: var(--ink-2);
+  font-size: var(--t-xs);
+  letter-spacing: 0.02em;
+}
+
+.trend {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+}
+.trend-glyph {
+  font-weight: var(--w-regular);
+}
+.trend-up .trend-glyph,
+.trend-down .trend-glyph {
+  color: var(--accent);
+}
+.trend-detail {
+  color: var(--ink-2);
+}
+
+.freshness {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+}
+.freshness-aging {
+  color: var(--accent);
+}
+.freshness-stale,
+.freshness-dead {
+  color: var(--accent);
+}

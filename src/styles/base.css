@@ -1,0 +1,141 @@
+/* Base reset + typography. Typography is the UI; chrome stays minimal. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  background: radial-gradient(120% 90% at 50% -10%, var(--bg-2), var(--bg) 60%);
+  background-attachment: fixed;
+  color: var(--ink);
+  font-family: var(--font);
+  font-weight: var(--w-regular);
+  font-size: var(--t-s);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow: hidden; /* the cockpit is a fixed instrument cluster — nothing scrolls */
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: var(--w-light);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+p {
+  margin: 0;
+}
+
+/* Numerals treated as artwork: tabular, light, slightly tightened. */
+.num {
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--w-light);
+  letter-spacing: -0.02em;
+}
+
+/* Inputs: hairline underline only — no boxed SaaS fields. */
+textarea,
+input[type='text'],
+input[type='number'] {
+  font: inherit;
+  color: var(--ink);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--hair);
+  padding: var(--s-2) 0;
+  width: 100%;
+  resize: vertical;
+  outline: none;
+  transition: none;
+}
+
+textarea:focus,
+input:focus {
+  border-bottom-color: var(--accent);
+}
+
+textarea {
+  line-height: 1.5;
+}
+
+::placeholder {
+  color: var(--ink-3);
+}
+
+/* Buttons read as type, not chrome. */
+button {
+  font: inherit;
+  color: var(--ink);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+}
+
+button:disabled {
+  color: var(--ink-3);
+  cursor: default;
+}
+
+.link {
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--hair);
+}
+.link:hover {
+  border-bottom-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Scrollbars: quiet. */
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--ink-3);
+  border-radius: 8px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* React Flow overrides: run it as a static renderer, strip its chrome. */
+.react-flow__attribution {
+  display: none;
+}
+.react-flow__handle {
+  opacity: 0;
+  pointer-events: none;
+  min-width: 1px;
+  min-height: 1px;
+  width: 1px;
+  height: 1px;
+  border: none;
+}
+.react-flow__edge-path {
+  transition: none;
+}
+.react-flow__edge.selectable:hover .react-flow__edge-path {
+  stroke-width: 2.5;
+}
+.react-flow__node {
+  cursor: default;
+}
+.react-flow__pane {
+  cursor: default;
+}

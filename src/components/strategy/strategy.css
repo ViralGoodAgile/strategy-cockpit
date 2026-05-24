@@ -1,0 +1,135 @@
+/* Strategy panel: authoring as quiet typography, not a boxed form. */
+
+.strategy-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--s-3);
+}
+.strategy-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  white-space: nowrap;
+}
+.save {
+  color: var(--accent);
+}
+
+.section {
+  padding: var(--s-4) 0 var(--s-5);
+}
+.section-active .section-name {
+  color: var(--accent);
+}
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-3);
+}
+.section-n {
+  color: var(--ink-3);
+  font-size: var(--t-s);
+}
+.section-name {
+  font-size: var(--t-m);
+  font-weight: var(--w-light);
+  color: var(--ink);
+}
+.section-empty {
+  color: var(--accent);
+  font-size: var(--t-xs);
+  margin-left: auto;
+}
+.section-prompt {
+  color: var(--ink-2);
+  font-size: var(--t-xs);
+  margin: var(--s-2) 0 var(--s-2);
+}
+
+.section-extra {
+  margin-top: var(--s-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+}
+.field > span {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+}
+.field-narrow {
+  max-width: 140px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  padding-top: var(--s-1);
+}
+.chip {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+  padding: 2px 0;
+  border-bottom: 1px solid transparent;
+}
+.chip-on {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* Planguage editor */
+.planguage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+.pl-entry {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+.pl-entry-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+}
+.pl-index {
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+}
+.pl-gist {
+  flex: 1;
+}
+.pl-remove {
+  font-size: var(--t-xs);
+  color: var(--ink-3);
+}
+.pl-remove:hover {
+  color: var(--accent);
+}
+.pl-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-2) var(--s-4);
+}
+.pl-field {
+  display: flex;
+  flex-direction: column;
+}
+.pl-field > span {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+}
+.pl-add {
+  align-self: flex-start;
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+}

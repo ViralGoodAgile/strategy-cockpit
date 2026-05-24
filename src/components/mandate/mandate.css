@@ -1,0 +1,148 @@
+/* Mandate Levels: a quiet A–I scale. Markers carry data; nothing decorative. */
+
+.mandate {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+.mandate-svg {
+  width: 100%;
+  height: auto;
+}
+
+.m-grid {
+  stroke: var(--hair);
+  stroke-width: 1;
+}
+.m-axis-letter {
+  fill: var(--ink-2);
+  font-size: 13.5px;
+}
+.m-caption {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+}
+
+.m-team {
+  cursor: pointer;
+}
+.m-authorised {
+  fill: var(--paper);
+  stroke: var(--ink);
+  stroke-width: 1.4;
+}
+.m-actual {
+  fill: var(--ink);
+}
+.m-actual-big {
+  fill: var(--accent);
+}
+.m-strategy {
+  stroke: var(--ink-2);
+  stroke-width: 1.6;
+}
+.m-gap {
+  stroke: var(--ink-3);
+  stroke-width: 1.4;
+}
+.m-gap-big {
+  stroke: var(--accent);
+}
+.m-gap-num {
+  fill: var(--ink-2);
+  font-size: 11px;
+}
+.m-gap-num-big {
+  fill: var(--accent);
+}
+.m-trend {
+  fill: var(--accent);
+  font-size: 11px;
+}
+.m-team-name {
+  fill: var(--ink-2);
+  font-size: 11px;
+  text-anchor: middle;
+}
+.m-team-name-on {
+  fill: var(--accent);
+}
+.m-team-on .m-authorised,
+.m-team-on .m-actual {
+  stroke: var(--accent);
+}
+
+.m-legend,
+.m-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-3);
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+}
+.m-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+.m-key {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+}
+.m-key-auth {
+  background: var(--paper);
+  border: 1.4px solid var(--ink);
+}
+.m-key-actual {
+  background: var(--ink);
+}
+.m-key-strategy {
+  width: 14px;
+  height: 0;
+  border-radius: 0;
+  border-top: 1.6px solid var(--ink-2);
+}
+.m-summary {
+  gap: var(--s-1);
+  align-items: baseline;
+}
+.m-summary .num {
+  color: var(--ink);
+  font-size: var(--t-m);
+  margin-right: 1px;
+}
+
+.m-drill {
+  border-top: 1px solid var(--hair);
+  padding-top: var(--s-3);
+}
+.m-drill-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+  margin-bottom: var(--s-2);
+}
+.m-drill-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+.m-drill-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s-3);
+  font-size: var(--t-s);
+}
+.m-drill-meta {
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+  white-space: nowrap;
+}

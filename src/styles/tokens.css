@@ -1,0 +1,62 @@
+/*
+  Design tokens = the aesthetic budget, auditable in one file.
+  Mode: DARK GLASS COCKPIT — an instrument cluster (BMW iDrive / Hyperscreen /
+  glass-cockpit reference). Near-black field, crisp light readouts, one warm accent
+  reserved for live/alert state. Everything visible at a glance; nothing scrolls.
+
+  Budget held: distinct UI colours <= 4 (field, light ink, dim ink, warm accent),
+  type sizes <= 5, animation only where it carries meaning (the flow movie).
+*/
+:root {
+  /* --- field + surfaces --- */
+  --bg: #0c0e12;           /* near-black instrument field */
+  --bg-2: #15191f;         /* top of the background gradient (glass depth) */
+  --paper: #0c0e12;        /* "knockout" colour = field, so hollow marks read as bg */
+  --panel: rgba(255, 255, 255, 0.025);  /* glass tile fill */
+  --panel-2: rgba(255, 255, 255, 0.05); /* lifted glass (hover/active) */
+
+  /* --- ink: light readouts on the dark field --- */
+  --ink: #eaedf2;          /* primary readout */
+  --ink-2: #9298a3;        /* secondary / labels */
+  --ink-3: #565d68;        /* faint geometry, dim indicators */
+
+  /* --- the single warm accent: live / alert / the constraint --- */
+  --accent: #e07a3f;       /* warm amber-terracotta */
+  --accent-dim: #7a4a2e;
+
+  /* --- lines + glow (depth via light, low opacity) --- */
+  --hair: rgba(255, 255, 255, 0.08);
+  --glow: 0 0 0 1px rgba(255, 255, 255, 0.05), 0 12px 40px rgba(0, 0, 0, 0.55);
+  --accent-wash: rgba(224, 122, 63, 0.10);
+  --accent-glow: 0 0 18px rgba(224, 122, 63, 0.22);
+
+  /* traffic-light status for loop closure: red = open, amber = partial, green = closed */
+  --tl-red: #d7574b;
+  --tl-amber: #e0a23f;
+  --tl-green: #5fb27a;
+
+  /* --- typography: single family, weights 300/400 --- */
+  --font: 'Inter', system-ui, -apple-system, 'SF Pro Display', 'Segoe UI', sans-serif;
+
+  /* type scale: 5 sizes */
+  --t-xs: 11.5px;  /* instrument labels, captions */
+  --t-s: 14px;     /* body / readouts */
+  --t-m: 19px;     /* tile titles */
+  --t-l: 30px;     /* secondary numerals */
+  --t-xl: 50px;    /* hero numerals-as-artwork */
+
+  --w-light: 300;
+  --w-regular: 400;
+
+  /* --- spacing: tighter than the document layout — this is an instrument panel --- */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 14px;
+  --s-4: 22px;
+  --s-5: 34px;
+  --s-6: 52px;
+
+  --shadow: var(--glow);
+  --radius: 10px;          /* glass tiles carry a soft radius */
+  --measure: 60ch;
+}
