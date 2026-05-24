@@ -18,6 +18,7 @@ export type DetailView =
   | 'striads'
   | 'loop'
   | 'outcomes'
+  | 'hygiene'
   | null;
 
 // All cockpit state the user can change, plus localStorage persistence.
