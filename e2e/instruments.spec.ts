@@ -58,20 +58,34 @@ test('the radar expands to a legible scope', async ({ page }) => {
   await expect(page.locator('.overlay')).toHaveCount(0);
 });
 
-test('product outcomes show AARRR/HEART lenses, a customer triad and unserved jobs', async ({ page }) => {
+test('product outcomes show AARRR/HEART lenses, a customer triad and unserved customer jobs', async ({ page }) => {
   // The full-width product-outcomes row is skimmable in place.
   const tile = page.locator('.inst', { hasText: 'Product outcomes' }).first();
-  await expect(tile).toContainText('AARRR');
-  await expect(tile).toContainText('HEART');
-  // customer sense-making triad renders in the tile
-  await expect(tile.locator('.po-triad-chart .tc-svg')).toBeVisible();
-  // top unserved jobs visible without expanding
-  expect(await tile.locator('.po-job').count()).toBe(3);
 
-  // Expanding reveals the full set: all jobs with evidence + the full customer triad.
+  // two metric lenses, five measures each
+  const lenses = tile.locator('.po-lens');
+  await expect(lenses).toHaveCount(2);
+  await expect(lenses.nth(0)).toContainText('AARRR');
+  await expect(lenses.nth(1)).toContainText('HEART');
+  expect(await lenses.nth(0).locator('.po-metric').count()).toBe(5);
+  expect(await lenses.nth(1).locator('.po-metric').count()).toBe(5);
+
+  // customer sense-making triad renders and reports its lean
+  await expect(tile.locator('.po-triad-chart .tc-svg')).toBeVisible();
+  await expect(tile.locator('.po-triad-finding')).toContainText('Friction-free');
+
+  // unserved CUSTOMER jobs, skimmable in place (phrased as customer JTBD)
+  await expect(tile.locator('.po-jobs .po-lens-head')).toContainText('Unserved customer jobs');
+  expect(await tile.locator('.po-job').count()).toBe(3);
+  await expect(tile.locator('.po-job-text').first()).toContainText('When ');
+
+  // Expanding reveals the full set: both lenses, all jobs with evidence, full triad.
   await tile.click();
   await expect(page.locator('.overlay-title')).toHaveText('Product Outcomes');
+  await expect(page.locator('.overlay')).toContainText('AARRR');
+  await expect(page.locator('.overlay')).toContainText('HEART');
   expect(await page.locator('.outcomes-job').count()).toBe(4);
+  await expect(page.locator('.outcomes-job-text').first()).toContainText('When ');
   await expect(page.locator('.outcomes-job-evidence').first()).not.toBeEmpty();
   await expect(page.locator('.po-detail-triad .tc-svg')).toBeVisible();
 
@@ -79,12 +93,18 @@ test('product outcomes show AARRR/HEART lenses, a customer triad and unserved jo
   await expect(page.locator('.overlay')).toHaveCount(0);
 });
 
-test('the reliability instrument expands to the production subset', async ({ page }) => {
-  await page.locator('.inst', { hasText: 'Reliability' }).first().click();
+test('the reliability instrument expands to the production subset, shown as trend', async ({ page }) => {
+  const tile = page.locator('.inst', { hasText: 'Reliability' }).first();
+  await expect(tile).toContainText('production subset');
+
+  await tile.click();
   await expect(page.locator('.overlay-title')).toHaveText('Reliability');
-  // uptime / MTTR etc. render as numerals
-  expect(await page.locator('.overlay .numeral').count()).toBeGreaterThan(2);
+  // the production measures render as numerals…
+  await expect(page.locator('.overlay')).toContainText('Uptime');
   await expect(page.locator('.overlay')).toContainText('MTTR');
+  expect(await page.locator('.overlay .numeral').count()).toBeGreaterThan(2);
+  // …each with a direction-of-travel mark (trend, not a pass/fail target)
+  expect(await page.locator('.overlay .trend').count()).toBeGreaterThan(0);
 
   await page.keyboard.press('Escape');
   await expect(page.locator('.overlay')).toHaveCount(0);
