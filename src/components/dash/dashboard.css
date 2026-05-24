@@ -6,8 +6,8 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: var(--s-2) var(--s-1);
-  gap: var(--s-2);
+  padding: var(--s-1) var(--s-1);
+  gap: var(--s-1);
   overflow: hidden;
 }
 /* Starlight — sparse, dim points of light on the obsidian field (atmosphere, not noise). */
@@ -172,7 +172,7 @@
   min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--s-2);
+  gap: var(--s-1);
 }
 
 /* Five rows. Strategy earns its own full-width banner row on top (the thing under
@@ -187,7 +187,7 @@
   /* Flow.Constraint earns extra height for its Theory-of-Constraints board, but not so
      much that the instrument rows truncate on shorter (~860px) displays: the instrument
      rows get more share and Flow stays clearly the tallest. */
-  grid-template-rows: 0.55fr 1.2fr 1.2fr 1.55fr 1.05fr;
+  grid-template-rows: 0.8fr 1.03fr 1.21fr 1.4fr 1.2fr;
   grid-template-areas:
     'strategy strategy strategy strategy strategy    strategy'
     'loop     mandate  quant    weak     radar       striads'
@@ -202,10 +202,12 @@
   background: var(--panel);
   border: 1px solid var(--bezel);
   border-radius: var(--radius);
-  padding: var(--s-3) var(--s-4) var(--s-4);
+  /* Tight but breathing: the cockpit must fit ~860px tall with nothing clipped, so the
+     per-tile chrome (padding + head→body gap) is trimmed to hand vertical room to content. */
+  padding: 10px var(--s-4) 10px;
   display: flex;
   flex-direction: column;
-  gap: var(--s-2);
+  gap: var(--s-1);
   min-height: 0;
   min-width: 0;
   overflow: hidden;
@@ -227,6 +229,7 @@
   display: flex;
   align-items: baseline;
   gap: var(--s-2);
+  white-space: nowrap;
 }
 .inst-head-click {
   cursor: pointer;
@@ -245,6 +248,11 @@
   font-size: var(--t-xs);
   color: var(--ink-3);
   margin-left: auto;
+  /* never wrap to a second line on a narrow tile — ellipsis instead, so every head is
+     exactly one line tall and the body keeps the height it needs */
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .inst-expand {
   color: var(--ink-3);
@@ -621,7 +629,7 @@
 .frw {
   display: flex;
   flex-direction: column;
-  gap: var(--s-3);
+  gap: var(--s-2);
   height: 100%;
   min-height: 0;
 }
@@ -643,7 +651,7 @@
 }
 .frw-stat .num {
   color: var(--ink);
-  font-size: var(--t-m);
+  font-size: var(--t-s);
   margin-right: 2px;
 }
 .frw-head .fi-legend {
@@ -662,7 +670,7 @@
 /* --- product outcomes: full-width row — AARRR + HEART lenses · customer triad · jobs --- */
 .po {
   display: flex;
-  gap: var(--s-5);
+  gap: var(--s-4);
   height: 100%;
   min-height: 0;
 }
@@ -687,14 +695,17 @@
   padding: 0;
   flex: 1;
   min-height: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  /* two-up: five PIRATE / HEART measures cost three rows, not five — the full-width
+     bottom row has horizontal room to spare, so we spend it instead of height */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-content: space-between;
+  gap: var(--s-1) var(--s-3);
 }
 .po-metric {
   display: flex;
   align-items: baseline;
-  gap: var(--s-2);
+  gap: var(--s-1);
 }
 .po-m-label {
   flex: 1;
@@ -704,6 +715,10 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+/* the metric's definition lives in the head tooltip; the headline word carries the tile */
+.po-m-note {
+  display: none;
 }
 .po-m-val {
   flex: 0 0 auto;
@@ -951,7 +966,7 @@
   background: var(--accent-wash);
   border: 1px solid var(--accent-dim);
   border-radius: var(--radius);
-  padding: var(--s-3) var(--s-4);
+  padding: var(--s-2) var(--s-4);
 }
 .cb-tag {
   flex: 0 0 auto;

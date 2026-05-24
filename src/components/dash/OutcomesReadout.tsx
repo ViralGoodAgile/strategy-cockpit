@@ -12,19 +12,25 @@ function leanIndex(triad: Triad, period: 'current' | 'prior'): number {
   return [m.a, m.b, m.c].indexOf(Math.max(m.a, m.b, m.c));
 }
 
-// One lens (AARRR or HEART): a compact column of label · value · direction-of-travel.
+// One lens (AARRR or HEART): a compact grid of name · value · direction-of-travel. The
+// full-width bottom row gives us room to lay the metrics two-up, so five measures cost
+// three rows, not five. Labels show the headline word; the full definition is on hover.
 function Lens({ title, metrics }: { title: string; metrics: Metric[] }) {
   return (
     <div className="po-lens">
       <div className="po-lens-head">{title}</div>
       <ul className="po-metrics">
-        {metrics.map((m) => (
-          <li className="po-metric" key={m.key}>
-            <span className="po-m-label">{m.label}</span>
-            <span className="po-m-val num">{m.display}</span>
-            <MetricTrend metric={m} />
-          </li>
-        ))}
+        {metrics.map((m) => {
+          const [head, ...rest] = m.label.split('·');
+          return (
+            <li className="po-metric" key={m.key} title={m.label}>
+              <span className="po-m-label">{head.trim()}</span>
+              {rest.length > 0 && <span className="po-m-note">{rest.join('·').trim()}</span>}
+              <span className="po-m-val num">{m.display}</span>
+              <MetricTrend metric={m} />
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
