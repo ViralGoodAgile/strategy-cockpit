@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import type { Signal } from '../../domain/types';
 import type { FlowConstraintData } from '../../domain/sensors';
 import { backlogClass } from '../../domain/sensors';
 import { BACKLOG } from '../../data/sensorData';
+import { Transport } from '../common/Transport';
+import { useTimeTravel } from '../common/useTimeTravel';
 import { SensorModule } from './SensorModule';
 import { FlowBoard, FlowLegend } from './FlowBoard';
 
@@ -66,19 +68,8 @@ function BacklogPanel() {
 // the station whose queue piles up; play/scrub to watch it shift. Motion carries meaning.
 export function FlowConstraint({ signal }: { signal: Signal<FlowConstraintData> }) {
   const { frames, caps } = signal.value;
-  const last = frames.length - 1;
-  const [week, setWeek] = useState(0);
-  const [playing, setPlaying] = useState(true); // auto-play the movie when opened
-  const [speed, setSpeed] = useState(1); // playback multiplier
-
-  // The movie: advance a frame every (1100 / speed) ms while playing; loop at the end.
-  useEffect(() => {
-    if (!playing) return;
-    const id = setInterval(() => setWeek((w) => (w >= last ? 0 : w + 1)), 1100 / speed);
-    return () => clearInterval(id);
-  }, [playing, last, speed]);
-
-  const SPEEDS = [0.5, 1, 2, 4];
+  const tt = useTimeTravel(frames.length);
+  const week = tt.index;
 
   const f = frames[week];
   const constraintName = f.constraint === 'review' ? 'Review' : 'Build';
@@ -104,34 +95,7 @@ export function FlowConstraint({ signal }: { signal: Signal<FlowConstraintData> 
       <div className="fi">
         <FlowBoard frame={f} caps={caps} />
         <FlowLegend />
-        <div className="toc-player">
-          <button className="toc-play" onClick={() => setPlaying((p) => !p)}>
-            {playing ? '❚❚ pause' : '▶ play'}
-          </button>
-          <input
-            className="toc-scrub"
-            type="range"
-            min={0}
-            max={last}
-            value={week}
-            onChange={(e) => {
-              setPlaying(false);
-              setWeek(Number(e.target.value));
-            }}
-          />
-          <div className="toc-speeds">
-            {SPEEDS.map((sp) => (
-              <button
-                key={sp}
-                className={`toc-speed ${speed === sp ? 'toc-speed-on' : ''}`}
-                onClick={() => setSpeed(sp)}
-              >
-                {sp}×
-              </button>
-            ))}
-          </div>
-          <span className="toc-week">{f.label}</span>
-        </div>
+        <Transport tt={tt} label={f.label} />
         <BacklogPanel />
       </div>
     </SensorModule>

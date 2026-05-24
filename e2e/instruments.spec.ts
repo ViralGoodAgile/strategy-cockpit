@@ -29,7 +29,7 @@ test('the flow movie opens, pauses, and scrubs to a chosen week', async ({ page 
   await scrub.focus();
   await page.keyboard.press('Home');
   await expect(scrub).toHaveValue('0');
-  await expect(page.locator('.toc-week')).toContainText('week');
+  await expect(page.locator('.toc-asof')).toContainText('week');
 
   // A speed can be selected.
   await page.locator('.toc-speed', { hasText: '2×' }).click();
@@ -37,6 +37,15 @@ test('the flow movie opens, pauses, and scrubs to a chosen week', async ({ page 
 
   await page.keyboard.press('Escape');
   await expect(page.locator('.overlay')).toHaveCount(0);
+});
+
+test('time travel does not autoplay when the viewer prefers reduced motion', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  await page.locator('.inst', { hasText: 'Flow.Constraint' }).first().click();
+  await expect(page.locator('.overlay-title')).toHaveText('Flow.Constraint');
+  // opens paused (offers "play"), and lands on the latest frame ("now"), not frame 0
+  await expect(page.locator('.toc-play')).toContainText('play');
 });
 
 test('the system model expands and switches among the seed CLDs', async ({ page }) => {
