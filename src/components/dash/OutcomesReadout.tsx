@@ -2,6 +2,9 @@ import { OUTCOMES_SIGNAL } from '../../data/sensorData';
 import type { Metric, Triad } from '../../domain/sensors';
 import { useCockpit } from '../../store/useCockpit';
 import { triadsWithCaptured } from '../../mirrors/capturedTriads';
+import { triadAtPeriod, triadHistory } from '../../mirrors/triadHistory';
+import { PERIODS, periodLabel } from '../../lib/timeTravel';
+import { metricAt } from '../common/trend';
 import { MetricTrend } from '../common/MetricTrend';
 import { TriadChart } from '../sensors/TriadChart';
 import { Instrument } from './Instrument';
@@ -39,27 +42,39 @@ function Lens({ title, metrics }: { title: string; metrics: Metric[] }) {
 
 // Product outcomes own the full bottom row: two recognised metric lenses (the PIRATE
 // funnel + HEART experience quality), the customer's own voice as a Cynefin sense-making
-// triad, and the demand still open (unserved jobs). All skimmable without clicking.
+// triad, and the demand still open. Numbers and the customer voice follow the dashboard's
+// global as-of; expand for the full movie.
 export function OutcomesReadout() {
   const setDetail = useCockpit((s) => s.setDetail);
   const captured = useCockpit((s) => s.capturedStories);
+  const timeUnit = useCockpit((s) => s.timeUnit);
+  const timeIndex = useCockpit((s) => s.timeIndex);
+
   const { aarrr, heart, jobs } = OUTCOMES_SIGNAL.value;
-  const customerTriad = triadsWithCaptured([OUTCOMES_SIGNAL.value.customerTriad], captured)[0];
+  const asOf = periodLabel(PERIODS - 1 - timeIndex, timeUnit);
+  const history = triadHistory(OUTCOMES_SIGNAL.value.customerTriad, PERIODS, timeUnit);
+  const customerTriad = triadAtPeriod(
+    OUTCOMES_SIGNAL.value.customerTriad,
+    history,
+    timeIndex,
+    (b) => triadsWithCaptured([b], captured)[0],
+  );
   const ranked = [...jobs].sort((a, b) => a.rank - b.rank).slice(0, 3);
   const now = leanIndex(customerTriad, 'current');
   const before = leanIndex(customerTriad, 'prior');
-  const drifted = now !== before;
+  const hasPrior = customerTriad.stories.some((s) => s.period === 'prior');
+  const drifted = hasPrior && now !== before;
 
   return (
     <Instrument
       label="Product outcomes"
-      sub="AARRR · HEART · customer sense-making · unserved customer jobs"
+      sub={`AARRR · HEART · customer sense-making · ${asOf}`}
       area="outcomes"
       onExpand={() => setDetail('outcomes')}
     >
       <div className="po">
-        <Lens title="Acquisition → Revenue · AARRR" metrics={aarrr} />
-        <Lens title="Experience · HEART" metrics={heart} />
+        <Lens title="Acquisition → Revenue · AARRR" metrics={aarrr.map((m) => metricAt(m, timeIndex))} />
+        <Lens title="Experience · HEART" metrics={heart.map((m) => metricAt(m, timeIndex))} />
         <div className="po-triad">
           <div className="po-lens-head">Customer sense-making</div>
           <div className="po-triad-chart">
