@@ -1,9 +1,11 @@
 import { loadFeature, describeFeature } from '@amiceli/vitest-cucumber';
 import { expect } from 'vitest';
-import { TRIAD_SIGNAL, RADAR_SIGNAL } from '../data/sensorData';
+import { TRIAD_SIGNAL, RADAR_SIGNAL, WEAK_SIGNAL } from '../data/sensorData';
 import { triadAtPeriod, triadHistory, type TriadPeriod } from '../mirrors/triadHistory';
 import { radarHistory } from '../mirrors/radarHistory';
 import { triadsWithCaptured } from '../mirrors/capturedTriads';
+import { hygieneAt, mandateGapsAt, weakSignalsAt } from '../mirrors/snapshotHistory';
+import { hygieneRows } from '../lib/hygiene';
 import type { CapturedStory, Triad, TriadStory } from '../domain/sensors';
 
 const triad = (): Triad => TRIAD_SIGNAL.value.triads[0]; // Sense-making
@@ -177,6 +179,35 @@ describeFeature(feature, ({ Scenario }) => {
       for (const snap of rh) {
         for (const im of snap.set.impediments) expect(PERSON.test(im.label)).toBe(false);
       }
+    });
+  });
+
+  Scenario('weak signals surface over time', ({ Given, Then }) => {
+    const signals = WEAK_SIGNAL.value.signals;
+    Given('the weak signals', () => expect(signals.length).toBeGreaterThan(0));
+    Then('fewer have surfaced an earlier period back than now', () => {
+      const now = weakSignalsAt(signals, 0).length;
+      const earlier = weakSignalsAt(signals, 3).length;
+      expect(earlier).toBeLessThan(now);
+    });
+  });
+
+  Scenario('the mandate gap narrows toward now', ({ Given, Then }) => {
+    const gaps = [1, 1, 2, 3];
+    Given('the mandate gaps now', () => expect(gaps.length).toBeGreaterThan(0));
+    Then('they are wider an earlier period back', () => {
+      const earlier = mandateGapsAt(gaps, 5, 5);
+      const now = mandateGapsAt(gaps, 0, 5);
+      expect(earlier.reduce((a, b) => a + b, 0)).toBeGreaterThan(now.reduce((a, b) => a + b, 0));
+    });
+  });
+
+  Scenario('data hygiene matures toward now', ({ Given, Then }) => {
+    const rows = hygieneRows();
+    const staleCount = (rs: typeof rows) => rs.filter((r) => r.freshness === 'stale' || r.freshness === 'dead').length;
+    Given('the hygiene ledger now', () => expect(rows.length).toBeGreaterThan(0));
+    Then('more signals are stale an earlier period back', () => {
+      expect(staleCount(hygieneAt(rows, 5, 5))).toBeGreaterThan(staleCount(hygieneAt(rows, 0, 5)));
     });
   });
 });

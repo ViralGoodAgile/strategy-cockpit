@@ -1,11 +1,21 @@
 import type { Signal } from '../../domain/types';
 import type { WeakSignalSet } from '../../domain/sensors';
+import { useCockpit } from '../../store/useCockpit';
+import { offsetFromNow, weakSignalsAt } from '../../mirrors/snapshotHistory';
+import { PERIODS, periodLabel } from '../../lib/timeTravel';
+import { useTimeTravel } from '../common/useTimeTravel';
+import { Transport } from '../common/Transport';
 import { SensorModule } from './SensorModule';
 
-// WeakSignal.Detector — behavioural anomalies below routine reporting. Role-level
-// only; never named individuals (C4). A weak signal may precede a regime shift.
+// WeakSignal.Detector — behavioural anomalies below routine reporting, as a time-travel
+// movie: scrub or play to watch them surface over time. Role-level only; never named
+// individuals (C4). Its own transport overrides the dashboard's global as-of.
 export function WeakSignalsSensor({ signal }: { signal: Signal<WeakSignalSet> }) {
-  const signals = signal.value.signals;
+  const timeUnit = useCockpit((s) => s.timeUnit);
+  const tt = useTimeTravel(PERIODS);
+  const asOf = periodLabel(offsetFromNow(tt.index, tt.last), timeUnit);
+  const signals = weakSignalsAt(signal.value.signals, offsetFromNow(tt.index, tt.last));
+
   return (
     <SensorModule
       name="Weak Signals"
@@ -15,22 +25,28 @@ export function WeakSignalsSensor({ signal }: { signal: Signal<WeakSignalSet> })
       freshness={signal.freshness}
       insight={
         <>
-          {signals.length} behavioural anomalies, below the threshold of routine reporting. Roles and
-          patterns only — never named people. A weak signal may precede a regime shift, or be noise.
+          <strong>{asOf}</strong>: {signals.length} behavioural anomalies, below the threshold of
+          routine reporting. Roles and patterns only — never named people. A weak signal may precede
+          a regime shift, or be noise. Scrub or play to watch them surface.
         </>
       }
     >
-      <ul className="ws-list">
-        {signals.map((s) => (
-          <li className="ws-item" key={s.id}>
-            <span className={`ws-pip ${s.rising ? 'ws-rising' : ''}`} />
-            <span className="ws-text">
-              The <strong>{s.role}</strong> role {s.behaviour}.
-            </span>
-            <span className="ws-since">{s.sinceWeeks}w{s.rising ? ' · rising' : ''}</span>
-          </li>
-        ))}
-      </ul>
+      <Transport tt={tt} label={asOf} granularity />
+      {signals.length === 0 ? (
+        <p className="ws-empty">none surfaced yet</p>
+      ) : (
+        <ul className="ws-list">
+          {signals.map((s) => (
+            <li className="ws-item" key={s.id}>
+              <span className={`ws-pip ${s.rising ? 'ws-rising' : ''}`} />
+              <span className="ws-text">
+                The <strong>{s.role}</strong> role {s.behaviour}.
+              </span>
+              <span className="ws-since">{s.sinceWeeks}w{s.rising ? ' · rising' : ''}</span>
+            </li>
+          ))}
+        </ul>
+      )}
     </SensorModule>
   );
 }
