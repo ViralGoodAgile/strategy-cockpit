@@ -54,7 +54,7 @@ export function OutcomesSensor({ signal }: { signal: Signal<OutcomeSet> }) {
         </>
       }
     >
-      <Transport tt={tt} label={asOf} />
+      <Transport tt={tt} label={asOf} granularity />
       <div className="po-detail">
         <div className="po-detail-col">
           <div className="po-detail-head">Acquisition → Revenue · AARRR</div>

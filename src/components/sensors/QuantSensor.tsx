@@ -16,7 +16,7 @@ export function QuantSensor() {
 
   return (
     <div className="quant-detail">
-      <Transport tt={tt} label={asOf} />
+      <Transport tt={tt} label={asOf} granularity />
       <div className="overlay-stack">
         <DoraSensor signal={DORA_SIGNAL} atIndex={tt.index} />
         <DataDogSensor signal={DATADOG_SIGNAL} atIndex={tt.index} />

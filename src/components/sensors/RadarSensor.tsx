@@ -43,7 +43,7 @@ export function RadarSensor({ signal }: { signal: Signal<RadarSet> }) {
         </>
       }
     >
-      <Transport tt={tt} label={snap.label} />
+      <Transport tt={tt} label={snap.label} granularity />
       <div className="radar-detail">
         <RadarScope set={snap.set} onInspect={() => tt.setPlaying(false)} />
         <div className="radar-legend">

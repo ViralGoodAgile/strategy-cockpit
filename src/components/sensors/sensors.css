@@ -506,6 +506,15 @@
   min-width: 52px;
   text-align: right;
 }
+.toc-unit {
+  background: var(--panel);
+  border: 1px solid var(--hair);
+  border-radius: 999px;
+  color: var(--ink-2);
+  font: inherit;
+  font-size: var(--t-xs);
+  padding: 1px 6px;
+}
 
 /* --- production outcomes grid --- */
 .outcomes-grid {
