@@ -1,6 +1,7 @@
 import { useCockpit } from '../../store/useCockpit';
 import { loopClosure } from '../../mirrors/loopClosure';
 import { LoopDiagram } from '../loop/LoopDiagram';
+import { GoalLadder } from './GoalLadder';
 
 // The loop, full-screen. Forward arrows are clickable: flow → slowing → stop. The
 // return path is evidence-driven — it closes only when Intent is revised after reality moves.
@@ -27,13 +28,18 @@ export function LoopDetail() {
           </button>
         )}
       </div>
-      <div className="loop-detail-canvas">
-        <LoopDiagram />
-      </div>
-      <div className="loop-legend">
-        <span><i className="swatch swatch-flow" /> flowing</span>
-        <span><i className="swatch swatch-partial" /> slowing</span>
-        <span><i className="swatch swatch-stop" /> stopped</span>
+      <div className="loop-detail-cols">
+        <div className="loop-detail-main">
+          <div className="loop-detail-canvas">
+            <LoopDiagram />
+          </div>
+          <div className="loop-legend">
+            <span><i className="swatch swatch-flow" /> flowing</span>
+            <span><i className="swatch swatch-partial" /> slowing</span>
+            <span><i className="swatch swatch-stop" /> stopped</span>
+          </div>
+        </div>
+        <GoalLadder />
       </div>
     </div>
   );

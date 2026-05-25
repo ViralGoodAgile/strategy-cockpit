@@ -1508,6 +1508,137 @@
   height: 100%;
 }
 
+/* The expanded loop shares its room with the EBM goal ladder: the loop shrinks to the left
+   column, the goals + experiment ledger fill the right. */
+.loop-detail-cols {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  gap: var(--s-5);
+}
+.loop-detail-main {
+  flex: 1 1 52%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+.goals {
+  flex: 1 1 48%;
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  border-left: 1px solid var(--hair);
+  padding-left: var(--s-5);
+}
+.goals-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-3);
+  flex-wrap: wrap;
+}
+.goals-title {
+  font-size: var(--t-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.goals-tally {
+  font-size: var(--t-xs);
+  color: var(--ink-3);
+}
+.goal-strategic {
+  display: flex;
+  gap: var(--s-2);
+  align-items: baseline;
+}
+.goal-kva {
+  flex: 0 0 auto;
+  font-size: var(--t-xs);
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  border: 1px solid var(--accent-wash);
+  border-radius: 3px;
+  padding: 0 4px;
+}
+.goal-strategic-text {
+  font-size: var(--t-s);
+  color: var(--ink);
+}
+.goal-intermediates {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+.goal-intermediate-text {
+  font-size: var(--t-s);
+  color: var(--ink);
+  margin-bottom: var(--s-2);
+}
+.goal-experiments {
+  list-style: none;
+  margin: 0;
+  padding-left: var(--s-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  border-left: 1px solid var(--hair);
+}
+.goal-exp {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.goal-exp-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+.goal-exp-pill {
+  font-size: var(--t-xs);
+  letter-spacing: 0.04em;
+  border-radius: 999px;
+  padding: 1px 8px;
+  border: 1px solid var(--hair);
+}
+.goal-exp-measure {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+}
+.goal-exp-hyp {
+  font-size: var(--t-xs);
+  color: var(--ink);
+}
+.goal-exp-evidence {
+  font-size: var(--t-xs);
+  color: var(--ink-3);
+}
+.gx-validated {
+  color: var(--tl-green);
+}
+.gx-invalidated {
+  color: var(--tl-red);
+}
+.gx-unsure {
+  color: var(--tl-amber);
+}
+.goal-exp-pill.gx-validated {
+  border-color: var(--tl-green);
+}
+.goal-exp-pill.gx-invalidated {
+  border-color: var(--tl-red);
+}
+.goal-exp-pill.gx-unsure {
+  border-color: var(--tl-amber);
+}
+
 /* --- offline state --- */
 .cockpit-offline {
   flex: 1;
