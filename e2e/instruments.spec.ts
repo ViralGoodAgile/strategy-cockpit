@@ -174,6 +174,28 @@ test('time travel: product-outcomes numbers travel on the tile and in the overla
   await expect(page.locator('.overlay .outcomes-grid .numeral-value').first()).toContainText('142');
 });
 
+test('time travel: strategy triads travel on the tile and in the overlay', async ({ page }) => {
+  const tile = page.locator('.inst', { hasText: 'Strategy triads' }).first();
+  await expect(tile.locator('.inst-sub')).toContainText('now');
+
+  // travel the whole dashboard back via the global control
+  await page.locator('.hud-time-chip').click();
+  const scrub = page.locator('.gt-scrub');
+  await scrub.focus();
+  await page.keyboard.press('Home');
+  await page.locator('.hud-time-backdrop').click();
+  await expect(tile.locator('.inst-sub')).toContainText('ago');
+
+  // the overlay carries its own transport (overrides the global as-of)
+  await tile.click();
+  await expect(page.locator('.overlay-title')).toHaveText('Strategy triads');
+  await expect(page.locator('.overlay .toc-play')).toContainText('pause'); // its own movie autoplays
+  const oscrub = page.locator('.overlay .toc-scrub');
+  await oscrub.focus();
+  await page.keyboard.press('End');
+  await expect(page.locator('.overlay .toc-asof')).toHaveText('now');
+});
+
 test('the system model expands and switches among the seed CLDs', async ({ page }) => {
   await page.locator('.inst', { hasText: 'System model' }).first().click();
   await expect(page.locator('.overlay-title')).toHaveText('System Model');
@@ -536,10 +558,15 @@ test('signify: the customer and strategy triads accept stories, shown as distinc
   await expect(page.locator('.po-detail-triad .tc-dot-captured')).toHaveCount(1);
   await page.keyboard.press('Escape');
 
-  // the strategy triads overlay shows the ringed perceived dot + the perceived-vs-authored legend
+  // the strategy triads overlay shows the ringed perceived dot + the perceived-vs-authored
+  // legend — it now time-travels too, and your dot lives at "now", so scrub there
   await page.locator('.inst', { hasText: 'Strategy triads' }).first().click();
   await expect(page.locator('.overlay-title')).toHaveText('Strategy triads');
-  expect(await page.locator('.overlay .tc-dot-captured').count()).toBe(1);
+  const stScrub = page.locator('.overlay .toc-scrub');
+  await stScrub.focus();
+  await page.keyboard.press('End');
+  await expect(page.locator('.overlay .toc-asof')).toHaveText('now');
+  await expect(page.locator('.overlay .tc-dot-captured')).toHaveCount(1);
   await expect(page.locator('.overlay .triad-legend')).toContainText('perceived');
 });
 
