@@ -34,8 +34,13 @@
 /* --- HUD: thin top strip --- */
 .hud {
   flex: 0 0 auto;
+  /* Pin to one line's height so it never resizes the grid below it during the movie: widening
+     the as-of chip used to squeeze the row and wrap a child (the build badge) to a second line,
+     jittering every tile. Pinned to the natural one-line height (no grid stolen) + children kept
+     nowrap (see .hud-build) and clipped if the row ever overflows horizontally. */
+  height: 30px;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: var(--s-4);
   /* sit above the band so the global time-travel popover (and its backdrop) can overlay the
      grid — otherwise the later-painted band intercepts clicks at equal z-index */
@@ -63,6 +68,8 @@
 .hud-status {
   margin-left: auto;
   font-size: var(--t-xs);
+  flex: 0 0 auto;
+  white-space: nowrap; /* keep "online · strategy v0.x" on one line so the pinned HUD never clips */
 }
 .hud-online {
   color: var(--ink-2);
@@ -87,6 +94,8 @@
   font-size: var(--t-xs);
   color: var(--ink-3);
   letter-spacing: 0.02em;
+  flex: 0 0 auto;
+  white-space: nowrap; /* never wrap to a second line — that would grow the HUD strip */
 }
 .hud-build:hover {
   color: var(--ink-2);
@@ -480,12 +489,15 @@
 }
 .sr-intent {
   color: var(--ink);
-  font-size: var(--t-m);
+  /* normalized to the dashboard body size (was --t-m) so the strategy banner is in step with
+     the rest; clamped + a reserved two-line height so its prose never shifts during the movie */
+  font-size: var(--t-s);
   line-height: 1.3;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  min-height: 2.6em;
 }
 .sr-chips {
   display: flex;
@@ -1134,6 +1146,12 @@
 /* --- Challenge: the primary message bar --- */
 .challenge-bar {
   flex: 0 0 auto;
+  /* Pinned height: the challenge text changes every period, and an auto-height bar sitting
+     above the flex grid would resize every tile during the movie (it swings ~60–79px as the
+     question and side block change). Pin it to the tallest state so the grid never moves;
+     content is clamped/centred within. */
+  height: 79px;
+  overflow: hidden;
   display: flex;
   align-items: center;
   gap: var(--s-4);
@@ -1152,10 +1170,16 @@
 .cb-q {
   flex: 1;
   font-family: var(--font-display);
-  font-size: var(--t-m);
+  /* normalized to the dashboard body size (was --t-m) so the challenge reads in step with the
+     rest of the cockpit, and clamped to two lines so its length never resizes the band */
+  font-size: var(--t-s);
   font-weight: 400;
   color: var(--ink);
   line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .cb-side {
   flex: 0 0 auto;

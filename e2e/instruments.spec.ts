@@ -410,6 +410,31 @@ test('sensemaker: the Cynefin overlay reads drift as a vector (direction + magni
   await page.keyboard.press('Escape');
 });
 
+test('movie stability: every widget keeps its size across periods (no reflow)', async ({ page }) => {
+  // The dashboard-as-movie must not jitter: as periods change, no tile may resize. The usual
+  // culprit is text-length-driven reflow in the challenge bar (it sits above the flex grid),
+  // which would shrink/grow every tile. Measure key boxes at "now" and at the oldest period.
+  const boxH = async (sel: string) => Math.round((await page.locator(sel).first().boundingBox())!.height);
+  const grid = '.dash-grid';
+  const flow = '.inst:has(.frw)';
+  const strategy = '.inst:has(.sr)';
+  const bar = '.challenge-bar';
+  const now = { grid: await boxH(grid), flow: await boxH(flow), strategy: await boxH(strategy), bar: await boxH(bar) };
+
+  // travel the whole dashboard to the oldest period (the challenge + strategy prose change most)
+  await page.locator('.hud-time-chip').click();
+  const scrub = page.locator('.gt-scrub');
+  await scrub.focus();
+  await page.keyboard.press('Home');
+  await page.locator('.hud-time-backdrop').click();
+  await expect(page.locator('.hud-time-chip')).toContainText('ago');
+
+  expect(await boxH(bar)).toBe(now.bar); // the challenge bar height is pinned
+  expect(await boxH(grid)).toBe(now.grid); // so the grid never resizes
+  expect(await boxH(flow)).toBe(now.flow);
+  expect(await boxH(strategy)).toBe(now.strategy);
+});
+
 test('time travel: the whole dashboard is one movie — the flow board travels in sync', async ({
   page,
 }) => {
