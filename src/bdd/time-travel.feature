@@ -78,3 +78,9 @@ Feature: Time travel across the triad and radar views
   Scenario: the mandate ladder's gap was wider an earlier period back
     Given a team's authorised level and its actual level now
     Then the actual sat further from authorised earlier than it does now
+
+  Scenario: the flow board runs on the dashboard's one master clock
+    Given the flow simulation's frames and the dashboard's periods
+    Then "now" maps to the latest frame
+    And the oldest period maps to the first frame
+    And travelling forward never steps the frame backward
