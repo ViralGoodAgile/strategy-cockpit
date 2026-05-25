@@ -379,6 +379,20 @@ test('time travel: the mandate ladder travels in the overlay (gap wider earlier)
   await page.keyboard.press('Escape');
 });
 
+test('the strategy-triads tile renders all four triangle charts (not collapsed)', async ({ page }) => {
+  const tile = page.locator('.inst', { hasText: 'Strategy triads' }).first();
+  await expect(tile.locator('.st-cell')).toHaveCount(4);
+  const svgs = tile.locator('.st-cell .tc-svg');
+  await expect(svgs).toHaveCount(4);
+  // regression guard: the chart wrapper used to collapse to 0×0, hiding every triangle
+  const box = await svgs.first().boundingBox();
+  expect(box!.height).toBeGreaterThan(40);
+  expect(box!.width).toBeGreaterThan(40);
+  // each triad shows its authored-lean centroid and a triangle frame
+  await expect(tile.locator('.st-cell .tc-centroid')).toHaveCount(4);
+  await expect(tile.locator('.st-cell .tc-frame')).toHaveCount(4);
+});
+
 test('EBM: the value-areas overlay reads value across all four KVAs', async ({ page }) => {
   await page.locator('.cb-ebm').click();
   await expect(page.locator('.overlay-title')).toHaveText('EBM — Value');

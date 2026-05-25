@@ -711,9 +711,17 @@
   color: var(--ink-2);
   letter-spacing: 0.04em;
 }
+/* The chart wrapper must grow to fill the cell, otherwise the SVG's height:100% resolves
+   against a zero-height flex item and the triangle collapses to nothing. */
+.st-cell .tc {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  justify-content: center;
+}
 .st-cell .tc-svg {
   height: 100%;
-  width: auto;
+  width: 100%;
   max-width: 100%;
   min-height: 0;
 }
