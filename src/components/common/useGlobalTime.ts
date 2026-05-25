@@ -1,6 +1,16 @@
 import { useCockpit } from '../../store/useCockpit';
 import { PERIODS } from '../../lib/timeTravel';
-import type { TimeTravel } from './useTimeTravel';
+
+// The shape the shared Transport drives. Backed by the one store-held master clock.
+export interface TimeTravel {
+  index: number; // current frame (0 oldest … last = now)
+  last: number; // max frame index
+  playing: boolean;
+  speed: number; // playback multiplier
+  setIndex: (i: number) => void; // scrub — pauses playback
+  setPlaying: (p: boolean) => void;
+  setSpeed: (s: number) => void;
+}
 
 // The ONE master clock, presented as a TimeTravel so the shared Transport drives it unchanged.
 // Every travel-capable widget (tiles AND overlays) reads and controls this single store-backed

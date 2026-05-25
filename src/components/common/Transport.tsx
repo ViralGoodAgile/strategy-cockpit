@@ -1,6 +1,6 @@
 import { useCockpit } from '../../store/useCockpit';
 import { TIME_UNITS, unitLabel, type TimeUnit } from '../../lib/timeTravel';
-import type { TimeTravel } from './useTimeTravel';
+import type { TimeTravel } from './useGlobalTime';
 
 const SPEEDS = [0.5, 1, 2, 4];
 
