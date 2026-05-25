@@ -20,6 +20,7 @@ import { OutcomesSensor } from '../sensors/OutcomesSensor';
 import { ReliabilitySensor } from '../sensors/ReliabilitySensor';
 import { HygieneSensor } from '../sensors/HygieneSensor';
 import { ChallengesSensor } from '../sensors/ChallengesSensor';
+import { EbmSensor } from './EbmSensor';
 import { RADAR_SIGNAL, OUTCOMES_SIGNAL, RELIABILITY_SIGNAL } from '../../data/sensorData';
 
 const TITLES: Record<string, string> = {
@@ -36,6 +37,7 @@ const TITLES: Record<string, string> = {
   reliability: 'Reliability',
   hygiene: 'Data hygiene',
   challenges: 'Challenges',
+  ebm: 'EBM — Value',
 };
 
 // Detail-on-demand: expanding an instrument opens its full sensor in a modal "page",
@@ -74,6 +76,7 @@ export function DetailOverlay() {
           {detail === 'hygiene' && <HygieneSensor />}
           {detail === 'challenges' && <ChallengesSensor />}
           {detail === 'quant' && <QuantSensor />}
+          {detail === 'ebm' && <EbmSensor />}
         </div>
       </div>
     </div>

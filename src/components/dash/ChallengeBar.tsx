@@ -46,6 +46,9 @@ export function ChallengeBar() {
         </div>
         <div className="cb-meta">
           <FreshPill freshness={c.freshness} />
+          <button className="cb-ebm" onClick={() => setDetail('ebm')}>
+            EBM value ›
+          </button>
           {challenges.length > 1 && (
             <button className="cb-all" onClick={() => setDetail('challenges')}>
               {challenges.length} challenges ›
