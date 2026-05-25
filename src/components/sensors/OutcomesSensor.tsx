@@ -2,6 +2,11 @@ import type { Signal } from '../../domain/types';
 import type { OutcomeSet, Triad } from '../../domain/sensors';
 import { useCockpit } from '../../store/useCockpit';
 import { triadsWithCaptured } from '../../mirrors/capturedTriads';
+import { triadAtPeriod, triadHistory } from '../../mirrors/triadHistory';
+import { PERIODS } from '../../lib/timeTravel';
+import { metricAt } from '../common/trend';
+import { useTimeTravel } from '../common/useTimeTravel';
+import { Transport } from '../common/Transport';
 import { Numeral } from '../common/Numeral';
 import { SensorModule } from './SensorModule';
 import { TriadChart } from './TriadChart';
@@ -13,15 +18,26 @@ function leanIndex(t: Triad, period: 'current' | 'prior') {
   return [m.a, m.b, m.c].indexOf(Math.max(m.a, m.b, m.c));
 }
 
-// Product Outcomes — the full set: the PIRATE funnel (AARRR) and experience quality
-// (HEART) as numbers, the customer's own voice as a Cynefin sense-making triad, and the
-// prioritised unserved jobs (demand). Production reliability is its own instrument.
+// Product Outcomes — a time-travel movie of the full set: the PIRATE funnel (AARRR) and
+// experience quality (HEART) as numbers that read "as of" the chosen period, the customer's
+// own voice as a drifting Cynefin triad, and the unserved jobs (demand). Scrub or play.
 export function OutcomesSensor({ signal }: { signal: Signal<OutcomeSet> }) {
   const captured = useCockpit((s) => s.capturedStories);
+  const timeUnit = useCockpit((s) => s.timeUnit);
+  const tt = useTimeTravel(PERIODS);
   const { aarrr, heart, jobs } = signal.value;
-  const customerTriad = triadsWithCaptured([signal.value.customerTriad], captured)[0];
+
+  const history = triadHistory(signal.value.customerTriad, PERIODS, timeUnit);
+  const asOf = history[tt.index].label;
+  const customerTriad = triadAtPeriod(
+    signal.value.customerTriad,
+    history,
+    tt.index,
+    (b) => triadsWithCaptured([b], captured)[0],
+  );
   const now = leanIndex(customerTriad, 'current');
   const before = leanIndex(customerTriad, 'prior');
+  const hasPrior = customerTriad.stories.some((s) => s.period === 'prior');
 
   return (
     <SensorModule
@@ -32,35 +48,38 @@ export function OutcomesSensor({ signal }: { signal: Signal<OutcomeSet> }) {
       freshness={signal.freshness}
       insight={
         <>
-          Is the product moving customers’ world toward INTENT? The PIRATE funnel (AARRR) and
-          experience quality (HEART) read the numbers; the customer triad reads the voice; the
-          unserved customer jobs name the demand still open. Production reliability is a separate instrument.
+          <strong>{asOf}</strong>: is the product moving customers’ world toward INTENT? The PIRATE
+          funnel (AARRR) and experience quality (HEART) read the numbers; the customer triad reads
+          the voice; the unserved customer jobs name the demand still open. Scrub or play to travel.
         </>
       }
     >
+      <Transport tt={tt} label={asOf} />
       <div className="po-detail">
         <div className="po-detail-col">
           <div className="po-detail-head">Acquisition → Revenue · AARRR</div>
           <div className="outcomes-grid">
-            {aarrr.map((m) => (
-              <Numeral key={m.key} value={m.display} label={m.label} metric={m} />
-            ))}
+            {aarrr.map((m) => {
+              const a = metricAt(m, tt.index);
+              return <Numeral key={m.key} value={a.display} label={m.label} metric={a} />;
+            })}
           </div>
           <div className="po-detail-head">Experience · HEART</div>
           <div className="outcomes-grid">
-            {heart.map((m) => (
-              <Numeral key={m.key} value={m.display} label={m.label} metric={m} />
-            ))}
+            {heart.map((m) => {
+              const a = metricAt(m, tt.index);
+              return <Numeral key={m.key} value={a.display} label={m.label} metric={a} />;
+            })}
           </div>
         </div>
 
         <div className="po-detail-triad">
           <div className="po-detail-head">Customer sense-making</div>
           <p className="po-detail-q">{customerTriad.question}</p>
-          <TriadChart triad={customerTriad} />
+          <TriadChart triad={customerTriad} onInspect={() => tt.setPlaying(false)} />
           <p className="triad-lean">
             leans <strong>“{customerTriad.poles[now].label}”</strong>
-            {now !== before && <> · drifted from “{customerTriad.poles[before].label}”</>}
+            {hasPrior && now !== before && <> · drifted from “{customerTriad.poles[before].label}”</>}
           </p>
           <div className="triad-interp">
             <div className="triad-interp-head">interpretations · by people, not the cockpit</div>

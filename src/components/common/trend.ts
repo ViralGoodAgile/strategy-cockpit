@@ -1,6 +1,39 @@
 import type { Metric } from '../../domain/sensors';
 import type { Trend } from '../../domain/types';
 
+// Decimals carried by a number, inferred from how the current value is written.
+function decimalsOf(n: number): number {
+  const s = String(n);
+  const dot = s.indexOf('.');
+  return dot < 0 ? 0 : s.length - dot - 1;
+}
+
+// The unit/qualifier trailing a display string ("2.3 / day" → "/ day", "99.94 %" → "%").
+function suffixOf(display: string): string {
+  const m = display.match(/^[\s\d.,+-]+(.*)$/);
+  return m ? m[1].trim() : '';
+}
+
+// The metric as it stood `index` periods into its series — value, the point before it, and
+// the series up to that point — so a numeral and its trend arrows read "as of" that period.
+// At the latest index it returns the metric untouched (keeping the hand-authored display).
+export function metricAt(m: Metric, index: number): Metric {
+  const last = m.series.length - 1;
+  const i = Math.max(0, Math.min(last, index));
+  if (i === last) return m;
+  const value = m.series[i];
+  const prior = i > 0 ? m.series[i - 1] : m.series[i];
+  const num = value.toFixed(decimalsOf(m.value));
+  const suffix = suffixOf(m.display);
+  return {
+    ...m,
+    value,
+    prior,
+    series: m.series.slice(0, i + 1),
+    display: suffix ? `${num} ${suffix}` : num,
+  };
+}
+
 // Direction of the LAST data point vs the one before it (short-term, two-point). Useful
 // but tamperable — a single fresh point can flip it. Shown small and secondary.
 export function metricTrend(m: Metric): Trend {

@@ -146,6 +146,34 @@ test('global time travel: a HUD control travels the whole dashboard; widgets ove
   await expect(page.locator('.overlay .toc-asof')).toHaveText('now'); // independent of global
 });
 
+test('time travel: product-outcomes numbers travel on the tile and in the overlay', async ({
+  page,
+}) => {
+  const tile = page.locator('.inst', { hasText: 'Product outcomes' }).first();
+  const acq = tile.locator('.po-metric', { hasText: 'Acquisition' }).locator('.po-m-val');
+  // at "now" the number is current
+  await expect(acq).toHaveText('142');
+
+  // travel the whole dashboard back via the global control → the number reads "as of" then
+  await page.locator('.hud-time-chip').click();
+  const scrub = page.locator('.gt-scrub');
+  await scrub.focus();
+  await page.keyboard.press('Home');
+  await page.locator('.hud-time-backdrop').click();
+  await expect(acq).toHaveText('96');
+  await expect(tile.locator('.inst-sub')).toContainText('ago');
+
+  // the overlay carries its own transport (overrides the global as-of): scrub it to "now"
+  await tile.click();
+  await expect(page.locator('.overlay-title')).toHaveText('Product Outcomes');
+  await expect(page.locator('.overlay .toc-play')).toContainText('pause'); // its own movie autoplays
+  const oscrub = page.locator('.overlay .toc-scrub');
+  await oscrub.focus();
+  await page.keyboard.press('End');
+  await expect(page.locator('.overlay .toc-asof')).toHaveText('now');
+  await expect(page.locator('.overlay .outcomes-grid .numeral-value').first()).toContainText('142');
+});
+
 test('the system model expands and switches among the seed CLDs', async ({ page }) => {
   await page.locator('.inst', { hasText: 'System model' }).first().click();
   await expect(page.locator('.overlay-title')).toHaveText('System Model');
@@ -497,10 +525,15 @@ test('signify: the customer and strategy triads accept stories, shown as distinc
 
   await page.locator('.author-back').click();
 
-  // the customer voice (Product Outcomes overlay) shows the ringed "yours" dot
+  // the customer voice (Product Outcomes overlay) shows the ringed "yours" dot — it now
+  // time-travels, and your dot lives at "now", so scrub there
   await page.locator('.inst', { hasText: 'Product outcomes' }).first().click();
   await expect(page.locator('.overlay-title')).toHaveText('Product Outcomes');
-  expect(await page.locator('.po-detail-triad .tc-dot-captured').count()).toBe(1);
+  const poScrub = page.locator('.overlay .toc-scrub');
+  await poScrub.focus();
+  await page.keyboard.press('End');
+  await expect(page.locator('.overlay .toc-asof')).toHaveText('now');
+  await expect(page.locator('.po-detail-triad .tc-dot-captured')).toHaveCount(1);
   await page.keyboard.press('Escape');
 
   // the strategy triads overlay shows the ringed perceived dot + the perceived-vs-authored legend
