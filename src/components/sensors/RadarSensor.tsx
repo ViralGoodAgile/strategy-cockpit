@@ -1,7 +1,9 @@
 import { useMemo } from 'react';
 import type { Signal } from '../../domain/types';
 import type { Impediment, RadarSet, ScopeLevel } from '../../domain/sensors';
+import { useCockpit } from '../../store/useCockpit';
 import { radarHistory } from '../../mirrors/radarHistory';
+import { PERIODS } from '../../lib/timeTravel';
 import { useTimeTravel } from '../common/useTimeTravel';
 import { Transport } from '../common/Transport';
 import { SensorModule } from './SensorModule';
@@ -18,7 +20,8 @@ const LEVELS: { level: ScopeLevel; label: string }[] = [
 // movie: scrub or play to watch impediments emerge, escalate and resolve. Center is the
 // most local (pod); the outer edge is outside the organisation (super-org).
 export function RadarSensor({ signal }: { signal: Signal<RadarSet> }) {
-  const snapshots = useMemo(() => radarHistory(signal.value), [signal.value]);
+  const timeUnit = useCockpit((s) => s.timeUnit);
+  const snapshots = useMemo(() => radarHistory(signal.value, PERIODS, timeUnit), [signal.value, timeUnit]);
   const tt = useTimeTravel(snapshots.length);
   const snap = snapshots[tt.index];
   const items = snap.set.impediments;

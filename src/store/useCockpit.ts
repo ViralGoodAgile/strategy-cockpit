@@ -4,6 +4,7 @@ import type { Closure, QualityId, Strategy, StrategyVersion } from '../domain/ty
 import type { CapturedStory } from '../domain/sensors';
 import { removeCapturedFrom, updateCapturedIn, type CapturedEdit } from '../mirrors/capturedTriads';
 import { DEFAULT_SEGMENTS } from '../data/segments';
+import { PERIODS, type TimeUnit } from '../lib/timeTravel';
 import { emptyStrategy } from '../domain/qualities';
 import { SAMPLE_STRATEGY } from '../data/sample';
 import type { ScenarioId } from '../data/scenarios';
@@ -44,6 +45,8 @@ interface CockpitState {
   capturedStories: CapturedStory[]; // stories signified by survey takers (/signify)
   theme: ThemeId; // colour scheme
   segments: string[]; // configurable "whose situation" list for /signify (C4: segments only)
+  timeUnit: TimeUnit; // dashboard-wide time-travel granularity (weeks … years)
+  timeIndex: number; // global as-of frame (0 oldest … PERIODS-1 = now)
 
   updateSection: <K extends keyof Strategy>(k: K, patch: Partial<Strategy[K]>) => void;
   setDraft: (s: Strategy) => void;
@@ -62,6 +65,8 @@ interface CockpitState {
   clearCaptured: () => void; // wipe captured stories (demo reset)
   addSegment: (name: string) => void; // add a "whose situation" segment
   removeSegment: (name: string) => void; // remove a segment
+  setTimeUnit: (u: TimeUnit) => void; // change the dashboard time-travel granularity
+  setTimeIndex: (i: number) => void; // move the global as-of
   setTheme: (t: ThemeId) => void; // switch colour scheme
   seed: () => void; // first-visit: load the example as v0.1 so the cockpit is alive
   reset: () => void; // "start fresh": wipe to a blank strategy and open the editor
@@ -88,6 +93,8 @@ export const useCockpit = create<CockpitState>()(
       capturedStories: [],
       theme: 'obsidian',
       segments: [...DEFAULT_SEGMENTS],
+      timeUnit: 'weeks',
+      timeIndex: PERIODS - 1, // open on "now"
 
       updateSection: (k, patch) =>
         set((s) => ({ draft: { ...s.draft, [k]: { ...s.draft[k], ...patch } } })),
@@ -137,6 +144,9 @@ export const useCockpit = create<CockpitState>()(
       removeSegment: (name) =>
         set((st) => ({ segments: st.segments.filter((s) => s !== name) })),
 
+      setTimeUnit: (timeUnit) => set({ timeUnit }),
+      setTimeIndex: (timeIndex) => set({ timeIndex: Math.max(0, Math.min(PERIODS - 1, timeIndex)) }),
+
       // Apply the data-theme attribute synchronously (before the re-render) so colour
       // tokens — including the loop arrows that read them — update in the same frame.
       setTheme: (theme) => {
@@ -179,6 +189,7 @@ export const useCockpit = create<CockpitState>()(
         capturedStories: s.capturedStories,
         theme: s.theme,
         segments: s.segments,
+        timeUnit: s.timeUnit,
       }),
     },
   ),

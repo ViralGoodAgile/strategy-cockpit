@@ -15,6 +15,7 @@ import { ReliabilityReadout } from './dash/ReliabilityReadout';
 import { HygieneReadout } from './dash/HygieneReadout';
 import { ChallengeBar } from './dash/ChallengeBar';
 import { ScenarioSelector } from './dash/ScenarioSelector';
+import { GlobalTimeTravel } from './dash/GlobalTimeTravel';
 import { ThemeSelector } from './dash/ThemeSelector';
 import { BuildBadge } from './dash/BuildBadge';
 import { DetailOverlay } from './dash/DetailOverlay';
@@ -52,6 +53,7 @@ export function Cockpit() {
             <span className="hud-offline">offline · no v0.1</span>
           )}
         </div>
+        {gateOpen && <GlobalTimeTravel />}
         {gateOpen && <ScenarioSelector />}
         <ThemeSelector />
         <BuildBadge />

@@ -1,6 +1,36 @@
 // Pure frame-stepping logic for the cockpit's "time-travel" views (Flow, and the triad /
 // radar movies). Kept free of React so it can be reasoned about and tested directly.
 
+// How many frames a movie / the global timeline carries.
+export const PERIODS = 6;
+
+// The granularity a time-travel timeline is read at — a dashboard-wide preference.
+export type TimeUnit = 'weeks' | 'months' | 'quarters' | 'halves' | 'years';
+export const TIME_UNITS: TimeUnit[] = ['weeks', 'months', 'quarters', 'halves', 'years'];
+
+const UNIT_WORD: Record<TimeUnit, { one: string; many: string }> = {
+  weeks: { one: 'wk', many: 'wks' },
+  months: { one: 'mo', many: 'mo' },
+  quarters: { one: 'qtr', many: 'qtrs' },
+  halves: { one: 'half', many: 'halves' },
+  years: { one: 'yr', many: 'yrs' },
+};
+const UNIT_LABEL: Record<TimeUnit, string> = {
+  weeks: 'weeks',
+  months: 'months',
+  quarters: 'quarters',
+  halves: 'half-years',
+  years: 'years',
+};
+export const unitLabel = (u: TimeUnit) => UNIT_LABEL[u];
+
+// Label for a frame, given how many steps back from "now" it sits ("now", "3 mo ago").
+export function periodLabel(offsetFromNow: number, unit: TimeUnit): string {
+  if (offsetFromNow <= 0) return 'now';
+  const w = UNIT_WORD[unit];
+  return `${offsetFromNow} ${offsetFromNow === 1 ? w.one : w.many} ago`;
+}
+
 // The next frame when playing — advance one, looping back to the start at the end.
 export function nextFrame(i: number, last: number): number {
   return i >= last ? 0 : i + 1;

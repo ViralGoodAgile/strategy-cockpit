@@ -4,6 +4,7 @@ import type { TriadSet, TriadStory } from '../../domain/sensors';
 import { useCockpit } from '../../store/useCockpit';
 import { triadsWithCaptured } from '../../mirrors/capturedTriads';
 import { triadAtPeriod, triadHistory } from '../../mirrors/triadHistory';
+import { PERIODS } from '../../lib/timeTravel';
 import { useTimeTravel } from '../common/useTimeTravel';
 import { Transport } from '../common/Transport';
 import { SensorModule } from './SensorModule';
@@ -21,8 +22,9 @@ function leanIndex(stories: TriadStory[], period: string) {
 // (never named individuals, C4); your own captures appear at "now", ringed.
 export function TriadSensor({ signal }: { signal: Signal<TriadSet> }) {
   const captured = useCockpit((s) => s.capturedStories);
+  const timeUnit = useCockpit((s) => s.timeUnit);
   const triads = signal.value.triads;
-  const histories = useMemo(() => triads.map((t) => triadHistory(t)), [triads]);
+  const histories = useMemo(() => triads.map((t) => triadHistory(t, PERIODS, timeUnit)), [triads, timeUnit]);
   const tt = useTimeTravel(histories[0]?.length ?? 1);
   const atNow = tt.index === tt.last;
   const asOf = histories[0]?.[tt.index]?.label ?? 'now';

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { clampFrame, initialFrame, nextFrame, shouldAutoplay } from './timeTravel';
+import { clampFrame, initialFrame, nextFrame, periodLabel, shouldAutoplay, unitLabel } from './timeTravel';
 
 describe('time-travel frame logic', () => {
   it('advances one frame and loops at the end', () => {
@@ -24,5 +24,22 @@ describe('time-travel frame logic', () => {
     expect(clampFrame(-2, 5)).toBe(0);
     expect(clampFrame(9, 5)).toBe(5);
     expect(clampFrame(3, 5)).toBe(3);
+  });
+
+  it('labels a period in the chosen granularity', () => {
+    expect(periodLabel(0, 'weeks')).toBe('now');
+    expect(periodLabel(3, 'weeks')).toBe('3 wks ago');
+    expect(periodLabel(1, 'weeks')).toBe('1 wk ago');
+    expect(periodLabel(3, 'months')).toBe('3 mo ago');
+    expect(periodLabel(2, 'quarters')).toBe('2 qtrs ago');
+    expect(periodLabel(1, 'halves')).toBe('1 half ago');
+    expect(periodLabel(2, 'halves')).toBe('2 halves ago');
+    expect(periodLabel(4, 'years')).toBe('4 yrs ago');
+  });
+
+  it('names each granularity for the picker', () => {
+    expect(unitLabel('weeks')).toBe('weeks');
+    expect(unitLabel('halves')).toBe('half-years');
+    expect(unitLabel('quarters')).toBe('quarters');
   });
 });
