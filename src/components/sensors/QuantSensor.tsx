@@ -1,7 +1,7 @@
 import { DATADOG_SIGNAL, DORA_SIGNAL } from '../../data/sensorData';
 import { useCockpit } from '../../store/useCockpit';
-import { PERIODS, periodLabel } from '../../lib/timeTravel';
-import { useTimeTravel } from '../common/useTimeTravel';
+import { periodLabel } from '../../lib/timeTravel';
+import { useGlobalTime } from '../common/useGlobalTime';
 import { Transport } from '../common/Transport';
 import { DoraSensor } from './DoraSensor';
 import { DataDogSensor } from './DataDogSensor';
@@ -11,7 +11,7 @@ import { DataDogSensor } from './DataDogSensor';
 // the dashboard's global as-of (travel within the widget wins once it's open).
 export function QuantSensor() {
   const timeUnit = useCockpit((s) => s.timeUnit);
-  const tt = useTimeTravel(PERIODS);
+  const tt = useGlobalTime();
   const asOf = periodLabel(tt.last - tt.index, timeUnit);
 
   return (

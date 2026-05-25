@@ -3,8 +3,11 @@ import type { Signal } from '../../domain/types';
 import type { FlowConstraintData } from '../../domain/sensors';
 import { backlogClass } from '../../domain/sensors';
 import { BACKLOG } from '../../data/sensorData';
+import { useCockpit } from '../../store/useCockpit';
+import { frameForPeriod, periodLabel } from '../../lib/timeTravel';
+import { offsetFromNow } from '../../mirrors/snapshotHistory';
 import { Transport } from '../common/Transport';
-import { useTimeTravel } from '../common/useTimeTravel';
+import { useGlobalTime } from '../common/useGlobalTime';
 import { SensorModule } from './SensorModule';
 import { FlowBoard, FlowLegend } from './FlowBoard';
 
@@ -68,14 +71,18 @@ function BacklogPanel() {
 // the station whose queue piles up; play/scrub to watch it shift. Motion carries meaning.
 export function FlowConstraint({ signal }: { signal: Signal<FlowConstraintData> }) {
   const { frames, caps } = signal.value;
-  const tt = useTimeTravel(frames.length);
-  const week = tt.index;
+  const timeUnit = useCockpit((s) => s.timeUnit);
+  const tt = useGlobalTime();
+  const asOf = periodLabel(offsetFromNow(tt.index, tt.last), timeUnit);
+  // the flow sim runs at a finer cadence than the global periods — project the period onto a frame
+  const week = frameForPeriod(tt.index, tt.last, frames.length);
+  const prevWeek = frameForPeriod(tt.index - 1, tt.last, frames.length);
 
   const f = frames[week];
   const constraintName = f.constraint === 'review' ? 'Review' : 'Build';
   const constraintQ = f[f.constraint].queue.length;
-  const shipped = week === 0 ? f.done.length : f.done.length - frames[week - 1].done.length;
-  const moved = week > 0 && frames[week - 1].constraint !== f.constraint;
+  const shipped = tt.index === 0 ? f.done.length : f.done.length - frames[prevWeek].done.length;
+  const moved = tt.index > 0 && frames[prevWeek].constraint !== f.constraint;
 
   return (
     <SensorModule
@@ -86,8 +93,9 @@ export function FlowConstraint({ signal }: { signal: Signal<FlowConstraintData> 
       freshness={signal.freshness}
       insight={
         <>
-          {f.label}: the constraint is <strong>{constraintName}</strong> — {constraintQ} item
-          {constraintQ === 1 ? '' : 's'} queued behind it. {moved && <>It just moved here. </>}
+          <strong>{asOf}</strong> · {f.label}: the constraint is <strong>{constraintName}</strong> —{' '}
+          {constraintQ} item{constraintQ === 1 ? '' : 's'} queued behind it.{' '}
+          {moved && <>It just moved here. </>}
           Throughput holds at ~{shipped}/wk: the constraint, not effort, sets the pace.
         </>
       }
@@ -95,7 +103,7 @@ export function FlowConstraint({ signal }: { signal: Signal<FlowConstraintData> 
       <div className="fi">
         <FlowBoard frame={f} caps={caps} />
         <FlowLegend />
-        <Transport tt={tt} label={f.label} />
+        <Transport tt={tt} label={asOf} granularity />
         <BacklogPanel />
       </div>
     </SensorModule>

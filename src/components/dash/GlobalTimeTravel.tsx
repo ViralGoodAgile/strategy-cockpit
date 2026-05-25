@@ -9,22 +9,25 @@ import { PERIODS, TIME_UNITS, periodLabel, unitLabel, type TimeUnit } from '../.
 export function GlobalTimeTravel() {
   const timeUnit = useCockpit((s) => s.timeUnit);
   const timeIndex = useCockpit((s) => s.timeIndex);
+  const playing = useCockpit((s) => s.timePlaying);
+  const speed = useCockpit((s) => s.timeSpeed);
   const setTimeUnit = useCockpit((s) => s.setTimeUnit);
   const setTimeIndex = useCockpit((s) => s.setTimeIndex);
+  const setPlaying = useCockpit((s) => s.setTimePlaying);
   const [open, setOpen] = useState(false);
-  const [playing, setPlaying] = useState(false);
   const last = PERIODS - 1;
   const asOf = periodLabel(last - timeIndex, timeUnit);
 
-  // Play the whole dashboard forward through time (read latest from the store each tick).
+  // The ONE master clock: play the whole dashboard forward through time (read latest from the
+  // store each tick). Every travel-capable widget reads timeIndex, so they all advance together.
   useEffect(() => {
     if (!playing) return;
     const id = setInterval(() => {
       const i = useCockpit.getState().timeIndex;
       useCockpit.getState().setTimeIndex(i >= last ? 0 : i + 1);
-    }, 1400);
+    }, 1400 / speed);
     return () => clearInterval(id);
-  }, [playing, last]);
+  }, [playing, speed, last]);
 
   return (
     <div className="hud-time">
@@ -42,7 +45,7 @@ export function GlobalTimeTravel() {
             <div className="gt-row">
               <button
                 className="gt-play"
-                onClick={() => setPlaying((p) => !p)}
+                onClick={() => setPlaying(!playing)}
                 aria-label={playing ? 'pause' : 'play'}
               >
                 {playing ? '❚❚' : '▶'}

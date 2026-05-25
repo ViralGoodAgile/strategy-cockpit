@@ -2,8 +2,8 @@ import { hygieneRows, hygieneSummary } from '../../lib/hygiene';
 import { ageInDays } from '../../lib/freshness';
 import { useCockpit } from '../../store/useCockpit';
 import { hygieneAt, offsetFromNow } from '../../mirrors/snapshotHistory';
-import { PERIODS, periodLabel } from '../../lib/timeTravel';
-import { useTimeTravel } from '../common/useTimeTravel';
+import { periodLabel } from '../../lib/timeTravel';
+import { useGlobalTime } from '../common/useGlobalTime';
 import { Transport } from '../common/Transport';
 
 // The full hygiene ledger as a time-travel movie: scrub or play to watch collection mature
@@ -12,7 +12,7 @@ import { Transport } from '../common/Transport';
 export function HygieneSensor() {
   const scenario = useCockpit((s) => s.scenario);
   const timeUnit = useCockpit((s) => s.timeUnit);
-  const tt = useTimeTravel(PERIODS);
+  const tt = useGlobalTime();
   const asOf = periodLabel(offsetFromNow(tt.index, tt.last), timeUnit);
   const rows = hygieneAt(hygieneRows(scenario), offsetFromNow(tt.index, tt.last), tt.last);
   const sum = hygieneSummary(rows);

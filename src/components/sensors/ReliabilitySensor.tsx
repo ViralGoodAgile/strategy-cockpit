@@ -2,8 +2,8 @@ import type { Signal } from '../../domain/types';
 import type { ReliabilitySet } from '../../domain/sensors';
 import { useCockpit } from '../../store/useCockpit';
 import { metricAt } from '../common/trend';
-import { PERIODS, periodLabel } from '../../lib/timeTravel';
-import { useTimeTravel } from '../common/useTimeTravel';
+import { periodLabel } from '../../lib/timeTravel';
+import { useGlobalTime } from '../common/useGlobalTime';
 import { Transport } from '../common/Transport';
 import { Numeral } from '../common/Numeral';
 import { SensorModule } from './SensorModule';
@@ -13,7 +13,7 @@ import { SensorModule } from './SensorModule';
 // 52m → 38m), never an SLA pass/fail badge. Its own transport overrides the global as-of.
 export function ReliabilitySensor({ signal }: { signal: Signal<ReliabilitySet> }) {
   const timeUnit = useCockpit((s) => s.timeUnit);
-  const tt = useTimeTravel(PERIODS);
+  const tt = useGlobalTime();
   const asOf = periodLabel(tt.last - tt.index, timeUnit);
 
   return (

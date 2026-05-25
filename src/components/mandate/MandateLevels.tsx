@@ -8,8 +8,8 @@ import {
 import { actualMedian } from '../../data/synthetic';
 import { useCockpit } from '../../store/useCockpit';
 import { actualAt, offsetFromNow } from '../../mirrors/snapshotHistory';
-import { PERIODS, periodLabel } from '../../lib/timeTravel';
-import { useTimeTravel } from '../common/useTimeTravel';
+import { periodLabel } from '../../lib/timeTravel';
+import { useGlobalTime } from '../common/useGlobalTime';
 import { Transport } from '../common/Transport';
 import './mandate.css';
 
@@ -43,7 +43,7 @@ export function MandateLevels({ signal }: { signal: Signal<Team[]> }) {
   const selected = useCockpit((s) => s.selectedTeam);
   const selectTeam = useCockpit((s) => s.selectTeam);
   const timeUnit = useCockpit((s) => s.timeUnit);
-  const tt = useTimeTravel(PERIODS);
+  const tt = useGlobalTime();
   const offset = offsetFromNow(tt.index, tt.last);
   const asOf = periodLabel(offset, timeUnit);
 
