@@ -51,7 +51,7 @@ export function TriadSensor({ signal }: { signal: Signal<TriadSet> }) {
         </>
       }
     >
-      <Transport tt={tt} label={asOf} />
+      <Transport tt={tt} label={asOf} granularity />
       <div className="triad-grid">
         {triads.map((t, i) => {
           const rt = triadAtPeriod(t, histories[i], tt.index, (base) => triadsWithCaptured([base], captured)[0]);

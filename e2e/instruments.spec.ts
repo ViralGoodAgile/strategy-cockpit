@@ -196,6 +196,18 @@ test('time travel: strategy triads travel on the tile and in the overlay', async
   await expect(page.locator('.overlay .toc-asof')).toHaveText('now');
 });
 
+test('time travel: a widget overlay can change the granularity (weeks…years)', async ({ page }) => {
+  await page.locator('.inst', { hasText: 'Cynefin triads' }).first().click();
+  await expect(page.locator('.overlay-title')).toHaveText('Cynefin triads');
+  const scrub = page.locator('.overlay .toc-scrub');
+  await scrub.focus();
+  await page.keyboard.press('Home'); // an earlier period, not "now"
+  await expect(page.locator('.overlay .toc-asof')).toContainText('wks ago'); // default: weeks
+  // the granularity chooser lives inside the widget too
+  await page.locator('.overlay .toc-unit').selectOption('quarters');
+  await expect(page.locator('.overlay .toc-asof')).toContainText('qtrs ago');
+});
+
 test('time travel: quant + reliability numbers travel (tiles + overlays)', async ({ page }) => {
   const quant = page.locator('.inst', { hasText: 'Quant' }).first();
   const deploy = quant.locator('.numeral', { hasText: 'Deploy frequency' }).locator('.numeral-value');

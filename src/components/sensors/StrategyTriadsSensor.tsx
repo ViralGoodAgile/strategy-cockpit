@@ -36,7 +36,7 @@ export function StrategyTriadsSensor() {
           </span>
         )}
       </p>
-      <Transport tt={tt} label={asOf} />
+      <Transport tt={tt} label={asOf} granularity />
       <div className="triad-grid">
         {views.map((v) => {
           const weights = weightsAtPeriod(v.weights, tt.index, tt.last);

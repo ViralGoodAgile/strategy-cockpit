@@ -31,7 +31,7 @@ export function ReliabilitySensor({ signal }: { signal: Signal<ReliabilitySet> }
         </>
       }
     >
-      <Transport tt={tt} label={asOf} />
+      <Transport tt={tt} label={asOf} granularity />
       <div className="outcomes-grid">
         {signal.value.metrics.map((m) => {
           const a = metricAt(m, tt.index);
