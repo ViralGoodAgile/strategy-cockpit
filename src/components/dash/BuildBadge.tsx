@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 interface BuildInfo {
+  version?: string | null; // app/release version: 0.<merged-PR>
   commit?: string | null;
   builtAt?: string | null;
   runUrl?: string | null;
@@ -24,16 +25,18 @@ export function BuildBadge() {
   // from; until (or unless) build-info.json loads it reads "dev" — so a local/unbuilt copy,
   // or a fresh CI checkout without a generated build-info, still shows the build identifier.
   const build = info?.commit ? info.commit.slice(0, 7) : 'dev';
+  const version = info?.version ?? null; // 0.<merged-PR>, when the live build carries one
   const t = info?.tests;
   const tests = t && t.passed != null ? `${t.passed}${info?.ok === false ? ' ✗' : ' ✓'}` : null;
   const builtAt = info?.builtAt ? new Date(info.builtAt).toLocaleString() : null;
-  const title = `build ${build}${builtAt ? ` · built ${builtAt}` : ''}${
-    info?.runUrl ? ' · click for the CI run that tested it' : ''
-  }`;
+  const title = `${version ? `v${version} · ` : ''}build ${build}${
+    builtAt ? ` · built ${builtAt}` : ''
+  }${info?.runUrl ? ' · click for the CI run that tested it' : ''}`;
 
   const body = (
     <>
       <i className={`hud-build-pip ${info?.ok === false ? 'hud-build-bad' : ''}`} />
+      {version && <span className="hud-build-ver">v{version} · </span>}
       <span className="hud-build-no">build {build}</span>
       {tests && <span className="hud-build-tests"> · tests {tests}</span>}
     </>

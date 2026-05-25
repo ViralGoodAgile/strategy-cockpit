@@ -1,6 +1,7 @@
-import type { Freshness } from '../domain/types';
+import type { Freshness, MandateLevel } from '../domain/types';
 import type { HygieneRow } from '../lib/hygiene';
 import type { WeakSignal } from '../domain/sensors';
+import { MANDATE_ORDER, levelGap, levelIndex } from '../domain/mandate';
 
 const WORSE: Record<Freshness, Freshness> = { fresh: 'aging', aging: 'stale', stale: 'dead', dead: 'dead' };
 
@@ -27,6 +28,43 @@ export function weakSignalsAt(signals: WeakSignal[], offset: number): WeakSignal
 export function mandateGapsAt(gaps: number[], offset: number, last: number): number[] {
   const f = 1 + (last > 0 ? offset / last : 0);
   return gaps.map((g) => Math.round(g * f));
+}
+
+// The authored intent/crux as a survey-taker would have read it. Authored prose has a REAL
+// history (the strategy's saved versions), so we don't fabricate a custom author's words: a
+// history is supplied only for the seed strategy; otherwise every period reads the current
+// text. `history` is oldest→newest, aligned to frames 0..last. Pure.
+export interface StrategyProse {
+  intent: string;
+  crux: string;
+}
+export function strategyProseAt(
+  history: StrategyProse[],
+  current: StrategyProse,
+  index: number,
+  last: number,
+): StrategyProse {
+  if (!history.length) return current;
+  const span = last > 0 ? last : history.length - 1;
+  // map the frame onto the history array (which may be a different length than the timeline).
+  const i = span <= 0 ? history.length - 1 : Math.round((index / span) * (history.length - 1));
+  return history[Math.max(0, Math.min(history.length - 1, i))] ?? current;
+}
+
+// The work-implied actual mandate level as it sat `offset` periods ago. The authorised↔actual
+// gap has narrowed toward now, so earlier the actual sat FURTHER from authorised — up to two
+// steps wider, in the same direction as today's gap (defaulting to "more ambitious"). Pure.
+export function actualAt(
+  actualNow: MandateLevel,
+  authorised: MandateLevel,
+  offset: number,
+  last: number,
+): MandateLevel {
+  if (offset <= 0) return actualNow;
+  const dir = Math.sign(levelGap(authorised, actualNow)) || 1; // away-from-authorised (default up)
+  const extra = Math.round((last > 0 ? offset / last : 0) * 2); // up to +2 steps wider earlier
+  const idx = Math.max(0, Math.min(MANDATE_ORDER.length - 1, levelIndex(actualNow) + dir * extra));
+  return MANDATE_ORDER[idx];
 }
 
 // Data hygiene was worse earlier (collection has matured): degrade each signal's freshness by

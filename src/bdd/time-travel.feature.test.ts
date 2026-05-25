@@ -4,8 +4,17 @@ import { TRIAD_SIGNAL, RADAR_SIGNAL, WEAK_SIGNAL } from '../data/sensorData';
 import { triadAtPeriod, triadHistory, type TriadPeriod } from '../mirrors/triadHistory';
 import { radarHistory } from '../mirrors/radarHistory';
 import { triadsWithCaptured } from '../mirrors/capturedTriads';
-import { hygieneAt, interpretationsAt, mandateGapsAt, weakSignalsAt } from '../mirrors/snapshotHistory';
+import {
+  actualAt,
+  hygieneAt,
+  interpretationsAt,
+  mandateGapsAt,
+  strategyProseAt,
+  weakSignalsAt,
+} from '../mirrors/snapshotHistory';
 import { hygieneRows } from '../lib/hygiene';
+import { SAMPLE_STRATEGY, STRATEGY_PROSE_HISTORY } from '../data/sample';
+import { levelGap } from '../domain/mandate';
 import type { CapturedStory, Triad, TriadStory } from '../domain/sensors';
 
 const triad = (): Triad => TRIAD_SIGNAL.value.triads[0]; // Sense-making
@@ -216,6 +225,35 @@ describeFeature(feature, ({ Scenario }) => {
     Given("a triad's interpretations", () => expect(interps.length).toBeGreaterThan(1));
     Then('fewer are written an earlier period back than now', () => {
       expect(interpretationsAt(interps, 0, 5).length).toBeLessThan(interpretationsAt(interps, 5, 5).length);
+    });
+  });
+
+  Scenario('the authored intent and crux read as of the period', ({ Given, Then, And }) => {
+    const current = { intent: SAMPLE_STRATEGY.intent.text, crux: SAMPLE_STRATEGY.context.crux };
+    Given("the seed strategy's prose history", () => expect(STRATEGY_PROSE_HISTORY.length).toBeGreaterThan(1));
+    Then('"now" reads today\'s authored intent', () => {
+      expect(strategyProseAt(STRATEGY_PROSE_HISTORY, current, 5, 5).intent).toBe(current.intent);
+    });
+    And('an earlier period reads a different, earlier intent', () => {
+      expect(strategyProseAt(STRATEGY_PROSE_HISTORY, current, 0, 5).intent).not.toBe(current.intent);
+    });
+    And('a custom strategy with no history reads its current words at every period', () => {
+      const custom = { intent: 'our own intent', crux: 'our own crux' };
+      expect(strategyProseAt([], custom, 0, 5)).toEqual(custom);
+      expect(strategyProseAt([], custom, 5, 5)).toEqual(custom);
+    });
+  });
+
+  Scenario("the mandate ladder's gap was wider an earlier period back", ({ Given, Then }) => {
+    const authorised = 'C';
+    const actualNow = 'G';
+    Given("a team's authorised level and its actual level now", () => {
+      expect(actualAt(actualNow, authorised, 0, 5)).toBe(actualNow);
+    });
+    Then('the actual sat further from authorised earlier than it does now', () => {
+      const now = Math.abs(levelGap(authorised, actualAt(actualNow, authorised, 0, 5)));
+      const earlier = Math.abs(levelGap(authorised, actualAt(actualNow, authorised, 5, 5)));
+      expect(earlier).toBeGreaterThan(now);
     });
   });
 });

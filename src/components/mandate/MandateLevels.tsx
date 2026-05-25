@@ -7,6 +7,10 @@ import {
 } from '../../domain/mandate';
 import { actualMedian } from '../../data/synthetic';
 import { useCockpit } from '../../store/useCockpit';
+import { actualAt, offsetFromNow } from '../../mirrors/snapshotHistory';
+import { PERIODS, periodLabel } from '../../lib/timeTravel';
+import { useTimeTravel } from '../common/useTimeTravel';
+import { Transport } from '../common/Transport';
 import './mandate.css';
 
 const W = 640;
@@ -31,19 +35,31 @@ function trendCaret(team: Team): string {
 }
 
 // The A–I ladder with three overlays per team and a gap indicator. SVG, not React
-// Flow — a vertical scale chart reads far cleaner hand-drawn (see report note).
+// Flow — a vertical scale chart reads far cleaner hand-drawn (see report note). The ladder
+// travels: the authorised↔actual gap was wider earlier and has narrowed, so scrub or play to
+// watch each team's actual marker close on its authorised level.
 export function MandateLevels({ signal }: { signal: Signal<Team[]> }) {
   const teams = signal.value;
   const selected = useCockpit((s) => s.selectedTeam);
   const selectTeam = useCockpit((s) => s.selectTeam);
+  const timeUnit = useCockpit((s) => s.timeUnit);
+  const tt = useTimeTravel(PERIODS);
+  const offset = offsetFromNow(tt.index, tt.last);
+  const asOf = periodLabel(offset, timeUnit);
+
+  // A team's work-implied actual level, as of the chosen period (wider gap earlier).
+  const actualOf = (t: Team): MandateLevel | null => {
+    const now = actualMedian(t);
+    return now ? actualAt(now, t.authorised, offset, tt.last) : null;
+  };
 
   const colX = (i: number) =>
     PLOT_LEFT + (i + 0.5) * ((PLOT_RIGHT - PLOT_LEFT) / teams.length);
 
-  // Q14 gap summary: distance authorised -> actual, per team.
+  // Q14 gap summary: distance authorised -> actual, per team (as of the chosen period).
   const gaps = teams
     .map((t) => {
-      const m = actualMedian(t);
+      const m = actualOf(t);
       return m ? Math.abs(levelGap(t.authorised, m)) : 0;
     })
     .sort((a, b) => a - b);
@@ -70,7 +86,7 @@ export function MandateLevels({ signal }: { signal: Signal<Team[]> }) {
 
         {teams.map((t, i) => {
           const x = colX(i);
-          const m = actualMedian(t)!;
+          const m = actualOf(t)!;
           const gap = Math.abs(levelGap(t.authorised, m));
           const big = gap >= 2;
           const on = selected === t.id;
@@ -103,7 +119,10 @@ export function MandateLevels({ signal }: { signal: Signal<Team[]> }) {
         })}
       </svg>
 
-      <div className="m-caption">A build-to-spec → I long-term outcome · hover a row for each level</div>
+      <div className="m-caption">A build-to-spec → I long-term outcome · hover a row for each level · {asOf}</div>
+
+      <Transport tt={tt} label={asOf} granularity />
+
 
       <div className="m-legend">
         <span><i className="m-key m-key-auth" /> authorised</span>

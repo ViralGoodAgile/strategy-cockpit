@@ -290,6 +290,68 @@ test('time travel: triad interpretations accrue (the qualitative text travels)',
   expect(atOldest).toBeLessThan(atNow);
 });
 
+test('time travel: the system model is a living CLD — sparser earlier, fuller at now', async ({
+  page,
+}) => {
+  await page.locator('.inst', { hasText: 'System model' }).first().click();
+  await expect(page.locator('.overlay-title')).toHaveText('System Model');
+  const oscrub = page.locator('.overlay .toc-scrub');
+
+  // earliest period: fewer links had been drawn
+  await oscrub.focus();
+  await page.keyboard.press('Home');
+  await expect(page.locator('.overlay .toc-asof')).toContainText('ago');
+  const early = await page.locator('.overlay .cld-link').count();
+
+  // "now": the full live model
+  await page.keyboard.press('End');
+  await expect(page.locator('.overlay .toc-asof')).toHaveText('now');
+  const now = await page.locator('.overlay .cld-link').count();
+
+  expect(early).toBeLessThan(now);
+  await page.keyboard.press('Escape');
+});
+
+test('time travel: the authored strategy intent travels on the banner', async ({ page }) => {
+  const tile = page.locator('.inst:has(.sr)');
+  const intent = tile.locator('.sr-intent');
+  const now = (await intent.textContent())?.trim();
+
+  // travel the whole dashboard back via the global control
+  await page.locator('.hud-time-chip').click();
+  const scrub = page.locator('.gt-scrub');
+  await scrub.focus();
+  await page.keyboard.press('Home');
+  await page.locator('.hud-time-backdrop').click();
+
+  // the banner now reads an earlier, different authored wording
+  await expect(tile.locator('.inst-sub')).toContainText('ago');
+  const earlier = (await intent.textContent())?.trim();
+  expect(earlier).not.toBe(now);
+  expect(earlier?.length).toBeGreaterThan(0);
+});
+
+test('time travel: the mandate ladder travels in the overlay (gap wider earlier)', async ({
+  page,
+}) => {
+  await page.locator('.inst', { hasText: 'Mandate Levels' }).first().click();
+  await expect(page.locator('.overlay-title')).toHaveText('Mandate Levels');
+  const oscrub = page.locator('.overlay .toc-scrub');
+  const summary = page.locator('.overlay .m-summary');
+
+  await oscrub.focus();
+  await page.keyboard.press('End'); // now — the narrowed gap
+  await expect(page.locator('.overlay .toc-asof')).toHaveText('now');
+  const now = (await summary.textContent())?.trim();
+
+  await page.keyboard.press('Home'); // earliest — the wider gap
+  await expect(page.locator('.overlay .toc-asof')).toContainText('ago');
+  const earlier = (await summary.textContent())?.trim();
+
+  expect(earlier).not.toBe(now);
+  await page.keyboard.press('Escape');
+});
+
 test('the system model expands and switches among the seed CLDs', async ({ page }) => {
   await page.locator('.inst', { hasText: 'System model' }).first().click();
   await expect(page.locator('.overlay-title')).toHaveText('System Model');

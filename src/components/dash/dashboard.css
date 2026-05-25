@@ -95,6 +95,10 @@
   color: var(--ink-2);
   letter-spacing: 0.04em;
 }
+.hud-build-ver {
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
 .hud-build-pip {
   width: 6px;
   height: 6px;
