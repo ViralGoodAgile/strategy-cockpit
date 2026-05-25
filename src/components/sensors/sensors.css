@@ -125,6 +125,13 @@
   font-weight: var(--w-regular);
   color: var(--ink);
 }
+/* SenseMaker shape note: a split distribution or an anomaly the average would hide */
+.triad-shape {
+  font-size: var(--t-xs);
+  color: var(--tl-amber);
+  opacity: 0.92;
+  margin-top: 2px;
+}
 .triad-frame {
   fill: none;
   stroke: var(--hair);
@@ -289,6 +296,19 @@
   stroke: var(--accent);
   stroke-width: 1.25;
   opacity: 0.55;
+  vector-effect: non-scaling-stroke;
+}
+/* an outlier fragment — surfaced with an amber dashed ring, never smoothed away */
+.tc-dot-outlier {
+  fill: var(--tl-amber);
+  opacity: 0.9;
+}
+.tc-dot-outlier-ring {
+  fill: none;
+  stroke: var(--tl-amber);
+  stroke-width: 1.25;
+  stroke-dasharray: 2 2;
+  opacity: 0.8;
   vector-effect: non-scaling-stroke;
 }
 /* hovered/pinned story's role, with a dark halo so it reads over the triangle */

@@ -352,6 +352,22 @@ test('time travel: the mandate ladder travels in the overlay (gap wider earlier)
   await page.keyboard.press('Escape');
 });
 
+test('sensemaker: the Cynefin overlay reads drift as a vector (direction + magnitude)', async ({
+  page,
+}) => {
+  await page.locator('.inst', { hasText: 'Cynefin triads' }).first().click();
+  await expect(page.locator('.overlay-title')).toHaveText('Cynefin triads');
+  const scrub = page.locator('.overlay .toc-scrub');
+  await scrub.focus();
+  await page.keyboard.press('End'); // "now" — a prior cloud is present, so drift is computed
+  await expect(page.locator('.overlay .triad-lean').first()).toContainText('leans');
+  // each triad with a prior reads either a directional drift or an explicit "steady"
+  await expect(
+    page.locator('.overlay .triad-lean', { hasText: /drifted|steady/ }).first(),
+  ).toBeVisible();
+  await page.keyboard.press('Escape');
+});
+
 test('time travel: the whole dashboard is one movie — the flow board travels in sync', async ({
   page,
 }) => {
