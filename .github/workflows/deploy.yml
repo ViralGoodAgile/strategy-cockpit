@@ -34,4 +34,8 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: 54613cc7ceeaf8e2706aa8fd14e3c773
-          command: pages deploy dist --project-name=strategy-cockpit --branch=main
+          # Pass an explicit ASCII commit message (the SHA) rather than letting wrangler forward
+          # the git commit message: Cloudflare's API rejects some valid-UTF-8 punctuation in commit
+          # bodies ("Invalid commit message" [8000111]), which had broken deploys. --commit-dirty
+          # silences the dirty-tree warning from generated test-results/build artifacts.
+          command: pages deploy dist --project-name=strategy-cockpit --branch=main --commit-message=${{ github.sha }} --commit-dirty=true
