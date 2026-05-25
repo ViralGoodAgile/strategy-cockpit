@@ -36,11 +36,13 @@ export function StrategyTriadChart({
   weights,
   captures = [],
   showStory = false,
+  onInspect,
 }: {
   labels: [string, string, string];
   weights: [number, number, number];
   captures?: StrategyCapture[];
   showStory?: boolean;
+  onInspect?: () => void; // called on hover — lets a movie pause so dots stop moving
 }) {
   const [authorHover, setAuthorHover] = useState(false);
   const [activeCap, setActiveCap] = useState<StrategyCapture | null>(null);
@@ -70,7 +72,10 @@ export function StrategyTriadChart({
             <g
               key={s.id}
               className="tc-dot-hit"
-              onMouseEnter={() => setActiveCap(s)}
+              onMouseEnter={() => {
+                onInspect?.();
+                setActiveCap(s);
+              }}
               onMouseLeave={() => setActiveCap((cur) => (cur?.id === s.id ? null : cur))}
             >
               <title>{`${s.role}: ${s.text} (your signified story)`}</title>
@@ -83,7 +88,10 @@ export function StrategyTriadChart({
         {/* authored: the strategy's own lean (solid champagne centroid, hoverable) */}
         <g
           className="tc-dot-hit"
-          onMouseEnter={() => setAuthorHover(true)}
+          onMouseEnter={() => {
+            onInspect?.();
+            setAuthorHover(true);
+          }}
           onMouseLeave={() => setAuthorHover(false)}
         >
           <title>{`Authored lean · ${lines.join(' · ')}`}</title>
