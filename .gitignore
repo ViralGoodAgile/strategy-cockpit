@@ -12,6 +12,9 @@ public/build-info.json
 # generated real-data snapshot (optional; absent → cockpit uses synthetic defaults)
 public/cockpit-data.json
 
+# coverage reports (npm run coverage)
+/coverage/
+
 # playwright e2e artifacts
 /test-results/
 /playwright-report/
