@@ -263,6 +263,79 @@
   text-transform: uppercase;
 }
 
+/* --- EBM — Value overlay: the four Key Value Areas, outcomes over output --- */
+.ebm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+.ebm-lead {
+  font-size: var(--t-s);
+  color: var(--ink-2);
+  max-width: 70ch;
+}
+.ebm-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--s-3);
+}
+.ebm-area {
+  border: 1px solid var(--bezel);
+  border-radius: var(--radius);
+  padding: var(--s-3);
+  background: var(--panel);
+}
+.ebm-area-head {
+  font-size: var(--t-s);
+  color: var(--ink);
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+}
+.ebm-kva {
+  font-size: var(--t-xs);
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  border: 1px solid var(--accent-wash);
+  border-radius: 3px;
+  padding: 0 4px;
+}
+.ebm-gist {
+  font-size: var(--t-xs);
+  color: var(--ink-3);
+  margin: 2px 0 var(--s-2);
+}
+.ebm-measures {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ebm-measure {
+  display: grid;
+  grid-template-columns: 1.2em 1fr auto;
+  align-items: baseline;
+  gap: var(--s-2);
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+}
+.ebm-arrow {
+  text-align: center;
+  color: var(--ink-3);
+}
+.ebm-improving .ebm-arrow {
+  color: var(--tl-green);
+}
+.ebm-worsening .ebm-arrow {
+  color: var(--tl-red);
+}
+.ebm-m-detail {
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
 /* --- the band: vertically centred -> letterbox above and below --- */
 .band {
   flex: 1;
@@ -1111,7 +1184,8 @@
   align-items: center;
   gap: var(--s-3);
 }
-.cb-all {
+.cb-all,
+.cb-ebm {
   font-size: var(--t-xs);
   color: var(--accent);
   letter-spacing: 0.04em;

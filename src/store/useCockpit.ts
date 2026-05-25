@@ -28,6 +28,7 @@ export type DetailView =
   | 'reliability'
   | 'hygiene'
   | 'challenges'
+  | 'ebm'
   | null;
 
 // All cockpit state the user can change, plus localStorage persistence.

@@ -352,6 +352,21 @@ test('time travel: the mandate ladder travels in the overlay (gap wider earlier)
   await page.keyboard.press('Escape');
 });
 
+test('EBM: the value-areas overlay reads value across all four KVAs', async ({ page }) => {
+  await page.locator('.cb-ebm').click();
+  await expect(page.locator('.overlay-title')).toHaveText('EBM — Value');
+  // all four Key Value Areas render
+  await expect(page.locator('.overlay .ebm-area')).toHaveCount(4);
+  await expect(page.locator('.overlay .ebm-kva', { hasText: 'CV' })).toBeVisible();
+  await expect(page.locator('.overlay .ebm-kva', { hasText: 'UV' })).toBeVisible();
+  await expect(page.locator('.overlay .ebm-kva', { hasText: 'T2M' })).toBeVisible();
+  await expect(page.locator('.overlay .ebm-kva', { hasText: 'A2I' })).toBeVisible();
+  // measures lead with direction of travel, not a target
+  expect(await page.locator('.overlay .ebm-measure').count()).toBeGreaterThan(3);
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.overlay')).toHaveCount(0);
+});
+
 test('sensemaker: the Cynefin overlay reads drift as a vector (direction + magnitude)', async ({
   page,
 }) => {
