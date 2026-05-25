@@ -54,3 +54,15 @@ export function shouldAutoplay(length: number, reducedMotion: boolean): boolean 
 export function clampFrame(i: number, last: number): number {
   return Math.max(0, Math.min(last, i));
 }
+
+// Map a global timeline position (period 0..lastPeriod) onto a flow-simulation frame
+// (0..frameCount-1). The flow board has its own, finer cadence (e.g. 8 weeks vs 6 periods),
+// so this projection lets it advance on the ONE master clock — the global time-travel control —
+// in lockstep with every other tile. "now" maps to the last frame; the oldest period to the
+// first; the projection is monotonic, so travelling forward never steps the frame backward.
+export function frameForPeriod(periodIndex: number, lastPeriod: number, frameCount: number): number {
+  if (frameCount <= 1) return 0;
+  if (lastPeriod <= 0) return frameCount - 1;
+  const frac = clampFrame(periodIndex, lastPeriod) / lastPeriod;
+  return Math.round(frac * (frameCount - 1));
+}

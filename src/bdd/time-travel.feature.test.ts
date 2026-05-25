@@ -1,6 +1,7 @@
 import { loadFeature, describeFeature } from '@amiceli/vitest-cucumber';
 import { expect } from 'vitest';
-import { TRIAD_SIGNAL, RADAR_SIGNAL, WEAK_SIGNAL } from '../data/sensorData';
+import { TRIAD_SIGNAL, RADAR_SIGNAL, WEAK_SIGNAL, FLOW_CONSTRAINT_SIGNAL } from '../data/sensorData';
+import { PERIODS, frameForPeriod } from '../lib/timeTravel';
 import { triadAtPeriod, triadHistory, type TriadPeriod } from '../mirrors/triadHistory';
 import { radarHistory } from '../mirrors/radarHistory';
 import { triadsWithCaptured } from '../mirrors/capturedTriads';
@@ -254,6 +255,24 @@ describeFeature(feature, ({ Scenario }) => {
       const now = Math.abs(levelGap(authorised, actualAt(actualNow, authorised, 0, 5)));
       const earlier = Math.abs(levelGap(authorised, actualAt(actualNow, authorised, 5, 5)));
       expect(earlier).toBeGreaterThan(now);
+    });
+  });
+
+  Scenario("the flow board runs on the dashboard's one master clock", ({ Given, Then, And }) => {
+    const frameCount = FLOW_CONSTRAINT_SIGNAL.value.frames.length;
+    const last = PERIODS - 1;
+    Given("the flow simulation's frames and the dashboard's periods", () => {
+      expect(frameCount).toBeGreaterThan(1);
+    });
+    Then('"now" maps to the latest frame', () => {
+      expect(frameForPeriod(last, last, frameCount)).toBe(frameCount - 1);
+    });
+    And('the oldest period maps to the first frame', () => {
+      expect(frameForPeriod(0, last, frameCount)).toBe(0);
+    });
+    And('travelling forward never steps the frame backward', () => {
+      const frames = Array.from({ length: PERIODS }, (_, p) => frameForPeriod(p, last, frameCount));
+      for (let i = 1; i < frames.length; i++) expect(frames[i]).toBeGreaterThanOrEqual(frames[i - 1]);
     });
   });
 });

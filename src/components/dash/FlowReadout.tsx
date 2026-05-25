@@ -1,20 +1,23 @@
-import { useEffect, useState } from 'react';
 import { FLOW_CONSTRAINT_SIGNAL } from '../../data/sensorData';
 import { useCockpit } from '../../store/useCockpit';
+import { offsetFromNow } from '../../mirrors/snapshotHistory';
+import { PERIODS, frameForPeriod, periodLabel } from '../../lib/timeTravel';
 import { FlowBoard, FlowLegend } from '../sensors/FlowBoard';
 import { Instrument } from './Instrument';
 
-// The Flow tile shows the WHOLE board, auto-playing, so it can be skimmed in place
-// without clicking. Expand for the scrubber + playback speeds.
+// The Flow tile shows the whole board AS OF the dashboard's global as-of, driven by the ONE
+// master clock (the global time-travel control) — so pressing play animates the flow board in
+// lockstep with every other tile, and the whole dashboard reads as a single movie. The flow
+// simulation runs at a finer cadence than the global periods, so the period is projected onto a
+// frame. Expand for the widget's own scrubber + speeds (which override the global clock).
 export function FlowReadout() {
   const setDetail = useCockpit((s) => s.setDetail);
+  const timeUnit = useCockpit((s) => s.timeUnit);
+  const timeIndex = useCockpit((s) => s.timeIndex);
   const { frames, caps } = FLOW_CONSTRAINT_SIGNAL.value;
-  const [w, setW] = useState(0);
-
-  useEffect(() => {
-    const id = setInterval(() => setW((x) => (x + 1) % frames.length), 1100);
-    return () => clearInterval(id);
-  }, [frames.length]);
+  const last = PERIODS - 1;
+  const w = frameForPeriod(timeIndex, last, frames.length);
+  const asOf = periodLabel(offsetFromNow(timeIndex, last), timeUnit);
 
   const f = frames[w];
   const constraint = f.constraint === 'review' ? 'Review' : 'Build';
@@ -24,7 +27,7 @@ export function FlowReadout() {
   return (
     <Instrument
       label="Flow.Constraint"
-      sub="theory of constraints · live"
+      sub={`theory of constraints · ${asOf}`}
       area="flow"
       live={queued >= 3}
       onExpand={() => setDetail('flow')}

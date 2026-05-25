@@ -352,6 +352,27 @@ test('time travel: the mandate ladder travels in the overlay (gap wider earlier)
   await page.keyboard.press('Escape');
 });
 
+test('time travel: the whole dashboard is one movie — the flow board travels in sync', async ({
+  page,
+}) => {
+  const flow = page.locator('.inst', { hasText: 'Flow.Constraint' }).first();
+  // at "now" the flow tile reads the global as-of and the latest simulation week
+  await expect(flow.locator('.inst-sub')).toContainText('now');
+  const nowWeek = (await flow.locator('.frw-week').textContent())?.trim();
+
+  // travel the whole dashboard back via the ONE master clock (the global control)
+  await page.locator('.hud-time-chip').click();
+  const scrub = page.locator('.gt-scrub');
+  await scrub.focus();
+  await page.keyboard.press('Home');
+  await page.locator('.hud-time-backdrop').click();
+
+  // the flow board stepped back in lockstep — an earlier week, with the global as-of on its sub
+  await expect(flow.locator('.inst-sub')).toContainText('ago');
+  const earlyWeek = (await flow.locator('.frw-week').textContent())?.trim();
+  expect(earlyWeek).not.toBe(nowWeek);
+});
+
 test('the system model expands and switches among the seed CLDs', async ({ page }) => {
   await page.locator('.inst', { hasText: 'System model' }).first().click();
   await expect(page.locator('.overlay-title')).toHaveText('System Model');
