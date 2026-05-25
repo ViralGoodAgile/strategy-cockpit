@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Triad, TriadStory } from '../../domain/sensors';
+import { outlierIds } from '../../mirrors/triadShape';
 
 const W = 240;
 const H = 214;
@@ -49,6 +50,7 @@ export function TriadChart({
   const prior = triad.stories.filter((s) => s.period === 'prior');
   const cNow = centroid(current);
   const cPrior = centroid(prior);
+  const outliers = outlierIds(current); // anomalies far from the cloud — surfaced, not smoothed
 
   // Hover takes precedence; a click pins a story so it stays after the mouse leaves.
   const active = current.find((s) => s.id === hoverId) ?? pinned;
@@ -72,6 +74,7 @@ export function TriadChart({
         {current.map((s) => {
           const p = place(s.a, s.b, s.c);
           const on = active?.id === s.id;
+          const outlier = outliers.has(s.id);
           return (
             <g
               key={s.id}
@@ -83,15 +86,18 @@ export function TriadChart({
               onMouseLeave={() => setHoverId((h) => (h === s.id ? null : h))}
               onClick={() => setPinned((cur) => (cur?.id === s.id ? null : s))}
             >
-              <title>{`${s.role}: ${s.text}${s.captured ? ' (your signified story)' : ''}`}</title>
+              <title>{`${s.role}: ${s.text}${s.captured ? ' (your signified story)' : ''}${outlier ? ' — outlier' : ''}`}</title>
               {s.captured && (
                 <circle cx={p.x} cy={p.y} r={on ? 9 : 7.5} className="tc-dot-ring" />
               )}
+              {outlier && <circle cx={p.x} cy={p.y} r={on ? 9 : 7.5} className="tc-dot-outlier-ring" />}
               <circle
                 cx={p.x}
                 cy={p.y}
                 r={on ? 6 : 4.5}
-                className={`tc-dot${on ? ' tc-dot-on' : ''}${s.captured ? ' tc-dot-captured' : ''}`}
+                className={`tc-dot${on ? ' tc-dot-on' : ''}${s.captured ? ' tc-dot-captured' : ''}${
+                  outlier ? ' tc-dot-outlier' : ''
+                }`}
               />
             </g>
           );

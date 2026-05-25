@@ -4,6 +4,7 @@ import { useCockpit } from '../../store/useCockpit';
 import { triadsWithCaptured } from '../../mirrors/capturedTriads';
 import { triadAtPeriod, triadHistory } from '../../mirrors/triadHistory';
 import { interpretationsAt } from '../../mirrors/snapshotHistory';
+import { driftVector, isBimodal, outlierIds } from '../../mirrors/triadShape';
 import { PERIODS } from '../../lib/timeTravel';
 import { metricAt } from '../common/trend';
 import { useTimeTravel } from '../common/useTimeTravel';
@@ -37,8 +38,11 @@ export function OutcomesSensor({ signal }: { signal: Signal<OutcomeSet> }) {
     (b) => triadsWithCaptured([b], captured)[0],
   );
   const now = leanIndex(customerTriad, 'current');
-  const before = leanIndex(customerTriad, 'prior');
-  const hasPrior = customerTriad.stories.some((s) => s.period === 'prior');
+  const cur = customerTriad.stories.filter((s) => s.period === 'current');
+  const pri = customerTriad.stories.filter((s) => s.period === 'prior');
+  const drift = driftVector(pri, cur);
+  const split = isBimodal(cur);
+  const outs = outlierIds(cur).size;
 
   return (
     <SensorModule
@@ -80,8 +84,18 @@ export function OutcomesSensor({ signal }: { signal: Signal<OutcomeSet> }) {
           <TriadChart triad={customerTriad} onInspect={() => tt.setPlaying(false)} />
           <p className="triad-lean">
             leans <strong>“{customerTriad.poles[now].label}”</strong>
-            {hasPrior && now !== before && <> · drifted from “{customerTriad.poles[before].label}”</>}
+            {drift && drift.significant && (
+              <> · drifted {drift.magnitude > 0.3 ? 'strongly' : 'clearly'} toward “{customerTriad.poles[drift.toward].label}”</>
+            )}
+            {drift && !drift.significant && <> · steady (no significant shift)</>}
           </p>
+          {(split || outs > 0) && (
+            <p className="triad-shape">
+              {split && 'split distribution — the average sits in an empty middle'}
+              {split && outs > 0 && ' · '}
+              {outs > 0 && `${outs} outlier${outs > 1 ? 's' : ''} worth reading`}
+            </p>
+          )}
           <div className="triad-interp">
             <div className="triad-interp-head">interpretations · by people, not the cockpit</div>
             {interpretationsAt(customerTriad.interpretations, tt.index, tt.last).map((it, i) => (

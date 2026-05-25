@@ -5,6 +5,7 @@ import { useCockpit } from '../../store/useCockpit';
 import { triadsWithCaptured } from '../../mirrors/capturedTriads';
 import { triadAtPeriod, triadHistory } from '../../mirrors/triadHistory';
 import { interpretationsAt } from '../../mirrors/snapshotHistory';
+import { driftVector, isBimodal, outlierIds } from '../../mirrors/triadShape';
 import { PERIODS } from '../../lib/timeTravel';
 import { useTimeTravel } from '../common/useTimeTravel';
 import { Transport } from '../common/Transport';
@@ -57,8 +58,11 @@ export function TriadSensor({ signal }: { signal: Signal<TriadSet> }) {
         {triads.map((t, i) => {
           const rt = triadAtPeriod(t, histories[i], tt.index, (base) => triadsWithCaptured([base], captured)[0]);
           const now = leanIndex(rt.stories, 'current');
-          const before = leanIndex(rt.stories, 'prior');
-          const hasPrior = rt.stories.some((s) => s.period === 'prior');
+          const cur = rt.stories.filter((s) => s.period === 'current');
+          const pri = rt.stories.filter((s) => s.period === 'prior');
+          const drift = driftVector(pri, cur);
+          const split = isBimodal(cur);
+          const outs = outlierIds(cur).size;
           return (
             <div className="triad-chart" key={t.id}>
               <div className="triad-title">{t.title}</div>
@@ -66,8 +70,18 @@ export function TriadSensor({ signal }: { signal: Signal<TriadSet> }) {
               <TriadChart triad={rt} onInspect={() => tt.setPlaying(false)} />
               <p className="triad-lean">
                 leans <strong>“{t.poles[now].label}”</strong>
-                {hasPrior && now !== before && <> · drifted from “{t.poles[before].label}”</>}
+                {drift && drift.significant && (
+                  <> · drifted {drift.magnitude > 0.3 ? 'strongly' : 'clearly'} toward “{t.poles[drift.toward].label}”</>
+                )}
+                {drift && !drift.significant && <> · steady (no significant shift)</>}
               </p>
+              {(split || outs > 0) && (
+                <p className="triad-shape">
+                  {split && 'split distribution — the average sits in an empty middle'}
+                  {split && outs > 0 && ' · '}
+                  {outs > 0 && `${outs} outlier${outs > 1 ? 's' : ''} worth reading`}
+                </p>
+              )}
               <div className="triad-interp">
                 <div className="triad-interp-head">interpretations · by people, not the cockpit</div>
                 {interpretationsAt(t.interpretations, tt.index, tt.last).map((it, j) => (
