@@ -3,8 +3,8 @@ import { useCockpit } from '../../store/useCockpit';
 import type { Strategy } from '../../domain/types';
 import { leanAtPeriod, weightsAtPeriod } from '../../mirrors/strategyTriadHistory';
 import { interpretationsAt } from '../../mirrors/snapshotHistory';
-import { PERIODS, periodLabel } from '../../lib/timeTravel';
-import { useTimeTravel } from '../common/useTimeTravel';
+import { periodLabel } from '../../lib/timeTravel';
+import { useGlobalTime } from '../common/useGlobalTime';
 import { Transport } from '../common/Transport';
 import { StrategyTriadChart } from './StrategyTriadChart';
 
@@ -17,7 +17,7 @@ export function StrategyTriadsSensor() {
   const captured = useCockpit((s) => s.capturedStories);
   const timeUnit = useCockpit((s) => s.timeUnit);
   const views = strategyTriadViews(draft);
-  const tt = useTimeTravel(PERIODS);
+  const tt = useGlobalTime();
   const atNow = tt.index === tt.last;
   const asOf = periodLabel(tt.last - tt.index, timeUnit);
   const capturesFor = (id: string) => (atNow ? captured.filter((c) => c.triadId === id && !c.na) : []);

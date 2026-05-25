@@ -7,7 +7,7 @@ import { interpretationsAt } from '../../mirrors/snapshotHistory';
 import { driftVector, isBimodal, outlierIds } from '../../mirrors/triadShape';
 import { PERIODS } from '../../lib/timeTravel';
 import { metricAt } from '../common/trend';
-import { useTimeTravel } from '../common/useTimeTravel';
+import { useGlobalTime } from '../common/useGlobalTime';
 import { Transport } from '../common/Transport';
 import { Numeral } from '../common/Numeral';
 import { SensorModule } from './SensorModule';
@@ -26,7 +26,7 @@ function leanIndex(t: Triad, period: 'current' | 'prior') {
 export function OutcomesSensor({ signal }: { signal: Signal<OutcomeSet> }) {
   const captured = useCockpit((s) => s.capturedStories);
   const timeUnit = useCockpit((s) => s.timeUnit);
-  const tt = useTimeTravel(PERIODS);
+  const tt = useGlobalTime();
   const { aarrr, heart, jobs } = signal.value;
 
   const history = triadHistory(signal.value.customerTriad, PERIODS, timeUnit);

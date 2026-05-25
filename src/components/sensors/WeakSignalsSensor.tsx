@@ -2,8 +2,8 @@ import type { Signal } from '../../domain/types';
 import type { WeakSignalSet } from '../../domain/sensors';
 import { useCockpit } from '../../store/useCockpit';
 import { offsetFromNow, weakSignalsAt } from '../../mirrors/snapshotHistory';
-import { PERIODS, periodLabel } from '../../lib/timeTravel';
-import { useTimeTravel } from '../common/useTimeTravel';
+import { periodLabel } from '../../lib/timeTravel';
+import { useGlobalTime } from '../common/useGlobalTime';
 import { Transport } from '../common/Transport';
 import { SensorModule } from './SensorModule';
 
@@ -12,7 +12,7 @@ import { SensorModule } from './SensorModule';
 // individuals (C4). Its own transport overrides the dashboard's global as-of.
 export function WeakSignalsSensor({ signal }: { signal: Signal<WeakSignalSet> }) {
   const timeUnit = useCockpit((s) => s.timeUnit);
-  const tt = useTimeTravel(PERIODS);
+  const tt = useGlobalTime();
   const asOf = periodLabel(offsetFromNow(tt.index, tt.last), timeUnit);
   const signals = weakSignalsAt(signal.value.signals, offsetFromNow(tt.index, tt.last));
 

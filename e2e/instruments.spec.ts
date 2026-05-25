@@ -18,22 +18,28 @@ test('the flow movie opens, pauses, and scrubs to a chosen week', async ({ page 
   await flowTile.click();
   await expect(page.locator('.overlay-title')).toHaveText('Flow.Constraint');
 
-  // Opens auto-playing, so the transport offers "pause".
-  const play = page.locator('.toc-play');
+  // Opens paused on the global as-of ("now"); the one master clock plays on demand.
+  const play = page.locator('.overlay .toc-play');
+  await expect(play).toContainText('play');
+  await expect(page.locator('.overlay .toc-asof')).toHaveText('now');
+  await play.click();
   await expect(play).toContainText('pause');
   await play.click();
-  await expect(play).toContainText('play'); // now paused
+  await expect(play).toContainText('play');
 
-  // Scrubbing jumps to the first frame (and keeps it paused).
-  const scrub = page.locator('.toc-scrub');
+  // The flow transport now offers the granularity selector (weeks…years), like every widget.
+  await expect(page.locator('.overlay .toc-unit')).toBeVisible();
+
+  // Scrubbing jumps to the first period (and keeps it paused); the label is the as-of, not a week.
+  const scrub = page.locator('.overlay .toc-scrub');
   await scrub.focus();
   await page.keyboard.press('Home');
   await expect(scrub).toHaveValue('0');
-  await expect(page.locator('.toc-asof')).toContainText('week');
+  await expect(page.locator('.overlay .toc-asof')).toContainText('ago');
 
   // A speed can be selected.
-  await page.locator('.toc-speed', { hasText: '2×' }).click();
-  await expect(page.locator('.toc-speed-on')).toContainText('2×');
+  await page.locator('.overlay .toc-speed', { hasText: '2×' }).click();
+  await expect(page.locator('.overlay .toc-speed-on')).toContainText('2×');
 
   await page.keyboard.press('Escape');
   await expect(page.locator('.overlay')).toHaveCount(0);
@@ -51,8 +57,11 @@ test('time travel does not autoplay when the viewer prefers reduced motion', asy
 test('time travel: the triad view plays, pauses and scrubs through periods', async ({ page }) => {
   await page.locator('.inst', { hasText: 'Cynefin triads' }).first().click();
   await expect(page.locator('.overlay-title')).toHaveText('Cynefin triads');
-  // opens auto-playing
+  // opens paused on the global as-of ("now"); play drives the one master clock
   const play = page.locator('.overlay .toc-play');
+  await expect(play).toContainText('play');
+  await expect(page.locator('.overlay .toc-asof')).toHaveText('now');
+  await play.click();
   await expect(play).toContainText('pause');
   await play.click();
   await expect(play).toContainText('play');
@@ -91,14 +100,16 @@ test('time travel: hovering a dot pauses the movie (incl. your own), with no sha
   await page.locator('.sig-submit').click();
   await page.locator('.author-back').click();
 
-  // open the Cynefin triads movie — it autoplays
+  // open the Cynefin triads movie and start it on the one master clock
   await page.locator('.inst', { hasText: 'Cynefin triads' }).first().click();
-  await expect(page.locator('.overlay .toc-play')).toContainText('pause');
+  const play = page.locator('.overlay .toc-play');
+  await play.click(); // start playing
+  await expect(play).toContainText('pause');
   await page.locator('.overlay .toc-speed', { hasText: '0.5×' }).click(); // slow it to hover safely
 
   // hovering a dot pauses the movie, so dots stop moving under the cursor (the shake fix)
   await page.locator('.overlay .tc-dot').first().hover({ force: true });
-  await expect(page.locator('.overlay .toc-play')).toContainText('play');
+  await expect(play).toContainText('play');
 
   // now inspect your OWN dot at "now": its caption shows and stays put across >1 frame
   const scrub = page.locator('.overlay .toc-scrub');
@@ -113,7 +124,7 @@ test('time travel: hovering a dot pauses the movie (incl. your own), with no sha
   await expect(page.locator('.overlay .toc-play')).toContainText('play');
 });
 
-test('global time travel: a HUD control travels the whole dashboard; widgets override', async ({
+test('global time travel: one master clock travels the whole dashboard in sync', async ({
   page,
 }) => {
   // the dashboard opens "as of now"
@@ -134,16 +145,19 @@ test('global time travel: a HUD control travels the whole dashboard; widgets ove
   const triadTile = page.locator('.inst', { hasText: 'Cynefin triads' }).first();
   await expect(triadTile.locator('.inst-sub')).toContainText('mo ago');
 
-  // per-widget override: opening a widget gives it its own transport, independent of the
-  // global as-of, with the granularity carried into its labels
+  // opening a widget reads the SAME master clock (the granularity carries into its labels)…
   await triadTile.click();
   await expect(page.locator('.overlay-title')).toHaveText('Cynefin triads');
+  await expect(page.locator('.overlay .toc-asof')).toContainText('mo ago');
+
+  // …and scrubbing the widget's transport travels the WHOLE dashboard in sync
   const oscrub = page.locator('.overlay .toc-scrub');
   await oscrub.focus();
-  await page.keyboard.press('Home');
-  await expect(page.locator('.overlay .toc-asof')).toContainText('mo ago');
   await page.keyboard.press('End');
-  await expect(page.locator('.overlay .toc-asof')).toHaveText('now'); // independent of global
+  await expect(page.locator('.overlay .toc-asof')).toHaveText('now');
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.hud-time-chip')).toContainText('now');
+  await expect(radarTile.locator('.inst-sub')).toContainText('now');
 });
 
 test('time travel: product-outcomes numbers travel on the tile and in the overlay', async ({
@@ -163,15 +177,22 @@ test('time travel: product-outcomes numbers travel on the tile and in the overla
   await expect(acq).toHaveText('96');
   await expect(tile.locator('.inst-sub')).toContainText('ago');
 
-  // the overlay carries its own transport (overrides the global as-of): scrub it to "now"
+  // the overlay reads the SAME global clock — it opens on the travelled period (one in-sync movie)
   await tile.click();
   await expect(page.locator('.overlay-title')).toHaveText('Product Outcomes');
-  await expect(page.locator('.overlay .toc-play')).toContainText('pause'); // its own movie autoplays
+  await expect(page.locator('.overlay .toc-asof')).toContainText('ago');
+  await expect(page.locator('.overlay .outcomes-grid .numeral-value').first()).toContainText('96');
+
+  // scrubbing the overlay travels the WHOLE dashboard in sync: End → "now" everywhere
   const oscrub = page.locator('.overlay .toc-scrub');
   await oscrub.focus();
   await page.keyboard.press('End');
   await expect(page.locator('.overlay .toc-asof')).toHaveText('now');
   await expect(page.locator('.overlay .outcomes-grid .numeral-value').first()).toContainText('142');
+  await page.keyboard.press('Escape');
+  // the tile reflects the overlay's scrub — they are one clock
+  await expect(acq).toHaveText('142');
+  await expect(tile.locator('.inst-sub')).toContainText('now');
 });
 
 test('time travel: strategy triads travel on the tile and in the overlay', async ({ page }) => {
@@ -186,14 +207,17 @@ test('time travel: strategy triads travel on the tile and in the overlay', async
   await page.locator('.hud-time-backdrop').click();
   await expect(tile.locator('.inst-sub')).toContainText('ago');
 
-  // the overlay carries its own transport (overrides the global as-of)
+  // the overlay reads the same global clock — opens on the travelled period (one in-sync movie)
   await tile.click();
   await expect(page.locator('.overlay-title')).toHaveText('Strategy triads');
-  await expect(page.locator('.overlay .toc-play')).toContainText('pause'); // its own movie autoplays
+  await expect(page.locator('.overlay .toc-asof')).toContainText('ago');
+  // scrubbing the overlay to "now" travels the whole dashboard back in sync
   const oscrub = page.locator('.overlay .toc-scrub');
   await oscrub.focus();
   await page.keyboard.press('End');
   await expect(page.locator('.overlay .toc-asof')).toHaveText('now');
+  await page.keyboard.press('Escape');
+  await expect(tile.locator('.inst-sub')).toContainText('now');
 });
 
 test('time travel: a widget overlay can change the granularity (weeks…years)', async ({ page }) => {
@@ -222,20 +246,22 @@ test('time travel: quant + reliability numbers travel (tiles + overlays)', async
   await expect(deploy).toHaveText('1.5 / day');
   await expect(quant.locator('.inst-sub')).toContainText('ago');
 
-  // quant overlay carries its own transport (DORA + DataDog as one movie): scrub to now
+  // quant overlay reads the same global clock (DORA + DataDog as one movie): opens travelled
   await quant.click();
   await expect(page.locator('.overlay-title')).toHaveText('DORA & DataDog');
-  await expect(page.locator('.overlay .toc-play')).toContainText('pause');
+  await expect(page.locator('.overlay .toc-asof')).toContainText('ago');
+  // scrub it to "now" — the whole dashboard, including the tile, travels in sync
   const oscrub = page.locator('.overlay .toc-scrub');
   await oscrub.focus();
   await page.keyboard.press('End');
   await expect(page.locator('.overlay .toc-asof')).toHaveText('now');
   await page.keyboard.press('Escape');
+  await expect(deploy).toHaveText('2.3 / day');
 
-  // reliability overlay also time-travels
+  // reliability overlay also reads the one clock (now at "now")
   await page.locator('.inst', { hasText: 'Reliability' }).first().click();
   await expect(page.locator('.overlay-title')).toHaveText('Reliability');
-  await expect(page.locator('.overlay .toc-play')).toContainText('pause');
+  await expect(page.locator('.overlay .toc-asof')).toHaveText('now');
 });
 
 test('time travel: the snapshot tiles (mandate, hygiene, weak) travel with the dashboard', async ({
@@ -257,10 +283,11 @@ test('time travel: the snapshot tiles (mandate, hygiene, weak) travel with the d
   await expect(page.locator('.inst', { hasText: 'Mandate Levels' }).first().locator('.inst-sub')).toContainText('ago');
   await expect(page.locator('.inst', { hasText: 'Data hygiene' }).first().locator('.inst-sub')).toContainText('ago');
 
-  // and the weak-signals overlay travels too (its own transport)
+  // and the weak-signals overlay reads the same global clock — opens on the travelled period
   await weak.click();
   await expect(page.locator('.overlay-title')).toHaveText('Weak Signals');
-  await expect(page.locator('.overlay .toc-play')).toContainText('pause');
+  await expect(page.locator('.overlay .toc-asof')).toContainText('ago');
+  await expect(page.locator('.overlay .toc-play')).toContainText('play'); // one clock, paused
 });
 
 test('time travel: the structural widgets carry the as-of across the dashboard', async ({ page }) => {

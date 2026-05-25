@@ -7,7 +7,7 @@ import { triadAtPeriod, triadHistory } from '../../mirrors/triadHistory';
 import { interpretationsAt } from '../../mirrors/snapshotHistory';
 import { driftVector, isBimodal, outlierIds } from '../../mirrors/triadShape';
 import { PERIODS } from '../../lib/timeTravel';
-import { useTimeTravel } from '../common/useTimeTravel';
+import { useGlobalTime } from '../common/useGlobalTime';
 import { Transport } from '../common/Transport';
 import { SensorModule } from './SensorModule';
 import { TriadChart } from './TriadChart';
@@ -27,7 +27,7 @@ export function TriadSensor({ signal }: { signal: Signal<TriadSet> }) {
   const timeUnit = useCockpit((s) => s.timeUnit);
   const triads = signal.value.triads;
   const histories = useMemo(() => triads.map((t) => triadHistory(t, PERIODS, timeUnit)), [triads, timeUnit]);
-  const tt = useTimeTravel(histories[0]?.length ?? 1);
+  const tt = useGlobalTime();
   const atNow = tt.index === tt.last;
   const asOf = histories[0]?.[tt.index]?.label ?? 'now';
 

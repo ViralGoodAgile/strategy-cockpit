@@ -4,7 +4,7 @@ import type { Impediment, RadarSet, ScopeLevel } from '../../domain/sensors';
 import { useCockpit } from '../../store/useCockpit';
 import { radarHistory } from '../../mirrors/radarHistory';
 import { PERIODS } from '../../lib/timeTravel';
-import { useTimeTravel } from '../common/useTimeTravel';
+import { useGlobalTime } from '../common/useGlobalTime';
 import { Transport } from '../common/Transport';
 import { SensorModule } from './SensorModule';
 import { RadarScope } from './RadarScope';
@@ -22,7 +22,7 @@ const LEVELS: { level: ScopeLevel; label: string }[] = [
 export function RadarSensor({ signal }: { signal: Signal<RadarSet> }) {
   const timeUnit = useCockpit((s) => s.timeUnit);
   const snapshots = useMemo(() => radarHistory(signal.value, PERIODS, timeUnit), [signal.value, timeUnit]);
-  const tt = useTimeTravel(snapshots.length);
+  const tt = useGlobalTime();
   const snap = snapshots[tt.index];
   const items = snap.set.impediments;
   const byLevel = (l: ScopeLevel): Impediment[] => items.filter((i) => i.level === l);

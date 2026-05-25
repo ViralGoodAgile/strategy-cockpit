@@ -48,6 +48,8 @@ interface CockpitState {
   segments: string[]; // configurable "whose situation" list for /signify (C4: segments only)
   timeUnit: TimeUnit; // dashboard-wide time-travel granularity (weeks … years)
   timeIndex: number; // global as-of frame (0 oldest … PERIODS-1 = now)
+  timePlaying: boolean; // the one master clock is playing — the whole dashboard is a movie
+  timeSpeed: number; // playback multiplier for the master clock
 
   updateSection: <K extends keyof Strategy>(k: K, patch: Partial<Strategy[K]>) => void;
   setDraft: (s: Strategy) => void;
@@ -68,6 +70,8 @@ interface CockpitState {
   removeSegment: (name: string) => void; // remove a segment
   setTimeUnit: (u: TimeUnit) => void; // change the dashboard time-travel granularity
   setTimeIndex: (i: number) => void; // move the global as-of
+  setTimePlaying: (p: boolean) => void; // play/pause the one master clock
+  setTimeSpeed: (s: number) => void; // set the master clock's playback speed
   setTheme: (t: ThemeId) => void; // switch colour scheme
   seed: () => void; // first-visit: load the example as v0.1 so the cockpit is alive
   reset: () => void; // "start fresh": wipe to a blank strategy and open the editor
@@ -96,6 +100,8 @@ export const useCockpit = create<CockpitState>()(
       segments: [...DEFAULT_SEGMENTS],
       timeUnit: 'weeks',
       timeIndex: PERIODS - 1, // open on "now"
+      timePlaying: false, // the master clock starts paused on "now"; play makes it a movie
+      timeSpeed: 1,
 
       updateSection: (k, patch) =>
         set((s) => ({ draft: { ...s.draft, [k]: { ...s.draft[k], ...patch } } })),
@@ -147,6 +153,8 @@ export const useCockpit = create<CockpitState>()(
 
       setTimeUnit: (timeUnit) => set({ timeUnit }),
       setTimeIndex: (timeIndex) => set({ timeIndex: Math.max(0, Math.min(PERIODS - 1, timeIndex)) }),
+      setTimePlaying: (timePlaying) => set({ timePlaying }),
+      setTimeSpeed: (timeSpeed) => set({ timeSpeed }),
 
       // Apply the data-theme attribute synchronously (before the re-render) so colour
       // tokens — including the loop arrows that read them — update in the same frame.
