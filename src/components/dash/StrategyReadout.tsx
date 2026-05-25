@@ -1,15 +1,22 @@
 import { useCockpit } from '../../store/useCockpit';
+import { offsetFromNow } from '../../mirrors/snapshotHistory';
+import { PERIODS, periodLabel } from '../../lib/timeTravel';
 import { Instrument } from './Instrument';
 
-// Compact, read-only strategy readout. Editing happens in Author mode (separate screen).
+// Compact, read-only strategy readout. Editing happens in Author mode (separate screen). The
+// banner is the authored strategy, so it carries the dashboard's as-of rather than fabricated
+// prose history.
 export function StrategyReadout() {
   const draft = useCockpit((s) => s.draft);
   const setMode = useCockpit((s) => s.setMode);
+  const timeUnit = useCockpit((s) => s.timeUnit);
+  const timeIndex = useCockpit((s) => s.timeIndex);
+  const asOf = periodLabel(offsetFromNow(timeIndex, PERIODS - 1), timeUnit);
 
   return (
     <Instrument
       label="Strategy"
-      sub="author ›"
+      sub={`${asOf} · author ›`}
       area="strategy"
       onExpand={() => setMode('author')}
     >
