@@ -196,6 +196,36 @@ test('time travel: strategy triads travel on the tile and in the overlay', async
   await expect(page.locator('.overlay .toc-asof')).toHaveText('now');
 });
 
+test('time travel: quant + reliability numbers travel (tiles + overlays)', async ({ page }) => {
+  const quant = page.locator('.inst', { hasText: 'Quant' }).first();
+  const deploy = quant.locator('.numeral', { hasText: 'Deploy frequency' }).locator('.numeral-value');
+  await expect(deploy).toHaveText('2.3 / day');
+
+  // travel the whole dashboard back → the number reads "as of" then
+  await page.locator('.hud-time-chip').click();
+  const scrub = page.locator('.gt-scrub');
+  await scrub.focus();
+  await page.keyboard.press('Home');
+  await page.locator('.hud-time-backdrop').click();
+  await expect(deploy).toHaveText('1.5 / day');
+  await expect(quant.locator('.inst-sub')).toContainText('ago');
+
+  // quant overlay carries its own transport (DORA + DataDog as one movie): scrub to now
+  await quant.click();
+  await expect(page.locator('.overlay-title')).toHaveText('DORA & DataDog');
+  await expect(page.locator('.overlay .toc-play')).toContainText('pause');
+  const oscrub = page.locator('.overlay .toc-scrub');
+  await oscrub.focus();
+  await page.keyboard.press('End');
+  await expect(page.locator('.overlay .toc-asof')).toHaveText('now');
+  await page.keyboard.press('Escape');
+
+  // reliability overlay also time-travels
+  await page.locator('.inst', { hasText: 'Reliability' }).first().click();
+  await expect(page.locator('.overlay-title')).toHaveText('Reliability');
+  await expect(page.locator('.overlay .toc-play')).toContainText('pause');
+});
+
 test('the system model expands and switches among the seed CLDs', async ({ page }) => {
   await page.locator('.inst', { hasText: 'System model' }).first().click();
   await expect(page.locator('.overlay-title')).toHaveText('System Model');

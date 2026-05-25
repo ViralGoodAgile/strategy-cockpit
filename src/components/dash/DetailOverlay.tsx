@@ -2,8 +2,6 @@ import { useEffect } from 'react';
 import { useCockpit } from '../../store/useCockpit';
 import { MANDATE_SIGNAL } from '../../data/synthetic';
 import {
-  DATADOG_SIGNAL,
-  DORA_SIGNAL,
   FLOW_CONSTRAINT_SIGNAL,
   SYSTEM_MODEL_SIGNAL,
   TRIAD_SIGNAL,
@@ -12,8 +10,7 @@ import {
 import { MandateLevels } from '../mandate/MandateLevels';
 import { TriadSensor } from '../sensors/TriadSensor';
 import { FlowConstraint } from '../sensors/FlowConstraint';
-import { DoraSensor } from '../sensors/DoraSensor';
-import { DataDogSensor } from '../sensors/DataDogSensor';
+import { QuantSensor } from '../sensors/QuantSensor';
 import { SystemModelSensor } from '../sensors/SystemModelSensor';
 import { WeakSignalsSensor } from '../sensors/WeakSignalsSensor';
 import { RadarSensor } from '../sensors/RadarSensor';
@@ -76,12 +73,7 @@ export function DetailOverlay() {
           {detail === 'reliability' && <ReliabilitySensor signal={RELIABILITY_SIGNAL} />}
           {detail === 'hygiene' && <HygieneSensor />}
           {detail === 'challenges' && <ChallengesSensor />}
-          {detail === 'quant' && (
-            <div className="overlay-stack">
-              <DoraSensor signal={DORA_SIGNAL} />
-              <DataDogSensor signal={DATADOG_SIGNAL} />
-            </div>
-          )}
+          {detail === 'quant' && <QuantSensor />}
         </div>
       </div>
     </div>

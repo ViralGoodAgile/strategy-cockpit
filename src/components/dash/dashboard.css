@@ -1312,6 +1312,14 @@
   flex: 1;
   min-width: 0;
 }
+/* Quant overlay: one transport above the DORA + DataDog stack */
+.quant-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  min-height: 0;
+  flex: 1;
+}
 
 /* loop return-closure indicator (tile header) */
 .loop-return-flow {
