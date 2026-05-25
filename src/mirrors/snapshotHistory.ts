@@ -7,6 +7,15 @@ const WORSE: Record<Freshness, Freshness> = { fresh: 'aging', aging: 'stale', st
 // How many periods back from "now" a frame sits.
 export const offsetFromNow = (index: number, last: number) => Math.max(0, last - index);
 
+// Human interpretations accrue over time: people add readings as more stories come in, so an
+// earlier period shows fewer of them (the later ones hadn't been written yet). At least one
+// reading always shows; at "now" they all do. Pure.
+export function interpretationsAt<T>(interps: T[], index: number, last: number): T[] {
+  if (last <= 0 || interps.length === 0) return interps;
+  const n = Math.max(1, Math.ceil((interps.length * (index + 1)) / (last + 1)));
+  return interps.slice(0, n);
+}
+
 // Weak signals emerge over time: a signal only existed `offset` periods ago if it had been
 // observed for longer than that, so earlier periods surface fewer. Pure.
 export function weakSignalsAt(signals: WeakSignal[], offset: number): WeakSignal[] {

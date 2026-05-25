@@ -2,6 +2,7 @@ import { strategyTriadViews } from '../../mirrors/strategyTriadView';
 import { useCockpit } from '../../store/useCockpit';
 import type { Strategy } from '../../domain/types';
 import { leanAtPeriod, weightsAtPeriod } from '../../mirrors/strategyTriadHistory';
+import { interpretationsAt } from '../../mirrors/snapshotHistory';
 import { PERIODS, periodLabel } from '../../lib/timeTravel';
 import { useTimeTravel } from '../common/useTimeTravel';
 import { Transport } from '../common/Transport';
@@ -56,7 +57,7 @@ export function StrategyTriadsSensor() {
               </p>
               <div className="triad-interp">
                 <div className="triad-interp-head">interpretations · by people, not the cockpit</div>
-                {v.interpretations.map((it, i) => (
+                {interpretationsAt(v.interpretations, tt.index, tt.last).map((it, i) => (
                   <p className="triad-interp-row" key={i}>
                     <span className="triad-interp-by">{it.by}</span>
                     {it.text}

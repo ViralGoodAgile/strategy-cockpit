@@ -4,7 +4,7 @@ import { TRIAD_SIGNAL, RADAR_SIGNAL, WEAK_SIGNAL } from '../data/sensorData';
 import { triadAtPeriod, triadHistory, type TriadPeriod } from '../mirrors/triadHistory';
 import { radarHistory } from '../mirrors/radarHistory';
 import { triadsWithCaptured } from '../mirrors/capturedTriads';
-import { hygieneAt, mandateGapsAt, weakSignalsAt } from '../mirrors/snapshotHistory';
+import { hygieneAt, interpretationsAt, mandateGapsAt, weakSignalsAt } from '../mirrors/snapshotHistory';
 import { hygieneRows } from '../lib/hygiene';
 import type { CapturedStory, Triad, TriadStory } from '../domain/sensors';
 
@@ -208,6 +208,14 @@ describeFeature(feature, ({ Scenario }) => {
     Given('the hygiene ledger now', () => expect(rows.length).toBeGreaterThan(0));
     Then('more signals are stale an earlier period back', () => {
       expect(staleCount(hygieneAt(rows, 5, 5))).toBeGreaterThan(staleCount(hygieneAt(rows, 0, 5)));
+    });
+  });
+
+  Scenario('human interpretations accrue over time', ({ Given, Then }) => {
+    const interps = TRIAD_SIGNAL.value.triads[0].interpretations;
+    Given("a triad's interpretations", () => expect(interps.length).toBeGreaterThan(1));
+    Then('fewer are written an earlier period back than now', () => {
+      expect(interpretationsAt(interps, 0, 5).length).toBeLessThan(interpretationsAt(interps, 5, 5).length);
     });
   });
 });

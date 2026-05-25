@@ -64,3 +64,7 @@ Feature: Time travel across the triad and radar views
   Scenario: data hygiene matures toward now
     Given the hygiene ledger now
     Then more signals are stale an earlier period back
+
+  Scenario: human interpretations accrue over time
+    Given a triad's interpretations
+    Then fewer are written an earlier period back than now
