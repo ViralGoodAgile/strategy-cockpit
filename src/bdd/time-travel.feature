@@ -68,3 +68,13 @@ Feature: Time travel across the triad and radar views
   Scenario: human interpretations accrue over time
     Given a triad's interpretations
     Then fewer are written an earlier period back than now
+
+  Scenario: the authored intent and crux read as of the period
+    Given the seed strategy's prose history
+    Then "now" reads today's authored intent
+    And an earlier period reads a different, earlier intent
+    And a custom strategy with no history reads its current words at every period
+
+  Scenario: the mandate ladder's gap was wider an earlier period back
+    Given a team's authorised level and its actual level now
+    Then the actual sat further from authorised earlier than it does now

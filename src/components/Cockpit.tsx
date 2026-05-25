@@ -47,10 +47,10 @@ export function Cockpit() {
         <div className="hud-status">
           {gateOpen ? (
             <span className="hud-online">
-              <i className="hud-pip" /> online · v{latest?.version}
+              <i className="hud-pip" /> online · strategy v{latest?.version}
             </span>
           ) : (
-            <span className="hud-offline">offline · no v0.1</span>
+            <span className="hud-offline">offline · no strategy v0.1</span>
           )}
         </div>
         {gateOpen && <GlobalTimeTravel />}

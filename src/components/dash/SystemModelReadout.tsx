@@ -1,21 +1,23 @@
 import { SYSTEM_MODEL_SIGNAL } from '../../data/sensorData';
 import { useCockpit } from '../../store/useCockpit';
 import { offsetFromNow } from '../../mirrors/snapshotHistory';
+import { systemModelAt } from '../../mirrors/systemModelHistory';
 import { PERIODS, periodLabel } from '../../lib/timeTravel';
 import { SystemModelCLD } from '../sensors/SystemModelCLD';
 import { Instrument } from './Instrument';
 
-// Glanceable system-model readout: the selected seed CLD. The structure is the team's
-// authored model (it doesn't change period-to-period), so it carries the dashboard's as-of
-// rather than a fabricated history. Expand to switch among the five.
+// Glanceable system-model readout: the selected seed CLD as a LIVING model — links are drawn,
+// re-routed and dropped over time, so it carries the dashboard's as-of (fewer, softer links
+// earlier). Expand to switch among the five and scrub the model's evolution.
 export function SystemModelReadout() {
   const setDetail = useCockpit((s) => s.setDetail);
   const index = useCockpit((s) => s.systemModelIndex);
   const timeUnit = useCockpit((s) => s.timeUnit);
   const timeIndex = useCockpit((s) => s.timeIndex);
   const models = SYSTEM_MODEL_SIGNAL.value;
-  const model = models[index];
-  const asOf = periodLabel(offsetFromNow(timeIndex, PERIODS - 1), timeUnit);
+  const offset = offsetFromNow(timeIndex, PERIODS - 1);
+  const model = systemModelAt(models[index], offset, PERIODS - 1);
+  const asOf = periodLabel(offset, timeUnit);
 
   return (
     <Instrument

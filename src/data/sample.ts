@@ -59,3 +59,38 @@ export const SAMPLE_STRATEGY: Strategy = {
     dependsOn: '',
   },
 };
+
+// How the seed strategy's intent and crux were worded over time, oldest → newest. The last
+// entry is today's authored wording (see SAMPLE_STRATEGY). This is the strategy's prose history
+// — what time-travel reads "as of" each period — and it tells the loop-closure story: a broad
+// early intent sharpening into a specific bet as the crux came into focus. Synthesised for the
+// seed only; a custom-authored strategy shows its current words at every period.
+export const STRATEGY_PROSE_HISTORY: { intent: string; crux: string }[] = [
+  {
+    intent: 'Build a collaboration tool teams genuinely like using.',
+    crux: 'We are not yet sure which teams we are really for.',
+  },
+  {
+    intent: 'Win the small teams who find enterprise suites too heavy.',
+    crux: 'We believe we are faster to adopt, but we have not proven it.',
+  },
+  {
+    intent:
+      'Be the lightweight workspace for small product teams underserved by enterprise tooling.',
+    crux: 'Adoption speed looks like the edge, yet activation stalls in the first week.',
+  },
+  {
+    intent:
+      'Become the default workspace for small product teams underserved by heavyweight suites — by being faster to adopt.',
+    crux: 'We win on time-to-first-value, but onboarding still assumes a power user.',
+  },
+  {
+    intent:
+      'Become the default workspace for small product teams underserved by heavyweight enterprise suites — faster to adopt and calmer to use.',
+    crux: 'We win on time-to-first-value, but onboarding still assumes an admin configuring everything up front.',
+  },
+  {
+    intent: SAMPLE_STRATEGY.intent.text,
+    crux: SAMPLE_STRATEGY.context.crux,
+  },
+];
