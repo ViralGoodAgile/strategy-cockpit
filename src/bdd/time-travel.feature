@@ -51,3 +51,16 @@ Feature: Time travel across the triad and radar views
     Given a radar movie
     Then every impediment in every period has a scope level and a high, med or low severity
     And no impediment is labelled with a person's name
+
+  # —— the snapshot widgets travel too ——
+  Scenario: weak signals surface over time
+    Given the weak signals
+    Then fewer have surfaced an earlier period back than now
+
+  Scenario: the mandate gap narrows toward now
+    Given the mandate gaps now
+    Then they are wider an earlier period back
+
+  Scenario: data hygiene matures toward now
+    Given the hygiene ledger now
+    Then more signals are stale an earlier period back

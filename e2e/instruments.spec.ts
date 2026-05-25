@@ -238,6 +238,31 @@ test('time travel: quant + reliability numbers travel (tiles + overlays)', async
   await expect(page.locator('.overlay .toc-play')).toContainText('pause');
 });
 
+test('time travel: the snapshot tiles (mandate, hygiene, weak) travel with the dashboard', async ({
+  page,
+}) => {
+  const weak = page.locator('.inst', { hasText: 'Weak signals' }).first();
+  await expect(weak.locator('.ws-read-row').first()).toBeVisible(); // signals present at "now"
+
+  // travel the whole dashboard to the earliest period
+  await page.locator('.hud-time-chip').click();
+  const scrub = page.locator('.gt-scrub');
+  await scrub.focus();
+  await page.keyboard.press('Home');
+  await page.locator('.hud-time-backdrop').click();
+
+  // weak signals hadn't surfaced yet; every snapshot tile's sub reflects the as-of
+  await expect(weak.locator('.ws-empty')).toBeVisible();
+  await expect(weak.locator('.inst-sub')).toContainText('ago');
+  await expect(page.locator('.inst', { hasText: 'Mandate Levels' }).first().locator('.inst-sub')).toContainText('ago');
+  await expect(page.locator('.inst', { hasText: 'Data hygiene' }).first().locator('.inst-sub')).toContainText('ago');
+
+  // and the weak-signals overlay travels too (its own transport)
+  await weak.click();
+  await expect(page.locator('.overlay-title')).toHaveText('Weak Signals');
+  await expect(page.locator('.overlay .toc-play')).toContainText('pause');
+});
+
 test('the system model expands and switches among the seed CLDs', async ({ page }) => {
   await page.locator('.inst', { hasText: 'System model' }).first().click();
   await expect(page.locator('.overlay-title')).toHaveText('System Model');

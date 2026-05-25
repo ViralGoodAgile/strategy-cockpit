@@ -692,6 +692,10 @@
   gap: var(--s-2);
   min-height: 0;
 }
+.ws-empty {
+  font-size: var(--t-s);
+  color: var(--ink-3);
+}
 .ws-read-row {
   display: flex;
   align-items: baseline;
