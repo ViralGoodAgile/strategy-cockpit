@@ -1,4 +1,5 @@
 import type { Impediment, RadarSet } from '../domain/sensors';
+import { periodLabel, type TimeUnit } from '../lib/timeTravel';
 
 // One period of the radar movie: a label and the impediments on the scope then.
 export interface RadarSnapshot {
@@ -10,15 +11,12 @@ const SEV_ORDER: Impediment['severity'][] = ['low', 'med', 'high'];
 const demote = (s: Impediment['severity'], notches: number): Impediment['severity'] =>
   SEV_ORDER[Math.max(0, SEV_ORDER.indexOf(s) - notches)];
 
-const periodLabel = (t: number, last: number) =>
-  t === last ? 'now' : `${last - t} wk${last - t === 1 ? '' : 's'} ago`;
-
 // Synthesise the radar's history: impediments are raised over time (high-severity ones
 // linger longest, so they read as raised earliest; others emerge later and escalate as
 // they age), and one impediment was present early but has since been resolved — so playing
 // the scope shows emerging vs fading blips as motion. Oldest first; final period is "now"
 // and equals the current scope. Pure.
-export function radarHistory(current: RadarSet, periods = 6): RadarSnapshot[] {
+export function radarHistory(current: RadarSet, periods = 6, unit: TimeUnit = 'weeks'): RadarSnapshot[] {
   const N = Math.max(1, periods);
   const last = N - 1;
   const items = current.impediments;
@@ -52,6 +50,6 @@ export function radarHistory(current: RadarSet, periods = 6): RadarSnapshot[] {
         live.push({ ...im, severity });
       }
     });
-    return { label: periodLabel(t, last), set: { maps: current.maps, impediments: live } };
+    return { label: periodLabel(last - t, unit), set: { maps: current.maps, impediments: live } };
   });
 }

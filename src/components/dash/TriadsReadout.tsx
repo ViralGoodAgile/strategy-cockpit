@@ -2,6 +2,8 @@ import { TRIAD_SIGNAL } from '../../data/sensorData';
 import type { Triad } from '../../domain/sensors';
 import { useCockpit } from '../../store/useCockpit';
 import { triadsWithCaptured } from '../../mirrors/capturedTriads';
+import { triadAtPeriod, triadHistory } from '../../mirrors/triadHistory';
+import { PERIODS } from '../../lib/timeTravel';
 import { TriadChart } from '../sensors/TriadChart';
 import { Instrument } from './Instrument';
 
@@ -12,21 +14,27 @@ function leanIndex(triad: Triad, period: 'current' | 'prior'): number {
   return [m.a, m.b, m.c].indexOf(Math.max(m.a, m.b, m.c));
 }
 
-// Glanceable triad readout: one clear sense-making triangle + the headline finding.
-// Expand for all three triads.
+// Glanceable triad readout: one clear sense-making triangle + the headline finding. Follows
+// the dashboard's global as-of; expand for the full movie of all three triads.
 export function TriadsReadout() {
   const setDetail = useCockpit((s) => s.setDetail);
   const captured = useCockpit((s) => s.capturedStories);
-  const triads = triadsWithCaptured(TRIAD_SIGNAL.value.triads, captured);
-  const sense = triads[0];
+  const timeUnit = useCockpit((s) => s.timeUnit);
+  const timeIndex = useCockpit((s) => s.timeIndex);
+
+  const base = TRIAD_SIGNAL.value.triads[0];
+  const history = triadHistory(base, PERIODS, timeUnit);
+  const sense = triadAtPeriod(base, history, timeIndex, (b) => triadsWithCaptured([b], captured)[0]);
+  const asOf = history[timeIndex].label;
   const now = leanIndex(sense, 'current');
   const before = leanIndex(sense, 'prior');
-  const drifted = now !== before;
+  const hasPrior = sense.stories.some((s) => s.period === 'prior');
+  const drifted = hasPrior && now !== before;
 
   return (
     <Instrument
       label="Cynefin triads"
-      sub={`${triads.length} · sense-making`}
+      sub={`sense-making · ${asOf}`}
       area="triads"
       live={drifted}
       onExpand={() => setDetail('triads')}

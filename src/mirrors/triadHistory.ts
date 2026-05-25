@@ -1,4 +1,5 @@
 import type { Triad, TriadStory } from '../domain/sensors';
+import { periodLabel, type TimeUnit } from '../lib/timeTravel';
 
 // One period of a triad movie: a label ("now", "3 wks ago") and the stories signified then.
 export interface TriadPeriod {
@@ -12,13 +13,10 @@ function centroid(stories: TriadStory[]): { a: number; b: number; c: number } {
   return { a: s.a / stories.length, b: s.b / stories.length, c: s.c / stories.length };
 }
 
-const periodLabel = (t: number, last: number) =>
-  t === last ? 'now' : `${last - t} wk${last - t === 1 ? '' : 's'} ago`;
-
 // Synthesise a dispositional movie for a triad: the current cloud of stories drifted back
 // through time toward where it used to sit (the prior period's centroid), preserving each
 // story's relative spread. Oldest first; the final period is exactly "now". Pure.
-export function triadHistory(triad: Triad, periods = 6): TriadPeriod[] {
+export function triadHistory(triad: Triad, periods = 6, unit: TimeUnit = 'weeks'): TriadPeriod[] {
   const N = Math.max(2, periods);
   const last = N - 1;
   const current = triad.stories.filter((s) => s.period === 'current');
@@ -36,7 +34,7 @@ export function triadHistory(triad: Triad, periods = 6): TriadPeriod[] {
       const sum = a + b + c || 1;
       return { ...s, id: `${s.id}@${t}`, a: a / sum, b: b / sum, c: c / sum, period: 'current' };
     });
-    return { label: periodLabel(t, last), stories };
+    return { label: periodLabel(last - t, unit), stories };
   });
 }
 

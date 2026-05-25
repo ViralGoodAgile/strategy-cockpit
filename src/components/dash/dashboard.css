@@ -37,6 +37,9 @@
   display: flex;
   align-items: baseline;
   gap: var(--s-4);
+  /* sit above the band so the global time-travel popover (and its backdrop) can overlay the
+     grid — otherwise the later-painted band intercepts clicks at equal z-index */
+  z-index: 5;
 }
 .hud-id {
   display: flex;
@@ -53,6 +56,9 @@
 .hud-sub {
   font-size: var(--t-xs);
   color: var(--ink-2);
+  /* never wrap to a second line — that would grow the HUD strip and steal height from the
+     no-scroll grid below */
+  white-space: nowrap;
 }
 .hud-status {
   margin-left: auto;
@@ -133,6 +139,89 @@
 .scn-pill-on {
   background: var(--accent-wash);
   color: var(--accent);
+}
+
+/* --- global dashboard time-travel control (compact chip + popover) --- */
+.hud-time {
+  position: relative;
+  display: inline-flex;
+  align-self: center;
+}
+.hud-time-chip {
+  font-size: var(--t-xs);
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  border: 1px solid var(--hair);
+  border-radius: 999px;
+  padding: 2px 9px;
+  white-space: nowrap;
+}
+.hud-time-chip:hover {
+  color: var(--ink);
+}
+.hud-time-chip-on {
+  color: var(--accent);
+  border-color: var(--accent-dim);
+  background: var(--accent-wash);
+}
+.hud-time-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+}
+.hud-time-pop {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  /* the panel sheen layered over the opaque field, so the dashboard doesn't bleed through */
+  background: var(--panel-2), var(--bg);
+  border: 1px solid var(--bezel);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), var(--glow);
+  padding: var(--s-3);
+  min-width: 220px;
+}
+.gt-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+.gt-play {
+  font-size: var(--t-xs);
+  color: var(--accent);
+  line-height: 1;
+}
+.gt-scrub {
+  flex: 1;
+  accent-color: var(--accent);
+}
+.gt-asof {
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+  min-width: 52px;
+  text-align: right;
+}
+.gt-unit-row {
+  justify-content: space-between;
+}
+.gt-unit-tag {
+  font-size: var(--t-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.gt-unit {
+  background: var(--panel);
+  border: 1px solid var(--hair);
+  border-radius: 999px;
+  color: var(--ink-2);
+  font: inherit;
+  font-size: var(--t-xs);
+  padding: 1px 6px;
 }
 
 /* --- colour-scheme swatches --- */

@@ -113,6 +113,39 @@ test('time travel: hovering a dot pauses the movie (incl. your own), with no sha
   await expect(page.locator('.overlay .toc-play')).toContainText('play');
 });
 
+test('global time travel: a HUD control travels the whole dashboard; widgets override', async ({
+  page,
+}) => {
+  // the dashboard opens "as of now"
+  await expect(page.locator('.hud-time-chip')).toContainText('now');
+
+  // open the control, choose a granularity, then scrub the global as-of back
+  await page.locator('.hud-time-chip').click();
+  await page.locator('.gt-unit').selectOption('months');
+  const scrub = page.locator('.gt-scrub');
+  await scrub.focus();
+  await page.keyboard.press('Home');
+  await expect(page.locator('.hud-time-chip')).toContainText('mo ago');
+  await page.locator('.hud-time-backdrop').click(); // close the popover
+
+  // travel-capable tiles reflect the global as-of, in the chosen granularity
+  const radarTile = page.locator('.inst', { hasText: 'Radar' }).first();
+  await expect(radarTile.locator('.inst-sub')).toContainText('mo ago');
+  const triadTile = page.locator('.inst', { hasText: 'Cynefin triads' }).first();
+  await expect(triadTile.locator('.inst-sub')).toContainText('mo ago');
+
+  // per-widget override: opening a widget gives it its own transport, independent of the
+  // global as-of, with the granularity carried into its labels
+  await triadTile.click();
+  await expect(page.locator('.overlay-title')).toHaveText('Cynefin triads');
+  const oscrub = page.locator('.overlay .toc-scrub');
+  await oscrub.focus();
+  await page.keyboard.press('Home');
+  await expect(page.locator('.overlay .toc-asof')).toContainText('mo ago');
+  await page.keyboard.press('End');
+  await expect(page.locator('.overlay .toc-asof')).toHaveText('now'); // independent of global
+});
+
 test('the system model expands and switches among the seed CLDs', async ({ page }) => {
   await page.locator('.inst', { hasText: 'System model' }).first().click();
   await expect(page.locator('.overlay-title')).toHaveText('System Model');
