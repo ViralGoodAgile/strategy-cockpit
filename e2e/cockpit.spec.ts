@@ -30,6 +30,30 @@ test('expanding the loop opens its full-screen view', async ({ page }) => {
   await expect(page.locator('.overlay')).toHaveCount(0);
 });
 
+test('the expanded loop carries the EBM goal ladder + experiment ledger', async ({ page }) => {
+  await page.locator('.inst-loop .inst-head-click').click();
+  await expect(page.locator('.overlay-title')).toHaveText('The loop under inspection');
+
+  // the loop shrinks to a column and shares the room with the goals
+  await expect(page.locator('.overlay .loop-detail-canvas .loop-canvas')).toBeVisible();
+  const goals = page.locator('.overlay .goals');
+  await expect(goals).toBeVisible();
+
+  // a Strategic Goal with a KVA, decomposing into intermediate goals + experiments
+  await expect(goals.locator('.goal-strategic .goal-kva')).toBeVisible();
+  expect(await goals.locator('.goal-intermediate').count()).toBeGreaterThan(0);
+  expect(await goals.locator('.goal-exp').count()).toBeGreaterThan(2);
+
+  // every experiment leads with a hypothesis and a clearly-labelled outcome
+  await expect(goals.locator('.goal-exp-hyp').first()).toContainText('We believe');
+  await expect(goals.locator('.goal-exp-pill.gx-validated').first()).toBeVisible();
+  await expect(goals.locator('.goal-exp-pill.gx-invalidated').first()).toBeVisible();
+  await expect(goals.locator('.goal-exp-pill.gx-unsure').first()).toBeVisible();
+
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.overlay')).toHaveCount(0);
+});
+
 test('Author mode: start fresh empties the strategy and the cockpit goes offline', async ({ page }) => {
   page.on('dialog', (d) => d.accept()); // accept the "start fresh?" confirm
   await page.locator('.hud-author').click();
