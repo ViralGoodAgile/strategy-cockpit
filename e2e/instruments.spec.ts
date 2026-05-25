@@ -263,6 +263,21 @@ test('time travel: the snapshot tiles (mandate, hygiene, weak) travel with the d
   await expect(page.locator('.overlay .toc-play')).toContainText('pause');
 });
 
+test('time travel: the structural widgets carry the as-of across the dashboard', async ({ page }) => {
+  // travel the whole dashboard back
+  await page.locator('.hud-time-chip').click();
+  const scrub = page.locator('.gt-scrub');
+  await scrub.focus();
+  await page.keyboard.press('Home');
+  await page.locator('.hud-time-backdrop').click();
+
+  // the loop, system model, strategy banner and challenge bar all reflect the as-of
+  await expect(page.locator('.inst-loop .loop-return')).toContainText('ago');
+  await expect(page.locator('.inst', { hasText: 'System model' }).first().locator('.inst-sub')).toContainText('ago');
+  await expect(page.locator('.inst:has(.sr) .inst-sub')).toContainText('ago');
+  await expect(page.locator('.cb-tag')).toContainText('ago');
+});
+
 test('the system model expands and switches among the seed CLDs', async ({ page }) => {
   await page.locator('.inst', { hasText: 'System model' }).first().click();
   await expect(page.locator('.overlay-title')).toHaveText('System Model');
