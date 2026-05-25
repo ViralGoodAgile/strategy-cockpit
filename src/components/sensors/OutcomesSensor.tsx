@@ -3,6 +3,7 @@ import type { OutcomeSet, Triad } from '../../domain/sensors';
 import { useCockpit } from '../../store/useCockpit';
 import { triadsWithCaptured } from '../../mirrors/capturedTriads';
 import { triadAtPeriod, triadHistory } from '../../mirrors/triadHistory';
+import { interpretationsAt } from '../../mirrors/snapshotHistory';
 import { PERIODS } from '../../lib/timeTravel';
 import { metricAt } from '../common/trend';
 import { useTimeTravel } from '../common/useTimeTravel';
@@ -83,7 +84,7 @@ export function OutcomesSensor({ signal }: { signal: Signal<OutcomeSet> }) {
           </p>
           <div className="triad-interp">
             <div className="triad-interp-head">interpretations · by people, not the cockpit</div>
-            {customerTriad.interpretations.map((it, i) => (
+            {interpretationsAt(customerTriad.interpretations, tt.index, tt.last).map((it, i) => (
               <p className="triad-interp-row" key={i}>
                 <span className="triad-interp-by">{it.by}</span>
                 {it.text}

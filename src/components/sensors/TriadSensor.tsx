@@ -4,6 +4,7 @@ import type { TriadSet, TriadStory } from '../../domain/sensors';
 import { useCockpit } from '../../store/useCockpit';
 import { triadsWithCaptured } from '../../mirrors/capturedTriads';
 import { triadAtPeriod, triadHistory } from '../../mirrors/triadHistory';
+import { interpretationsAt } from '../../mirrors/snapshotHistory';
 import { PERIODS } from '../../lib/timeTravel';
 import { useTimeTravel } from '../common/useTimeTravel';
 import { Transport } from '../common/Transport';
@@ -69,7 +70,7 @@ export function TriadSensor({ signal }: { signal: Signal<TriadSet> }) {
               </p>
               <div className="triad-interp">
                 <div className="triad-interp-head">interpretations · by people, not the cockpit</div>
-                {t.interpretations.map((it, j) => (
+                {interpretationsAt(t.interpretations, tt.index, tt.last).map((it, j) => (
                   <p className="triad-interp-row" key={j}>
                     <span className="triad-interp-by">{it.by}</span>
                     {it.text}

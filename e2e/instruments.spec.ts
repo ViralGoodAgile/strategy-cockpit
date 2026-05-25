@@ -278,6 +278,18 @@ test('time travel: the structural widgets carry the as-of across the dashboard',
   await expect(page.locator('.cb-tag')).toContainText('ago');
 });
 
+test('time travel: triad interpretations accrue (the qualitative text travels)', async ({ page }) => {
+  await page.locator('.inst', { hasText: 'Cynefin triads' }).first().click();
+  await expect(page.locator('.overlay-title')).toHaveText('Cynefin triads');
+  const scrub = page.locator('.overlay .toc-scrub');
+  await scrub.focus();
+  await page.keyboard.press('End'); // now — all interpretations written
+  const atNow = await page.locator('.overlay .triad-interp-row').count();
+  await page.keyboard.press('Home'); // earliest — fewer had been written
+  const atOldest = await page.locator('.overlay .triad-interp-row').count();
+  expect(atOldest).toBeLessThan(atNow);
+});
+
 test('the system model expands and switches among the seed CLDs', async ({ page }) => {
   await page.locator('.inst', { hasText: 'System model' }).first().click();
   await expect(page.locator('.overlay-title')).toHaveText('System Model');
@@ -319,6 +331,9 @@ test('the radar expands to a legible scope', async ({ page }) => {
 test('strategy triads show per-triad interpretations from different groups', async ({ page }) => {
   await page.locator('.inst', { hasText: 'Strategy triads' }).first().click();
   await expect(page.locator('.overlay-title')).toHaveText('Strategy triads');
+  // interpretations accrue over time — scrub to "now" to see them all
+  await page.locator('.overlay .toc-scrub').focus();
+  await page.keyboard.press('End');
   // four triads, each with an interpretations block (≥2 group readings apiece)
   expect(await page.locator('.overlay .triad-interp').count()).toBeGreaterThanOrEqual(4);
   expect(await page.locator('.overlay .triad-interp-row').count()).toBeGreaterThanOrEqual(8);
